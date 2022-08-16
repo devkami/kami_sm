@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="kami_sm_menu_root" name="Kami Service Manager">
+    <menuitem id="kami_sm_attendance_first_level_menu" name="Atendimentos">
+      <menuitem 
+        id="kami_sm_attendance_model_menu_action" 
+        action="kami_sm_attendance_action"
+      />
+    </menuitem>
+    <menuitem id="kami_sm_attendance_type_first_level_menu" name="Configurações">
+      <menuitem 
+        id="kami_sm_attendance_type_model_menu_action"
+        action="kami_sm_attendance_type_action"
+      />
+      <menuitem
+        id="kami_sm_attendance_themes_model_menu_action"
+        action="kami_sm_attendance_theme_action"
+      />
+    </menuitem>
+  </menuitem>    
+</odoo>
+  
