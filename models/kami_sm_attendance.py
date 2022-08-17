@@ -76,6 +76,19 @@ class KamiInEducationAttendance(models.Model):
                 raise UserError("Somente Atendimentos Novos ou Aprovados Podem ser Cancelados!")
             else:
                 record.state = "waiting"
+    
+    def action_open_request_cancel(self):
+        return {
+            "res_model": "kami_sm.attendance",
+            "res_id": self.id,
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "view_id": self.env.ref("kami_sm.kami_sm_attendance_view_popup_form").id,
+            "target": "new"
+        }
+    
+    def action_cancel_popup_attendance(self):
+        return {'type': 'ir.actions.act_window_close'}
 
     def action_cancel_attendance(self):
         for record in self:

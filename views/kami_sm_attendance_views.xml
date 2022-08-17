@@ -45,7 +45,7 @@
             states="new"
           />
           <button
-            name="action_request_cancel"
+            name="action_open_request_cancel"
             string="Solicitar Cancelamento"
             type="object"
             class="oe_highlight"
@@ -56,7 +56,7 @@
             string="Cancelar"
             type="object"
             class="oe_highlight"
-            states="new,approved"
+            states="waiting"
           />
           <field 
             name="state"            
@@ -86,6 +86,14 @@
                 <field name="attendance_cost"/>
                 <field name="extra_cost"/>
                 <field name="total_cost"/>
+              </group>
+            </page>
+            <page 
+              string="Justificativa"
+              attrs="{'invisible': [('cancellation_reason', '=', False)]}"
+            >
+              <group>
+                <field name="cancellation_reason"/>                
               </group>
             </page>                         
           </notebook>           
@@ -146,6 +154,36 @@
           />
         </group>      
       </search>
+    </field>
+  </record>
+
+  <record id="kami_sm_attendance_view_popup_form" model="ir.ui.view">
+    <field name="name">kami_sm.attendance.popup.form</field>
+    <field name="model">kami_sm.attendance</field>
+    <field name="arch" type="xml">
+      <form string="Solicitação de Cancelamento" create="false">
+        <h3>Preencha a Justificativa para o Cancelamento:</h3>
+        
+        <group>
+          <field name="cancellation_reason"/>
+        </group>
+        
+        <group>
+          <button
+            name="action_request_cancel"
+            string="Solicitar"
+            type="object"
+            class="oe_highlight"
+          />  
+          <button
+            name="action_cancel_popup_attendance"
+            string="Cancelar"
+            type="object"
+            class="oe_highlight"
+          />
+        </group>
+        <footer></footer>        
+      </form>
     </field>
   </record>
 
