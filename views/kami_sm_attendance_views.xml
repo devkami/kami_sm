@@ -17,12 +17,13 @@
           decoration-muted="state == 'done'"          
         >
           <field name="seller_id"/>
-          <field name="client_id"/>
+          <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
           <field name="attendance_type_id"/>
           <field name="attendance_theme_id"/>
-          <field name="partner_id"/>
+          <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
           <field name="expected_audience"/>
-          <field name="activity_date"/>
+          <field name="attendance_start"/>
+          <field name="duration"/>
           <field name="attendance_cost"/>
           <field name="extra_cost"/>
           <field name="total_cost"/>
@@ -66,13 +67,15 @@
         </header>     
         <sheet>          
           <group>
-            <field name="client_id"/>
+            <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
             <field name="attendance_type_id"/> 
             <field name="attendance_theme_id"/> 
           </group>          
           <group>
-            <field name="activity_date"/>
-            <field name="partner_id"/>
+            <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+            <field name="attendance_start"/>
+            <field name="attendance_stop"/>
+            <field name="duration"/>
             <field name="expected_audience"/>                             
           </group>
           <notebook>
@@ -93,7 +96,12 @@
               attrs="{'invisible': [('cancellation_reason', '=', False)]}"
             >
               <group>
-                <field name="cancellation_reason"/>                
+                <field 
+                  name="cancellation_reason"
+                  attrs="{
+                    'readonly': [('state', 'in', ('waiting', 'canceled'))
+                  ]}"
+                />                
               </group>
             </page>                         
           </notebook>           
@@ -114,10 +122,10 @@
         <templates>
           <t t-name="kanban-box">
             <div class="oe_kanban_global_click">
-              <field name="client_id"/>
+              <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
               <br/>
-              <field name="activity_date"/>
-              <field name="partner_id"/>
+              <field name="duration"/>
+              <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
             </div>
           </t>
         </templates>
@@ -131,10 +139,10 @@
     <field name="arch" type="xml">
       <search string="Atendimento">
         <field name="seller_id"/>
-        <field name="client_id"/>
+        <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
         <field name="attendance_type_id"/>
         <field name="attendance_theme_id"/>
-        <field name="partner_id"/>                        
+        <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>                        
         <separator/>
         <filter 
           string="Aguarando Aprovação"

@@ -16,6 +16,10 @@
         id="kami_sm_attendance_themes_model_menu_action"
         action="kami_sm_attendance_theme_action"
       />
+      <menuitem
+        id="kami_sm_attendance_partners_model_menu_action"
+        action="kami_sm_attendance_partner_action"
+      />
     </menuitem>
   </menuitem>    
 </odoo>

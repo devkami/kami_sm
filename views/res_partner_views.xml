@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="kami_sm.res_partner_view_form" model="ir.ui.view">
+    <field name="name">res.partner.view.form.inherit.kami</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">      
+      <xpath expr="//page[@name='sales_purchases']" position="after">
+        <page name="kami_sm" string="Kami Service Manager">
+          <group>
+            <field name="attendance_type_id" />
+            <field name="attendance_theme_id" />
+          </group>
+          <group>
+            <field name="seller_ids">
+              <tree>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+              </tree>
+            </field>
+          </group>
+        </page>        
+      </xpath>              
+    </field>
+  </record>
+
+  <record id="kami_sm_attendance_partner_action" model="ir.actions.act_window">
+    <field name="name">Parceiros</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">tree,form,kanban</field>
+    <field name="context">{'search_default_available': True}</field>
+  </record>
+
+  <record id="kami_sm_partner_view_tree" model="ir.ui.view">
+    <field name="name">res.partner.tree</field>
+    <field name="model">res.partner</field>
+    <field name="arch" type="xml">
+        <tree string="Parceiros" editable="bottom">
+          <field name="name"/>
+          <field name="email"/>
+          <field name="phone"/>
+          <field name="attendance_type_id"/>
+          <field name="attendance_theme_id"/>
+        </tree>
+    </field>
+  </record>
+
+  <record id="kami_sm_partner_view_form" model="ir.ui.view">
+    <field name="name">res.partner.form</field>
+    <field name="model">res.partner</field>
+    <field name="arch" type="xml">
+      <form string="Parceiro">
+        <sheet>          
+          <group>
+            <field name="name"/>
+            <field name="email"/> 
+            <field name="phone"/>             
+          </group>          
+          <group>
+            <field name="attendance_type_id"/> 
+            <field name="attendance_theme_id"/>
+          </group>
+          <notebook>
+            <page string="Vendedores">
+              <group>
+                <field name="seller_ids">
+                  <tree>
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="phone"/>
+                  </tree>
+                </field>                              
+              </group>
+            </page>            
+          </notebook>           
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="kami_sm_partner_view_kanban" model="ir.ui.view">
+    <field name="name">res.partner.kanban</field>
+    <field name="model">res.partner</field>
+    <field name="arch" type="xml">
+      <kanban 
+        default_group_by="state"
+        records_draggable="false"
+      > 
+        <templates>
+          <t t-name="kanban-box">
+            <div class="oe_kanban_global_click">
+              <group>
+                <field name="avatar_128"/>
+              </group>
+              <group>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="email"/>
+              </group>              
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+
+  <record id="view_kami_sm_partner_search" model="ir.ui.view">
+    <field name="name">res.partner.search</field>
+    <field name="model">res.partner</field>
+    <field name="arch" type="xml">
+      <search string="Parceiro">
+        <field name="name"/>        
+        <field name="attendance_type_id"/>
+        <field name="attendance_theme_id"/>        
+        <separator/>        
+        <group expand="1" string="Group By">                 
+          <filter 
+            string="Tipo de Atendimento"
+            name="attendance_type"
+            context="{'group_by':'attendance_type_id'}"            
+          />
+          <filter 
+            string="Tema do Atendimento"
+            name="attendance_theme"
+            context="{'group_by':'attendance_theme_id'}"            
+          />
+        </group>      
+      </search>
+    </field>
+  </record>
+
+</odoo>
