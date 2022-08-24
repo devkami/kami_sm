@@ -122,10 +122,15 @@
         <templates>
           <t t-name="kanban-box">
             <div class="oe_kanban_global_click">
-              <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
-              <br/>
-              <field name="duration"/>
-              <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+              <div>
+                <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
+              </div>
+              <div>
+                <field name="attendance_start"/>                
+              </div>
+              <div>
+                <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+              </div>
             </div>
           </t>
         </templates>
