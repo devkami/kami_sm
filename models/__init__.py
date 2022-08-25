@@ -3,5 +3,6 @@ from . import (
   kami_sm_attendance,
   kami_sm_attendance_type,
   kami_sm_attendance_theme,
-  res_partner
+  res_partner,
+  res_users
 )

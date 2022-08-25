@@ -10,6 +10,7 @@
     "security/ir.model.access.csv",
     "data/calendar_data.xml",    
     "views/res_partner_views.xml",
+    "views/res_users_views.xml",
     "views/kami_sm_attendance_type_views.xml", 
     "views/kami_sm_attendance_theme_views.xml", 
     "views/kami_sm_attendance_views.xml",    
