@@ -37,7 +37,16 @@
               <group>
                 <field name="description"/>
               </group>              
-            </page>            
+            </page>
+            <page string="Parceiros">
+              <field name="partner_ids">
+                <tree>
+                  <field name="name"/>
+                  <field name="email"/>
+                  <field name="phone"/>                  
+                </tree>
+              </field>              
+            </page>         
           </notebook>           
         </sheet>
       </form>
