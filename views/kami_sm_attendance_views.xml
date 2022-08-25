@@ -72,7 +72,7 @@
             <field name="attendance_theme_id"/> 
           </group>          
           <group>
-            <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+            <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/> 
             <field name="attendance_start"/>
             <field name="attendance_stop"/>
             <field name="duration"/>

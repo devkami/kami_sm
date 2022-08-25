@@ -17,8 +17,10 @@ class KamiSmAttendanceType(models.Model):
         string='Atendimentos'
     )
     sequence = fields.Integer(default=1)
-    """ partner_ids = fields.One2many(
-        'res.partner',
-        'attendance_type_id',
-        string='Parceiros'
-    ) """
+    partner_ids = fields.Many2many(
+      comodel_name="res.partner",
+      relation="partner_attendance_type_table",
+      column1="table_to_partner_col",
+      column2="partner_to_table_col",
+      string='Parceiros'
+    )

@@ -78,8 +78,8 @@ class KamiInEducationAttendance(models.Model):
     )
     currency_id = fields.Many2one("res.currency", string="Currency")    
     description = fields.Text(string="Observações Relevantes")
-    cancellation_reason = fields.Text(string="Motivo do Cancelamento")
-    
+    cancellation_reason = fields.Text(string="Motivo do Cancelamento")    
+
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -101,7 +101,7 @@ class KamiInEducationAttendance(models.Model):
         for record in self:
             minimum_antecedence = fields.Datetime.today() + timedelta(days=4)
             if(record.attendance_start < minimum_antecedence):
-                raise ValidationError(" A antecedência mínima para a marcação de um evento são 4 dias!")
+                raise ValidationError(" A antecedência mínima para o agendamento de um evento são 4 dias!")            
 
     # ------------------------------------------------------------
     # COMPUTES
@@ -177,4 +177,25 @@ class KamiInEducationAttendance(models.Model):
             if record.state != "waiting":
                 raise UserError("Somente Atendimentos Aguardando Cancelamento Podem ser Cancelados!")
             else:
-                record.state = "canceled"
+                record.state = "canceled" 
+
+    # ------------------------------------------------------------
+    # DOMAINS FILTER
+    # ------------------------------------------------------------
+
+    @api.onchange('attendance_type_id')
+    def _onchange_attendance_type_id(self):
+        for record in self:
+            return {'domain':
+                {'partner_id':
+                [('id', 'in', record.attendance_type_id.partner_ids.mapped('id'))]}}
+
+    @api.onchange('attendance_theme_id')
+    def _onchange_attendance_theme_id(self):
+        for record in self:
+            return {'domain':
+                {'partner_id':
+                [('id', 'in', record.attendance_theme_id.partner_ids.mapped('id'))]}}
+
+    
+    

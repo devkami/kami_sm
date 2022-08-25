@@ -8,8 +8,8 @@
       <xpath expr="//page[@name='sales_purchases']" position="after">
         <page name="kami_sm" string="Kami Service Manager">
           <group>
-            <field name="attendance_type_id" />
-            <field name="attendance_theme_id" />
+            <field name="attendance_type_ids" />
+            <field name="attendance_theme_ids" />
           </group>
           <group>
             <field name="seller_ids">
@@ -40,8 +40,8 @@
           <field name="name"/>
           <field name="email"/>
           <field name="phone"/>
-          <field name="attendance_type_id"/>
-          <field name="attendance_theme_id"/>
+          <field name="attendance_type_ids"/>
+          <field name="attendance_theme_ids"/>
         </tree>
     </field>
   </record>
@@ -58,8 +58,8 @@
             <field name="phone"/>             
           </group>          
           <group>
-            <field name="attendance_type_id"/> 
-            <field name="attendance_theme_id"/>
+            <field name="attendance_type_ids"/> 
+            <field name="attendance_theme_ids"/>
           </group>
           <notebook>
             <page string="Vendedores">
@@ -111,19 +111,19 @@
     <field name="arch" type="xml">
       <search string="Parceiro">
         <field name="name"/>        
-        <field name="attendance_type_id"/>
-        <field name="attendance_theme_id"/>        
+        <field name="attendance_type_ids"/>
+        <field name="attendance_theme_ids"/>        
         <separator/>        
         <group expand="1" string="Group By">                 
           <filter 
             string="Tipo de Atendimento"
             name="attendance_type"
-            context="{'group_by':'attendance_type_id'}"            
+            context="{'group_by':'attendance_type_ids'}"            
           />
           <filter 
             string="Tema do Atendimento"
             name="attendance_theme"
-            context="{'group_by':'attendance_theme_id'}"            
+            context="{'group_by':'attendance_theme_ids'}"            
           />
         </group>      
       </search>
