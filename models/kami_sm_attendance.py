@@ -101,7 +101,12 @@ class KamiInEducationAttendance(models.Model):
         for record in self:
             minimum_antecedence = fields.Datetime.today() + timedelta(days=4)
             if(record.attendance_start < minimum_antecedence):
-                raise ValidationError(" A antecedência mínima para o agendamento de um evento são 4 dias!")            
+                raise ValidationError(" A antecedência mínima para o agendamento de um evento são 4 dias!")
+            meetings_start = record.partner_id.meeting_ids.mapped('start')
+            meetings_stop = record.partner_id.meeting_ids.mapped('stop')
+            for meeting_start, meeting_stop in zip(meetings_start, meetings_stop):
+                if (meeting_start == record.attendance_start) or (meeting_stop == record.attendance_stop):
+                    raise ValidationError(" O parceiro já possui um evento na mesma data!")
 
     # ------------------------------------------------------------
     # COMPUTES
@@ -132,22 +137,19 @@ class KamiInEducationAttendance(models.Model):
         for record in self:
             if record.state != "new":
                 raise UserError("Somente Atendimentos Novos Podem Ser Aprovados!")
-            else:                
+            else:
                 record.state = "approved"                
                 event_vals = {
                     "name": record.name,
                     "start": record.attendance_start,
-                    "stop": record.attendance_stop,
-                    "duration": record.duration,
+                    "stop": record.attendance_stop,                    
                     "user_id": record.seller_id.id,
                     "partner_ids": [
-                        record.partner_id.id,
-                        record.client_id.id
-                    ],
-                    "alarm_ids": [
-                        Command.link(self.env.ref('kami_sm.alarm_mail_1_day').id)                        
-                    ],
-                    "location": record.client_id.contact_address
+                        (4, record.partner_id.id),
+                        (4, record.client_id.id),
+                    ],                    
+                    "location": record.client_id.contact_address,
+                    "description": record.description
                 }            
                 self.env["calendar.event"].create(event_vals)
                 
@@ -178,6 +180,7 @@ class KamiInEducationAttendance(models.Model):
                 raise UserError("Somente Atendimentos Aguardando Cancelamento Podem ser Cancelados!")
             else:
                 record.state = "canceled" 
+                
 
     # ------------------------------------------------------------
     # DOMAINS FILTER
