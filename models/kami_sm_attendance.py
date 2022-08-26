@@ -102,11 +102,7 @@ class KamiInEducationAttendance(models.Model):
             minimum_antecedence = fields.Datetime.today() + timedelta(days=4)
             if(record.attendance_start < minimum_antecedence):
                 raise ValidationError(" A antecedência mínima para o agendamento de um evento são 4 dias!")
-            meetings_start = record.partner_id.meeting_ids.mapped('start')
-            meetings_stop = record.partner_id.meeting_ids.mapped('stop')
-            for meeting_start, meeting_stop in zip(meetings_start, meetings_stop):
-                if (meeting_start == record.attendance_start) or (meeting_stop == record.attendance_stop):
-                    raise ValidationError(" O parceiro já possui um evento na mesma data!")
+            
 
     # ------------------------------------------------------------
     # COMPUTES
@@ -145,8 +141,7 @@ class KamiInEducationAttendance(models.Model):
                     "stop": record.attendance_stop,                    
                     "user_id": record.seller_id.id,
                     "partner_ids": [
-                        (4, record.partner_id.id),
-                        (4, record.client_id.id),
+                        (4, record.partner_id.id),                        
                     ],                    
                     "location": record.client_id.contact_address,
                     "description": record.description
@@ -179,26 +174,33 @@ class KamiInEducationAttendance(models.Model):
             if record.state != "waiting":
                 raise UserError("Somente Atendimentos Aguardando Cancelamento Podem ser Cancelados!")
             else:
-                record.state = "canceled" 
-                
+                record.state = "canceled"
 
+    def action_finish_attendance(self):
+        for record in self:   
+            if record.state != "approved":
+                raise UserError("Somente Atendimentos Aprovados Podem ser Encerrados!")
+            else:
+                record.state = "done"
+
+        
     # ------------------------------------------------------------
-    # DOMAINS FILTER
+    # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
-    @api.onchange('attendance_type_id')
-    def _onchange_attendance_type_id(self):
+    @api.onchange('attendance_type_id', 'attendance_theme_id', 'attendance_start')
+    def _onchange_attendance_type_theme_start_id(self):
         for record in self:
+            partner_types = record.attendance_type_id.partner_ids.mapped('id')
+            partner_themes = record.attendance_theme_id.partner_ids.mapped('id')
+            meetings = self.env['kami_sm.attendance'].search(
+                [('attendance_start', '=', record.attendance_start)])            
+            busy_partners = meetings.mapped('partner_id.id')
+            
             return {'domain':
                 {'partner_id':
-                [('id', 'in', record.attendance_type_id.partner_ids.mapped('id'))]}}
-
-    @api.onchange('attendance_theme_id')
-    def _onchange_attendance_theme_id(self):
-        for record in self:
-            return {'domain':
-                {'partner_id':
-                [('id', 'in', record.attendance_theme_id.partner_ids.mapped('id'))]}}
-
-    
-    
+                ['&', '&',
+                    ('id', 'in', partner_types),
+                    ('id', 'in', partner_themes),                    
+                    ('id', 'not in', busy_partners),
+                ]}}
