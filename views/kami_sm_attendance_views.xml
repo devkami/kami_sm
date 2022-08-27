@@ -23,7 +23,7 @@
           <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
           <field name="expected_audience"/>
           <field name="attendance_start"/>          
-          <field name="attendance_cost"/>          
+          <field name="attendance_total_cost"/>          
           <field name="state" invisible="1" />
         </tree>
     </field>
@@ -90,9 +90,14 @@
             </page>
             <page string="Custos">
               <group>
-                <field name="attendance_cost"/>
-                <field name="extra_cost"/>
-                <field name="total_cost"/>
+                <field name="attendance_total_cost"/>
+                <field name="attendance_cost_ids">
+                  <tree>                    
+                    <field name="cost_type"/>
+                    <field name="partial_cost"/>
+                    <field name="cost"/>
+                  </tree>
+                </field>
               </group>
             </page>
             <page 

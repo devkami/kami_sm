@@ -11,7 +11,7 @@ class KamiInEducationAttendance(models.Model):
     _order = "id desc"
 
     name = fields.Char(
-        string="Title", 
+        string="Título", 
         required=True,
         compute="_compute_default_name",
         readonly=True
@@ -66,19 +66,28 @@ class KamiInEducationAttendance(models.Model):
         string="Duração",
         compute="_compute_duration",
         readonly=True
+    )    
+    attendance_cost_ids = fields.One2many(
+        "kami_sm.attendance.cost",
+        "attendance_id",
+        string="Custos",        
     )
-    attendance_cost = fields.Monetary(
-        string="Custo do Atendimento", currency_field="currency_id")
-    extra_cost = fields.Monetary(
-        string="Custo Extra", currency_field="currency_id")
-    total_cost = fields.Monetary(
-        string="Custo Total",
-        currency_field="currency_id",
-        compute="_compute_total_cost"
+    attendance_total_cost = fields.Monetary(
+      string="Custo Total", 
+      currency_field="currency_id",
+      compute="_compute_attendance_total_cost"
     )
-    currency_id = fields.Many2one("res.currency", string="Currency")    
+    currency_id = fields.Many2one(
+      "res.currency",
+      string="Currency"
+    )
+
     description = fields.Text(string="Observações Relevantes")
-    cancellation_reason = fields.Text(string="Motivo do Cancelamento")    
+    cancellation_reason = fields.Text(string="Motivo do Cancelamento")
+    has_product_cost = fields.Boolean(
+      "Pagamento Com Produtos",
+      default=False    
+    )  
 
 
     # ------------------------------------------------------------
@@ -108,10 +117,10 @@ class KamiInEducationAttendance(models.Model):
     # COMPUTES
     # ------------------------------------------------------------
 
-    @api.depends("attendance_cost", "extra_cost")
-    def _compute_total_cost(self):
+    @api.depends("attendance_cost_ids")
+    def _compute_attendance_total_cost(self):
         for record in self:
-            record.total_cost = record.attendance_cost + record.extra_cost
+            record.attendance_total_cost = sum(record.attendance_cost_ids.mapped('cost'))
 
     @api.depends("attendance_type_id", "attendance_theme_id", "partner_id")
     def _compute_default_name(self):
@@ -146,8 +155,7 @@ class KamiInEducationAttendance(models.Model):
                     "location": record.client_id.contact_address,
                     "description": record.description
                 }            
-                self.env["calendar.event"].create(event_vals)
-                
+                self.env["calendar.event"].create(event_vals)                
 
     def action_request_cancel(self):
         for record in self:

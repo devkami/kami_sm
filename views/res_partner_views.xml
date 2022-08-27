@@ -6,20 +6,20 @@
     <field name="inherit_id" ref="base.view_partner_form"/>
     <field name="arch" type="xml">      
       <xpath expr="//page[@name='sales_purchases']" position="after">
-        <page name="kami_sm" string="Kami Service Manager">
+        <page name="kami_sm_account" string="Dados Bancários">
           <group>
-            <field name="attendance_type_ids" />
-            <field name="attendance_theme_ids" />
-          </group>
-          <group>
-            <field name="seller_ids">
-              <tree>
-                <field name="name"/>
-                <field name="email"/>
-                <field name="phone"/>
+            <field name="account_info_ids">
+              <tree editable="top">
+                <field name="name"/>                
+                <field name="active"/>
+                <field name="pix_key"/>
+                <field name="bank_code"/>
+                <field name="agency"/>
+                <field name="account_number"/>
+                <field name="account_digit"/>                
               </tree>
-            </field>
-          </group>
+            </field>    
+          </group>          
         </page>        
       </xpath>              
     </field>
@@ -40,8 +40,16 @@
           <field name="name"/>
           <field name="email"/>
           <field name="phone"/>
-          <field name="attendance_type_ids"/>
-          <field name="attendance_theme_ids"/>
+          <field
+            name="attendance_type_ids"
+            widget="many2many_tags"
+            options="{'color_field': 'color'}"
+          />
+          <field
+            name="attendance_theme_ids"
+            widget="many2many_tags"
+            options="{'color_field': 'color'}"
+          />
         </tree>
     </field>
   </record>
@@ -58,8 +66,16 @@
             <field name="phone"/>             
           </group>          
           <group>
-            <field name="attendance_type_ids"/> 
-            <field name="attendance_theme_ids"/>
+            <field
+              name="attendance_type_ids"
+              widget="many2many_tags"
+              options="{'color_field': 'color'}"            
+            /> 
+            <field
+              name="attendance_theme_ids"
+              widget="many2many_tags"
+              options="{'color_field': 'color'}"           
+            />
           </group>
           <notebook>
             <page string="Vendedores">

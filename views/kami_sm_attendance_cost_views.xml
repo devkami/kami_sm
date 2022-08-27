@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  
+  <record id="kami_sm_attendance_cost_action" model="ir.actions.act_window">
+    <field name="name">Custos de Atendimento</field>
+    <field name="res_model">kami_sm.attendance.cost</field>
+    <field name="view_mode">tree,form</field>  
+  </record>
+
+  <record id="kami_sm_attendance_cost_view_tree" model="ir.ui.view">
+    <field name="name">kami_sm.attendance.cost.tree</field>
+    <field name="model">kami_sm.attendance.cost</field>
+    <field name="arch" type="xml">
+      <tree string="Custos de Atendimento">
+        <field name="description"/>     
+        <field name="cost_type"/>
+        <field name="partial_cost"/>
+        <field name="cost"/>        
+      </tree>
+    </field>
+  </record>
+
+  <record id="kami_sm_attendance_cost_view_simple_form" model="ir.ui.view">
+    <field name="name">kami_sm.attendance.cost.form</field>
+    <field name="model">kami_sm.attendance.cost</field>
+    <field name="arch" type="xml">
+      <form string="Custo de Atendimento">        
+        <sheet>     
+          <group>
+            <group>                                         
+              <field name="description"/>
+            </group>
+            <group>
+              <field name="cost_type"/>
+              <field name="partial_cost"/>
+              <field 
+                name="order_id"
+                attrs="{'invisible': [('cost_type', '=', 'cash')]}"
+              />
+            </group>
+            <group>
+              <field name="partner_id" invisible="1"/>
+              <field name="cost"/>
+              <field 
+                name="account_payment_info"
+                attrs="{'invisible': [('cost_type', '!=', 'cash')]}"
+                domain="[('partner_id', '=', partner_id)]"               
+              />
+              <field 
+                name="project_id"
+                attrs="{'invisible': [('cost_type', '!=', 'cash')]}"
+              />              
+            </group>            
+          </group>                   
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_kami_sm_attendance_cost_search" model="ir.ui.view">
+    <field name="name">kami_sm.attendance.cost.search</field>
+    <field name="model">kami_sm.attendance.cost</field>
+    <field name="arch" type="xml">
+      <search string="Custo de Atendimento">
+        <field name="cost_type" />
+        <field name="description" />
+        <separator/>
+        <filter 
+          string="Parcial"
+          name="partial"
+          domain="[('partial_cost', '=', 'True')]"
+        />            
+      </search>
+    </field>
+  </record>
+
+</odoo> 
