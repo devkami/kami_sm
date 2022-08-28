@@ -9,6 +9,7 @@ class KamiInEducationAttendance(models.Model):
     _name = "kami_sm.attendance"
     _description = "Attendance Model for Kami In Education Module"
     _order = "id desc"
+    _inherit = ['mail.thread']
 
     name = fields.Char(
         string="Título", 
