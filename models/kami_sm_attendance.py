@@ -9,7 +9,7 @@ class KamiInEducationAttendance(models.Model):
     _name = "kami_sm.attendance"
     _description = "Attendance Model for Kami In Education Module"
     _order = "id desc"
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(
         string="Título", 
@@ -25,7 +25,8 @@ class KamiInEducationAttendance(models.Model):
         ("waiting", "Aguardando Cancelamento"),
         ("canceled", "Cancelado")],
         string="Status",
-        default="new"
+        default="new",
+        tracking=True
     )
     seller_id =  fields.Many2one(
         "res.users", 
