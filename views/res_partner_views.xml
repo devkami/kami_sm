@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-  <record id="kami_sm.res_partner_view_form" model="ir.ui.view">
-    <field name="name">res.partner.view.form.inherit.kami</field>
-    <field name="model">res.partner</field>
-    <field name="inherit_id" ref="base.view_partner_form"/>
-    <field name="arch" type="xml">      
-      <xpath expr="//page[@name='sales_purchases']" position="after">
-        <page name="kami_sm_account" string="Dados Bancários">
-          <group>
-            <field name="account_info_ids">
-              <tree editable="top">
-                <field name="name"/>                
-                <field name="active"/>
-                <field name="pix_key"/>
-                <field name="bank_code"/>
-                <field name="agency"/>
-                <field name="account_number"/>
-                <field name="account_digit"/>                
-              </tree>
-            </field>    
-          </group>          
-        </page>        
-      </xpath>              
-    </field>
-  </record>
+<odoo> 
 
   <record id="kami_sm_attendance_partner_action" model="ir.actions.act_window">
     <field name="name">Parceiros</field>

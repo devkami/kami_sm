@@ -5,7 +5,7 @@
   "summary": "Kamico Service Manager",
   "version": "1.0",
   "license": "GPL-3 or any later version",
-  "depends": ["base", "calendar", "project"],
+  "depends": ["base", "calendar", "account"],
   "data": [
     "security/ir.model.access.csv",
     "data/calendar_data.xml",    

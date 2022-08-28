@@ -10,4 +10,4 @@ class ResUsers(models.Model):
       column1="table_to_partner_col",
       column2="partner_to_table_col",
       string='Parceiros'
-    )
+    )   

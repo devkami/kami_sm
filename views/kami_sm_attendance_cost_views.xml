@@ -14,7 +14,7 @@
       <tree string="Custos de Atendimento">
         <field name="description"/>     
         <field name="cost_type"/>
-        <field name="partial_cost"/>
+        <field name="partial"/>
         <field name="cost"/>        
       </tree>
     </field>
@@ -28,28 +28,14 @@
         <sheet>     
           <group>
             <group>                                         
-              <field name="description"/>
-            </group>
-            <group>
+              <field name="description"/>            
               <field name="cost_type"/>
-              <field name="partial_cost"/>
+              <field name="partial"/>
+              <field name="cost"/>
               <field 
                 name="order_id"
                 attrs="{'invisible': [('cost_type', '=', 'cash')]}"
               />
-            </group>
-            <group>
-              <field name="partner_id" invisible="1"/>
-              <field name="cost"/>
-              <field 
-                name="account_payment_info"
-                attrs="{'invisible': [('cost_type', '!=', 'cash')]}"
-                domain="[('partner_id', '=', partner_id)]"               
-              />
-              <field 
-                name="project_id"
-                attrs="{'invisible': [('cost_type', '!=', 'cash')]}"
-              />              
             </group>            
           </group>                   
         </sheet>
@@ -68,7 +54,7 @@
         <filter 
           string="Parcial"
           name="partial"
-          domain="[('partial_cost', '=', 'True')]"
+          domain="[('partial', '=', 'True')]"
         />            
       </search>
     </field>

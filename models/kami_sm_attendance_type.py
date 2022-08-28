@@ -13,7 +13,7 @@ class KamiSmAttendanceType(models.Model):
     active = fields.Boolean(default=True)
     attendance_ids = fields.One2many(
         'kami_sm.attendance',
-        'attendance_type_id',
+        'type_id',
         string='Atendimentos'
     )
     sequence = fields.Integer(default=1)

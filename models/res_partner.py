@@ -25,8 +25,3 @@ class ResPartner(models.Model):
       column2="table_to_partner_col",
       string="Vendedores",
     )
-    account_info_ids = fields.One2many(
-      "kami_sm.partner.account",
-      "partner_id",
-      string="Informações de Pagamento"
-    )

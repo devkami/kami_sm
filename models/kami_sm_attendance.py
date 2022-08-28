@@ -2,8 +2,8 @@
 from odoo import fields, models, api, Command
 from odoo.exceptions import ValidationError, UserError
 from dateutil.relativedelta import relativedelta
-from datetime import timedelta
-
+from datetime import timedelta, datetime
+from pytz import timezone, utc
 
 class KamiInEducationAttendance(models.Model):
     _name = "kami_sm.attendance"
@@ -37,11 +37,11 @@ class KamiInEducationAttendance(models.Model):
         copy=False,
         default=None
     )
-    attendance_type_id = fields.Many2one(
+    type_id = fields.Many2one(
         "kami_sm.attendance.type",
         string="Tipo"
     )
-    attendance_theme_id = fields.Many2one(
+    theme_id = fields.Many2one(
         "kami_sm.attendance.theme",
         string="Tema"
     )
@@ -51,28 +51,25 @@ class KamiInEducationAttendance(models.Model):
         copy=False,
         default=None
     )
-    expected_audience = fields.Integer(string="Público Esperado")
-    attendance_start = fields.Datetime(
+    expected_audience = fields.Integer(string="Público Esperado")    
+    
+    start_date = fields.Datetime(
         string="Ínicio",
         copy=False,
-        default=lambda self: fields.Datetime.today() + timedelta(days=4)
+        default= lambda self: self._get_default_start_date()
     )
-    attendance_stop = fields.Datetime(
+    stop_date = fields.Datetime(
         string="Término",
         copy=False,
-        default=lambda self: fields.Datetime.today() + timedelta(days=4, hours=4)
+        default= lambda self: self._get_default_stop_date()
     )
-    duration = fields.Float(
-        string="Duração",
-        compute="_compute_duration",
-        readonly=True
-    )    
-    attendance_cost_ids = fields.One2many(
+        
+    cost_ids = fields.One2many(
         "kami_sm.attendance.cost",
         "attendance_id",
         string="Custos",        
     )
-    attendance_total_cost = fields.Monetary(
+    total_cost = fields.Monetary(
       string="Custo Total", 
       currency_field="currency_id",
       compute="_compute_attendance_total_cost"
@@ -87,29 +84,85 @@ class KamiInEducationAttendance(models.Model):
     has_product_cost = fields.Boolean(
       "Pagamento Com Produtos",
       default=False    
-    )  
+    )
 
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
 
-    def _get_duration(self, start, stop):
-        """ Get the duration value between the 2 given dates. """
-        if not start or not stop:
-            return 0
-        duration = (stop - start).total_seconds() / 3600
-        return round(duration, 2)
+    def _get_user_timezone(self):
+        return timezone(self.env.user.partner_id.tz)     
+        
+    def _convert_to_user_timezone(self, date_time):
+        return fields.Datetime.to_string(timezone(
+            self.env.user.partner_id.tz).localize(fields.Datetime.from_string(
+            date_time), is_dst=None).astimezone(utc)
+        )
+ 
+    def _get_default_start_date(self):
+        return self._convert_to_user_timezone( fields.Datetime.today().replace(
+            hour=10, minute=00, second=00) + timedelta(days=4)
+        )
+    
+    def _get_default_stop_date(self):
+        return self._convert_to_user_timezone( fields.Datetime.today().replace(
+            hour=18, minute=00, second=00) + timedelta(days=4)
+        )
+
+    def _create_attendance_event(self, attendance):       
+        
+        event_vals = {
+            "name": attendance.name,
+            "start": attendance.start_date,
+            "stop": attendance.stop_date,
+            "user_id": attendance.seller_id.id,
+            "partner_ids": [
+                (4, attendance.partner_id.id),                        
+            ],                    
+            "location": attendance.client_id.contact_address,
+            "description": attendance.description
+        }            
+        self.env["calendar.event"].create(event_vals)
+    
+
+    def _create_attendance_invoice(self, attendance):
+        for attendance_cost in attendance.cost_ids:
+            if attendance_cost.cost_type == 'cash':
+                journal = self.env['account.move']\
+                .with_context(default_move_type='in_invoice')\
+                ._get_default_journal()
+
+                default_partner_account = attendance.partner_id.bank_ids.\
+                search([("active", "=", True)], limit=1)
+                        
+                invoice_vals = {                    
+                    'partner_id': attendance.partner_id,
+                    'partner_bank_id': default_partner_account,
+                    'invoice_date': fields.Datetime.today(),
+                    'invoice_date_due': fields.Datetime.today() \
+                        + timedelta(days=1),
+                    'move_type': 'in_invoice',
+                    'journal_id': journal.id,
+                    'invoice_line_ids': [
+                        ((0, 0,{
+                            'name':attendance_cost.name,
+                            'quantity': 1,
+                            'price_unit': attendance_cost.cost,
+                        })),
+                    ],
+                }
+                self.env['account.move'].create(invoice_vals)
     
     # ------------------------------------------------------------
     # CONSTRAINS
     # ------------------------------------------------------------
 
-    @api.constrains("attendance_start")
+    @api.constrains("start_date")
     def _check_attendance_start(self):
-        for record in self:
+        for attendance in self:
             minimum_antecedence = fields.Datetime.today() + timedelta(days=4)
-            if(record.attendance_start < minimum_antecedence):
+            if(attendance.start_date < minimum_antecedence):
                 raise ValidationError(" A antecedência mínima para o agendamento de um evento são 4 dias!")
             
 
@@ -117,52 +170,36 @@ class KamiInEducationAttendance(models.Model):
     # COMPUTES
     # ------------------------------------------------------------
 
-    @api.depends("attendance_cost_ids")
+    @api.depends("cost_ids")
     def _compute_attendance_total_cost(self):
-        for record in self:
-            record.attendance_total_cost = sum(record.attendance_cost_ids.mapped('cost'))
+        for attendance in self:
+            attendance.total_cost = sum(attendance.cost_ids.mapped('cost'))
 
-    @api.depends("attendance_type_id", "attendance_theme_id", "partner_id")
+    @api.depends("type_id", "theme_id", "partner_id")
     def _compute_default_name(self):
-        for record in self:
-            record.name = f"{record.attendance_type_id.name} - \
-              {record.attendance_theme_id.name} - \
-              {record.partner_id.name}"
-
-    @api.depends("attendance_stop", "attendance_start")
-    def _compute_duration(self):
-        for record in self:
-            record.duration = self._get_duration(record.attendance_start, record.attendance_stop)
+        for attendance in self:
+            attendance.name = f"{attendance.type_id.name}-\
+            {attendance.theme_id.name}"    
     
     # ------------------------------------------------------------
     # ACTIONS
     # ------------------------------------------------------------
 
     def action_approve_attendance(self):
-        for record in self:
-            if record.state != "new":
+        for attendance in self:
+            if attendance.state != "new":
                 raise UserError("Somente Atendimentos Novos Podem Ser Aprovados!")
             else:
-                record.state = "approved"                
-                event_vals = {
-                    "name": record.name,
-                    "start": record.attendance_start,
-                    "stop": record.attendance_stop,                    
-                    "user_id": record.seller_id.id,
-                    "partner_ids": [
-                        (4, record.partner_id.id),                        
-                    ],                    
-                    "location": record.client_id.contact_address,
-                    "description": record.description
-                }            
-                self.env["calendar.event"].create(event_vals)                
+                attendance.state = "approved"                
+                self._create_attendance_invoice(attendance)
+                self._create_attendance_event(attendance)            
 
     def action_request_cancel(self):
-        for record in self:
-            if record.state not in ["new", "approved"]:
+        for attendance in self:
+            if attendance.state not in ["new", "approved"]:
                 raise UserError("Somente Atendimentos Novos ou Aprovados Podem ser Cancelados!")
             else:
-                record.state = "waiting"
+                attendance.state = "waiting"
     
     def action_open_request_cancel(self):
         return {
@@ -178,31 +215,32 @@ class KamiInEducationAttendance(models.Model):
         return {"type": "ir.actions.act_window_close"}
 
     def action_cancel_attendance(self):
-        for record in self:
-            if record.state != "waiting":
+        for attendance in self:
+            if attendance.state != "waiting":
                 raise UserError("Somente Atendimentos Aguardando Cancelamento Podem ser Cancelados!")
             else:
-                record.state = "canceled"
+                attendance.state = "canceled"
 
     def action_finish_attendance(self):
-        for record in self:   
-            if record.state != "approved":
+        for attendance in self:   
+            if attendance.state != "approved":
                 raise UserError("Somente Atendimentos Aprovados Podem ser Encerrados!")
-            else:
-                record.state = "done"
+            else:            
+                raise UserError(self._get_default_start_date(hours=8))
+                #attendance.state = "done"
 
         
     # ------------------------------------------------------------
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
-    @api.onchange('attendance_type_id', 'attendance_theme_id', 'attendance_start')
+    @api.onchange('type_id', 'theme_id', 'start_date')
     def _onchange_attendance_type_theme_start_id(self):
-        for record in self:
-            partner_types = record.attendance_type_id.partner_ids.mapped('id')
-            partner_themes = record.attendance_theme_id.partner_ids.mapped('id')
+        for attendance in self:
+            partner_types = attendance.type_id.partner_ids.mapped('id')
+            partner_themes = attendance.theme_id.partner_ids.mapped('id')
             meetings = self.env['kami_sm.attendance'].search(
-                [('attendance_start', '=', record.attendance_start)])            
+                [('start_date', '=', attendance.start_date)])            
             busy_partners = meetings.mapped('partner_id.id')
             
             return {'domain':

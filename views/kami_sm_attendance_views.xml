@@ -18,12 +18,12 @@
         >
           <field name="seller_id"/>
           <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
-          <field name="attendance_type_id"/>
-          <field name="attendance_theme_id"/>
+          <field name="type_id"/>
+          <field name="theme_id"/>
           <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
           <field name="expected_audience"/>
-          <field name="attendance_start"/>          
-          <field name="attendance_total_cost"/>          
+          <field name="start_date"/>          
+          <field name="total_cost"/>          
           <field name="state" invisible="1" />
         </tree>
     </field>
@@ -72,15 +72,14 @@
         <sheet>          
           <group>
             <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
-            <field name="attendance_type_id"/> 
-            <field name="attendance_theme_id"/> 
-            <field name="attendance_start" string="Data"/>
+            <field name="type_id"/> 
+            <field name="theme_id"/> 
+            <field name="start_date" string="Data"/>
           </group>          
           <group>
             <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>             
             <field name="expected_audience"/>
-            <field name="attendance_stop" invisible="1"/>
-            <field name="duration" invisible="1"/>                                      
+            <field name="stop_date" invisible="1"/>            
           </group>
           <notebook>
             <page string="Detalhes">
@@ -90,11 +89,12 @@
             </page>
             <page string="Custos">
               <group>
-                <field name="attendance_total_cost"/>
-                <field name="attendance_cost_ids">
-                  <tree>                    
+                <field name="total_cost"/>
+                <field name="cost_ids">
+                  <tree>
+                    <field name="description"/>
                     <field name="cost_type"/>
-                    <field name="partial_cost"/>
+                    <field name="partial"/>
                     <field name="cost"/>
                   </tree>
                 </field>
@@ -135,7 +135,7 @@
                 <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
               </div>
               <div>
-                <field name="attendance_start"/>                
+                <field name="start_date"/>                
               </div>
               <div>
                 <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
@@ -154,8 +154,8 @@
       <search string="Atendimento">
         <field name="seller_id"/>
         <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
-        <field name="attendance_type_id"/>
-        <field name="attendance_theme_id"/>
+        <field name="type_id"/>
+        <field name="theme_id"/>
         <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>                        
         <separator/>
         <filter 
@@ -167,12 +167,12 @@
           <filter 
             string="Tipo de Atendimento"
             name="attendance_type"
-            context="{'group_by':'attendance_type_id'}"            
+            context="{'group_by':'type_id'}"            
           />
           <filter 
             string="Tema do Atendimento"
             name="attendance_theme"
-            context="{'group_by':'attendance_theme_id'}"            
+            context="{'group_by':'theme_id'}"            
           />
         </group>      
       </search>
