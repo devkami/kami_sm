@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../odoo-2/addons"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

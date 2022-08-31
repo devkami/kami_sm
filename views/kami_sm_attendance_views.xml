@@ -58,18 +58,28 @@
           />
           <button
             name="action_finish_attendance"
-            string="Encerrar"
+            string="Avaliar e Encerrar"
             type="object"
             class="oe_highlight"
             states="approved"
-          />
+          />         
           <field 
             name="state"            
             widget="statusbar"
             statusbar_visible="new,approved,done,waiting;canceled"
           />
         </header>     
-        <sheet>          
+        <sheet>
+          <div class="oe_button_box" name="button_box">
+            <button
+              name="action_get_ratings"
+              type="object"
+              class="oe_stat_button"
+              icon="fa-smile-o"
+            >
+              Avaliações
+            </button>
+          </div>      
           <group>
             <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
             <field name="type_id"/> 
@@ -98,6 +108,11 @@
                     <field name="cost"/>
                   </tree>
                 </field>
+              </group>
+            </page>
+            <page string="Avaliação">
+              <group>
+                <field name="rating_ids"/>
               </group>
             </page>
             <page 
@@ -210,6 +225,38 @@
             class="oe_highlight"
           />
         </group>
+        <footer></footer>        
+      </form>
+    </field>
+  </record>
+
+  <record id="kami_sm_attendance_rating_view_popup_form" model="ir.ui.view">
+    <field name="name">kami_sm.attendance.rating.popup.form</field>
+    <field name="model">kami_sm.attendance</field>
+    <field name="arch" type="xml">
+      <form string="Avaliação" create="false">
+        <h3>Preencha a Avaliação Antes de Encerrar o Atendimento:</h3>
+        
+        <group>          
+          <field name="rating"></field>
+          <field name="feedback"></field>
+        </group>
+        
+        <group>
+          <button
+            name="action_rating_and_finish"
+            string="Avaliar e Encerrar"
+            type="object"
+            class="oe_highlight"
+          />  
+          <button
+            name="action_cancel_popup_attendance"
+            string="Cancelar"
+            type="object"
+            class="oe_highlight"
+          />
+        </group>
+        
         <footer></footer>        
       </form>
     </field>
