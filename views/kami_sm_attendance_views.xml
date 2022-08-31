@@ -178,12 +178,7 @@
         <field name="type_id"/>
         <field name="theme_id"/>
         <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>                        
-        <separator/>
-        <filter 
-          string="Aguarando Aprovação"
-          name="available"
-          domain="[('state', '=', 'new')]"
-        />
+        <separator/>       
         <group expand="1" string="Group By">                 
           <filter 
             string="Tipo de Atendimento"
