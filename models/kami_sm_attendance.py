@@ -63,7 +63,7 @@ class KamiInEducationAttendance(models.Model):
     stop_date = fields.Datetime(
         string='Término',
         copy=False,
-        default= lambda self: self._get_default_stop_date()
+        compute='_compute_stop_date'
     )
         
     cost_ids = fields.One2many(
@@ -107,11 +107,6 @@ class KamiInEducationAttendance(models.Model):
     def _get_default_start_date(self):
         return self._convert_to_user_timezone( fields.Datetime.today().replace(
             hour=10, minute=00, second=00) + timedelta(days=4)
-        )
-    
-    def _get_default_stop_date(self):
-        return self._convert_to_user_timezone( fields.Datetime.today().replace(
-            hour=18, minute=00, second=00) + timedelta(days=4)
         )
 
     def _create_attendance_event(self, attendance):       
@@ -196,6 +191,10 @@ class KamiInEducationAttendance(models.Model):
             attendance.name = f'{attendance.type_id.name}-\
             {attendance.theme_id.name}'    
     
+    @api.depends('start_date')
+    def _compute_stop_date(self):
+        for attendance in self:
+            attendance.stop_date = attendance.start_date + timedelta(hours=8)
     # ------------------------------------------------------------
     # ACTIONS
     # ------------------------------------------------------------
