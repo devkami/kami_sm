@@ -140,7 +140,7 @@ class KamiInEducationAttendance(models.Model):
                     'partner_bank_id': default_partner_account,
                     'invoice_date': fields.Datetime.today(),
                     'invoice_date_due': fields.Datetime.today() \
-                        + timedelta(days=1),
+                        + timedelta(days=3),
                     'move_type': 'in_invoice',
                     'journal_id': journal.id,
                     'invoice_line_ids': [
