@@ -64,8 +64,7 @@ class KamiInEducationAttendance(models.Model):
         string='Término',
         copy=False,
         compute='_compute_stop_date'
-    )
-        
+    )   
     cost_ids = fields.One2many(
         'kami_sm.attendance.cost',
         'attendance_id',
@@ -80,7 +79,6 @@ class KamiInEducationAttendance(models.Model):
       'res.currency',
       string='Currency'
     )
-
     description = fields.Text(string='Observações Relevantes')
     cancellation_reason = fields.Text(string='Motivo do Cancelamento')
     has_product_cost = fields.Boolean(
@@ -89,6 +87,7 @@ class KamiInEducationAttendance(models.Model):
     )
     feedback = fields.Text(string='Comentário')
     rating = fields.Float(string='Nível de Satisfação')
+    is_expired = fields.Boolean(compute='_compute_is_expired')
 
 
     # ------------------------------------------------------------
@@ -195,6 +194,11 @@ class KamiInEducationAttendance(models.Model):
     def _compute_stop_date(self):
         for attendance in self:
             attendance.stop_date = attendance.start_date + timedelta(hours=8)
+    
+    def _compute_is_expired(self):
+        for attendance in self:
+            attendance.is_expired = attendance.state == 'approved'\
+            and attendance.start_date < fields.Datetime.now()
     # ------------------------------------------------------------
     # ACTIONS
     # ------------------------------------------------------------
