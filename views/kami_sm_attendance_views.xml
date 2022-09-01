@@ -235,8 +235,8 @@
         <h3>Preencha a Avaliação Antes de Encerrar o Atendimento:</h3>
         
         <group>          
-          <field name="rating"></field>
-          <field name="feedback"></field>
+          <field name="rating" required="1" widget="priority" default="1"></field>
+          <field name="feedback" required="1"></field>
         </group>
         
         <group>

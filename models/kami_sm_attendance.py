@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ast
+from email.policy import default
 from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError, UserError
 from datetime import timedelta
@@ -86,7 +87,15 @@ class KamiInEducationAttendance(models.Model):
       default=False    
     )
     feedback = fields.Text(string='Comentário')
-    rating = fields.Float(string='Nível de Satisfação')
+    rating = fields.Selection(
+        [('1', 'Insatisfeito'),
+        ('2', 'Pouco Satisfeito'),
+        ('3', 'Satisfeito'),
+        ('4', 'Muito Satisfeito'),
+        ('5', 'Extremamente Satisfeito')],
+        string='Nível de Satisfação',
+        default='1'     
+    )
     is_expired = fields.Boolean(compute='_compute_is_expired')
 
 
@@ -105,7 +114,7 @@ class KamiInEducationAttendance(models.Model):
  
     def _get_default_start_date(self):
         return self._convert_to_user_timezone( fields.Datetime.today().replace(
-            hour=10, minute=00, second=00) + timedelta(days=4)
+           hour=10, minute=00, second=00) + timedelta(days=4)
         )
 
     def _create_attendance_event(self, attendance):       
@@ -136,6 +145,7 @@ class KamiInEducationAttendance(models.Model):
                         
                 invoice_vals = {                    
                     'partner_id': attendance.partner_id,
+                    'create_uid': self.evn.user.id,
                     'partner_bank_id': default_partner_account,
                     'invoice_date': fields.Datetime.today(),
                     'invoice_date_due': fields.Datetime.today() \
