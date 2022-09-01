@@ -108,15 +108,22 @@
                     <field name="cost_type"/>
                     <field name="partial"/>
                     <field name="cost"/>
+                    <field name="invoice_id" invisible="1"/>
+                    <button 
+                      name="action_open_invoice"
+                      type="object"
+                      class="oe_highlight"
+                      string="Ver Fatura"                      
+                      attrs="{
+                        'invisible': [('invoice_id', '=', None)
+                      ]}"
+                    >
+                      Abrir Fatura
+                    </button>                    
                   </tree>
                 </field>
               </group>
-            </page>
-            <page string="Avaliação">
-              <group>
-                <field name="rating_ids"/>
-              </group>
-            </page>
+            </page>            
             <page 
               string="Justificativa"
               attrs="{'invisible': [('cancellation_reason', '=', False)]}"

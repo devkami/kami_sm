@@ -143,9 +143,10 @@ class KamiInEducationAttendance(models.Model):
                 default_partner_account = attendance.partner_id.bank_ids.\
                 search([('active', '=', True)], limit=1)
                         
-                invoice_vals = {                    
+                invoice_vals = {
+                    'name':f'ATENDIMENTO/EDUCAÇÃO/{attendance.id}',           
                     'partner_id': attendance.partner_id,
-                    'create_uid': self.evn.user.id,
+                    'create_uid': self.env.user.id,
                     'partner_bank_id': default_partner_account,
                     'invoice_date': fields.Datetime.today(),
                     'invoice_date_due': fields.Datetime.today() \
@@ -160,7 +161,8 @@ class KamiInEducationAttendance(models.Model):
                         })),
                     ],
                 }
-                self.env['account.move'].create(invoice_vals)
+                account_move = self.env['account.move'].create(invoice_vals)
+                attendance_cost.invoice_id = account_move.id
     
     def _create_attendance_rating(self, attendance):       
         
@@ -196,9 +198,8 @@ class KamiInEducationAttendance(models.Model):
 
     @api.depends('type_id', 'theme_id', 'partner_id')
     def _compute_default_name(self):
-        for attendance in self:
-            attendance.name = f'{attendance.type_id.name}-\
-            {attendance.theme_id.name}'    
+      for attendance in self:
+        attendance.name = f'{attendance.type_id.name}-{attendance.theme_id.name}'    
     
     @api.depends('start_date')
     def _compute_stop_date(self):
@@ -314,3 +315,14 @@ class KamiInEducationAttendance(models.Model):
         if self.partner_id.user_id:
             return self.partner_id.user_id
         return self.env['res.users']
+
+    # ------------------------------------------------------------
+    # ONCHANGES
+    # ------------------------------------------------------------
+
+    @api.onchange('cost_ids')
+    def _onchange_cost_ids(self):
+        for attendance in self:
+            for attendance_cost in attendance.cost_ids:
+                if not attendance_cost.invoice_id:
+                    self._create_attendance_invoice(attendance)
