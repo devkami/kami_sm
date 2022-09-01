@@ -279,9 +279,7 @@ class KamiInEducationAttendance(models.Model):
             #registra avaliação do educador
             self._create_attendance_rating(attendance)
             attendance.state = 'done'
-
-
-        
+               
     # ------------------------------------------------------------
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
