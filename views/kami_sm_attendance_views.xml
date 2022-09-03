@@ -99,7 +99,7 @@
                 <field name="description"/>                              
               </group>
             </page>
-            <page string="Custos">
+            <page string="Custos" groups="kami_sm.attendance_group_manager">
               <group>
                 <field name="total_cost"/>
                 <field name="cost_ids">
