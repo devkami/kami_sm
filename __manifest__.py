@@ -7,6 +7,7 @@
   'license': 'GPL-3 or any later version',
   'depends': ['base', 'calendar', 'account', 'mail', 'rating',],
   'data': [
+    'security/security.xml',
     'security/ir.model.access.csv',
     'views/res_partner_views.xml',
     'views/res_users_views.xml',
