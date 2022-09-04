@@ -18,11 +18,16 @@
           decoration-danger="state == 'canceled'"          
         >
           <field name="is_expired" invisible="1"/>
-          <field name="seller_id" groups="kami_sm.attendance_group_manager"/>
+          <field 
+            name="seller_id"
+            groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_educator"/>          
           <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
           <field name="type_id"/>
           <field name="theme_id"/>
-          <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+          <field 
+            name="partner_id"
+            context="{'res_partner_search_mode': 'supplier'}"
+            groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_seller"/>
           <field name="expected_audience"/>
           <field name="start_date"/>          
           <field name="total_cost"/>          

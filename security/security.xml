@@ -36,8 +36,8 @@
     <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_educator'))]"/>
     <field name="domain_force">[
       '|',
-      ('partner_id.user_id', '=', user.id),
-      ('partner_id.user_id', '=', False)
+      ('partner_id', '=', user.partner_id.id),
+      ('partner_id', '=', False)
     ]</field>
   </record>
 
@@ -58,8 +58,8 @@
     <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_educator'))]"/>
     <field name="domain_force">[
       '|',
-      ('partner_id.user_id', '=', user.id),
-      ('partner_id.user_id', '=', False)
+      ('partner_id', '=', user.partner_id.id),
+      ('partner_id', '=', False)
     ]</field>
   </record>
   
