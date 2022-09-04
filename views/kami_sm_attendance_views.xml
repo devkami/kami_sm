@@ -18,7 +18,7 @@
           decoration-danger="state == 'canceled'"          
         >
           <field name="is_expired" invisible="1"/>
-          <field name="seller_id"/>
+          <field name="seller_id" groups="kami_sm.attendance_group_manager"/>
           <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
           <field name="type_id"/>
           <field name="theme_id"/>
@@ -89,6 +89,7 @@
               type="object"
               class="oe_stat_button"
               icon="fa-smile-o"
+              groups="kami_sm.attendance_group_manager"
             >
               Avaliações
             </button>

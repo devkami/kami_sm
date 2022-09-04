@@ -17,20 +17,57 @@
     <field name="category_id" ref="kami_sm.module_category_kami_sm_attendance_education"/>
     <field name="implied_ids" eval="[(6, 0, [ref('kami_sm.attendance_group_seller'), ref('kami_sm.attendance_group_educator')])]"/>
   </record> 
-  <record id="attendance_seller_rule" model="ir.rule">
-    <field name="name">Regras de acesso aos atendimentos de um vendedor</field>
+  <record id="attendance_read_and_write_seller_rule" model="ir.rule">
+    <field name="name">Vendedores podem acessar apenas seus próprios atendimentos</field>
     <field name="model_id" ref="model_kami_sm_attendance"/>    
-    <field name="perm_write" eval="False"/>    
+    <field name="perm_read" eval="False"/>    
     <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_seller'))]"/>
-    <field name="domain_force">[('seller_id', '!=', user.id)]
-    </field>
+    <field name="domain_force">[
+      '|',
+      ('seller_id', '=', user.id),
+      ('seller_id', '=', False)
+    ]</field>
+  </record>
+  
+  <record id="attendance_read_and_write_educator_rule" model="ir.rule">
+    <field name="name">Educadores podem acessar apenas seus próprios atendimentos</field>
+    <field name="model_id" ref="model_kami_sm_attendance"/>
+    <field name="perm_read" eval="False"/>    
+    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_educator'))]"/>
+    <field name="domain_force">[
+      '|',
+      ('partner_id.user_id', '=', user.id),
+      ('partner_id.user_id', '=', False)
+    ]</field>
   </record>
 
-  <record id="attendance_seller_rule" model="ir.rule">
+  <record id="attendance_domain_seller_rule" model="ir.rule">
     <field name="name">A description of the rule's role</field>
-    <field name="model_id" ref="model_kami_sm_attendance"/>
-    <field name="perm_read" eval="False"/>
+    <field name="model_id" ref="model_kami_sm_attendance"/>    
+    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_seller'))]"/>
+    <field name="domain_force">[
+      '|',
+      ('seller_id', '=', user.id),
+      ('seller_id', '=', False)
+    ]</field>
+  </record>
+
+  <record id="attendance_domain_educator_rule" model="ir.rule">
+    <field name="name">A description of the rule's role</field>
+    <field name="model_id" ref="model_kami_sm_attendance"/>    
     <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_educator'))]"/>
-    <field name="domain_force">[('partner_id', '!=', user.partner.id)]</field>
-  </record> 
+    <field name="domain_force">[
+      '|',
+      ('partner_id.user_id', '=', user.id),
+      ('partner_id.user_id', '=', False)
+    ]</field>
+  </record>
+  
+  <record id="attendance_domain_manager_rule" model="ir.rule">
+    <field name="name">A description of the rule's role</field>
+    <field name="model_id" ref="model_kami_sm_attendance"/>    
+    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_manager'))]"/>
+    <field name="domain_force">[]</field>
+  </record>
+
 </odoo> 
