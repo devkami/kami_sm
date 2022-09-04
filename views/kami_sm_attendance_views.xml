@@ -51,6 +51,7 @@
             type="object"
             class="oe_highlight"
             states="new,approved"
+            groups="kami_sm.attendance_group_seller"
           />
           <button
             name="action_cancel_attendance"
@@ -61,10 +62,19 @@
           />
           <button
             name="action_finish_attendance"
-            string="Avaliar e Encerrar"
+            string="Encerrar"
             type="object"
             class="oe_highlight"
             states="approved"
+            groups="kami_sm.attendance_group_educator"
+          />
+          <button
+            name="action_finish_attendance"
+            string="Avaliar"
+            type="object"
+            class="oe_highlight"
+            states="approved;done"
+            groups="kami_sm.attendance_group_seller"
           />         
           <field 
             name="state"            
