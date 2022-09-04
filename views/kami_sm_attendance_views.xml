@@ -78,7 +78,7 @@
             string="Avaliar"
             type="object"
             class="oe_highlight"
-            states="approved;done"
+            states="done"
             groups="kami_sm.attendance_group_seller"
           />         
           <field 
