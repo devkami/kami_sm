@@ -4,7 +4,7 @@
     <field name="name">Atendimentos</field>
     <field name="res_model">kami_sm.attendance</field>
     <field name="view_mode">tree,form,kanban</field>
-    <field name="context">{'search_default_available': True}</field>
+    <field name="context">{'search_default_available': True}</field>    
   </record>
 
   <record id="kami_sm_attendance_view_tree" model="ir.ui.view">
@@ -43,6 +43,7 @@
             type="object"
             class="oe_highlight"
             states="new"
+            groups="kami_sm.attendance_group_manager"
           />
           <button
             name="action_open_request_cancel"
