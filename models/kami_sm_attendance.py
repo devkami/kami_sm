@@ -164,16 +164,34 @@ class KamiInEducationAttendance(models.Model):
                 account_move = self.env['account.move'].create(invoice_vals)
                 attendance_cost.invoice_id = account_move.id
     
-    def _create_attendance_rating(self, attendance):       
+    def _create_attendance_rating(self, attendance):
+        rating_vals = {}       
+
+        if(attendance.partner_id == self.env.user.partner_id):            
+            rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id,
+            rating_vals['res_id'] = self.id,
+            rating_vals['rated_partner_id'] = attendance.seller_id.partner_id.id,
+            rating_vals['partner_id'] = attendance.partner_id.id,            
+            rating_vals['rating'] = attendance.rating,
+            rating_vals['feedback'] = attendance.feedback
+            
         
-        rating_vals = {            
-            'res_model_id': self.env.ref('kami_sm.model_kami_sm_attendance').id,
-            'res_id': self.id,
-            'rated_partner_id': attendance.seller_id.partner_id.id,
-            'partner_id': attendance.partner_id.id,            
-            'rating': attendance.rating,
-            'feedback': attendance.feedback
-        }        
+        elif(attendance.seller_id == self.env.user):
+            rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id
+            rating_vals['res_id'] = self.id
+            rating_vals['rated_partner_id'] = attendance.partner_id.id
+            rating_vals['partner_id'] = attendance.seller_id.partner_id.id
+            rating_vals['rating'] = attendance.rating
+            rating_vals['feedback'] = attendance.feedback
+            
+            
+            
+            
+            
+            
+            
+        
+        
         self.env['rating.rating'].create(rating_vals)
     
     # ------------------------------------------------------------
@@ -217,7 +235,7 @@ class KamiInEducationAttendance(models.Model):
     def action_approve_attendance(self):
         for attendance in self:
             if attendance.state != 'new':
-                raise UserError('Somente Atendimentos Novos Podem Ser Aprovados!')
+                raise UserError('Somente Novos Atendimentos Podem Ser Aprovados!')
             else:
                 attendance.state = 'approved'                
                 self._create_attendance_invoice(attendance)
@@ -253,7 +271,7 @@ class KamiInEducationAttendance(models.Model):
     def action_finish_attendance(self):
         for attendance in self:   
             if attendance.state != 'approved':
-                raise UserError('Somente Atendimentos Aprovados Podem ser Encerrados!')
+                raise UserError('Somente Atendimentos Aprovados Podem ser Avaliados!')
             else:                            
                 return {
                     'res_model': 'kami_sm.attendance',
@@ -273,13 +291,16 @@ class KamiInEducationAttendance(models.Model):
 
     def action_rating_and_finish(self):
         for attendance in self:
-            #envia email de avaliação para o cliente
-            rating_template = self.env.ref('kami_sm.mail_template_attendance_rating')            
-            attendance.rating_send_request(rating_template, force_send=True)
-            #registra avaliação do educador
-            self._create_attendance_rating(attendance)
-            attendance.state = 'done'
-               
+            if(attendance.partner_id == self.env.user.partner_id):
+                #envia email de avaliação para o cliente
+                rating_template = self.env.ref('kami_sm.mail_template_attendance_rating')
+                attendance.rating_send_request(rating_template, force_send=True)
+                #registra avaliação do educador
+                self._create_attendance_rating(attendance)
+                attendance.state = 'done'                
+            elif(attendance.seller_id == self.env.user):
+                self._create_attendance_rating(attendance)    
+    
     # ------------------------------------------------------------
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------

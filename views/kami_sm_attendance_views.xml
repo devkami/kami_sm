@@ -78,7 +78,7 @@
             string="Avaliar"
             type="object"
             class="oe_highlight"
-            states="done"
+            states="approved,done"
             groups="kami_sm.attendance_group_seller"
           />         
           <field 
@@ -259,14 +259,14 @@
         <h3>Preencha a Avaliação Antes de Encerrar o Atendimento:</h3>
         
         <group>          
-          <field name="rating" required="1" widget="priority" default="1"></field>
-          <field name="feedback" required="1"></field>
+          <field name="rating" required="1" widget="priority" value="1"></field>
+          <field name="feedback" required="1" value=" "></field>
         </group>
         
         <group>
           <button
             name="action_rating_and_finish"
-            string="Avaliar e Encerrar"
+            string="Enviar"
             type="object"
             class="oe_highlight"
           />  
