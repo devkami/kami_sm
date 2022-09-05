@@ -64,6 +64,7 @@
             type="object"
             class="oe_highlight"
             states="waiting"
+            groups="kami_sm.attendance_group_manager"
           />
           <button
             name="action_rating_attendance"
@@ -78,7 +79,7 @@
             string="Avaliar"
             type="object"
             class="oe_highlight"
-            states="approved,done"
+            states="done"
             groups="kami_sm.attendance_group_seller"
           />         
           <field 
@@ -255,7 +256,7 @@
     <field name="name">kami_sm.attendance.rating.popup.form</field>
     <field name="model">kami_sm.attendance</field>
     <field name="arch" type="xml">
-      <form string="Avaliação" create="false">
+      <form string="Avaliação" create="false" edit="false">
         <h3>Preencha a Avaliação Antes de Encerrar o Atendimento:</h3>
         
         <group>          
@@ -280,6 +281,19 @@
         
         <footer></footer>        
       </form>
+    </field>
+  </record>
+
+  <record id="kami_sm_attendance_educator_form" model="ir.ui.view">
+    <field name="name">edit_button</field>
+    <field name="model">kami_sm.attendance</field>
+    <field name="inherit_id" ref="kami_sm.kami_sm_attendance_view_form"/>
+    <field name="groups_id" eval="[(4,ref('kami_sm.attendance_group_educator'))]"/>
+    <field name="arch" type="xml">
+      <xpath expr="/form" position="attributes">
+        <attribute name="create">false</attribute>
+        <attribute name="edit">false</attribute>
+      </xpath>
     </field>
   </record>
 

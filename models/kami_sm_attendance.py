@@ -168,7 +168,7 @@ class KamiInEducationAttendance(models.Model):
     def _create_attendance_rating(self, attendance):
         rating_vals = {}       
 
-        if(attendance.partner_id == self.env.user.partner_id):            
+        if(attendance.partner_id == self.env.user.partner_id):
             rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id
             rating_vals['res_id'] = self.id
             rating_vals['rated_partner_id'] = attendance.seller_id.partner_id.id
