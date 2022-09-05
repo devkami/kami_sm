@@ -30,7 +30,7 @@
             groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_seller"/>
           <field name="expected_audience"/>
           <field name="start_date"/>          
-          <field name="total_cost"/>          
+          <field name="total_cost" groups="kami_sm.attendance_group_manager"/>          
           <field name="state" invisible="1" />
         </tree>
     </field>

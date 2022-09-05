@@ -3,121 +3,97 @@
   <record id="mail_template_attendance_rating" model="mail.template">
     <field name="name">Avaliação de Atendimento</field>
     <field name="email_from">{{ (object.rating_get_rated_partner_id().email or  user.email_formatted or '') }}</field>
-    <field name="subject">{{ object.name }}: Service Rating Request</field>
+    <field name="subject">{{ object.name }}: Solicitação de Avalaição do Atendimento</field>
     <field name="model_id" ref="kami_sm.model_kami_sm_attendance"/>
     <field name="partner_to" >{{ object.rating_get_partner_id().id }}</field>
     <field name="auto_delete" eval="True"/>
     <field name="body_html" type="html">
-      <div 
-        style="background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;"
-      >
+      <div>
         <t t-set="access_token" t-value="object.rating_get_access_token()" data-oe-t-inline="true"></t>
-        <table style="width:600px;margin:5px auto;">
-          <tbody>
+        <t t-set="partner" t-value="object.rating_get_partner_id()" data-oe-t-inline="true"></t>
+        <table style="width:100%; margin:0px auto;" width="590" cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr><td style="font-size: 13px;" valign="top">
+                <t t-if="partner.name" data-oe-t-group="0" data-oe-t-selectable="true" data-oe-t-group-active="true" data-oe-t-inline="true">
+                    Olá <t t-out="partner.name or ''" data-oe-t-inline="true" contenteditable="false">Brandon Freeman</t>,<br/><br/>
+                </t>
+                <t t-else="" data-oe-t-selectable="true" data-oe-t-group="0" data-oe-t-inline="true">
+                    Olá,<br/><br/>
+                </t>
+                Reserve um momento para avaliar nossos serviços relacionados ao atendimento "<strong t-out="object.name or ''" contenteditable="false">Atendimento</strong>"
+                <t t-if="object.rating_get_rated_partner_id().name" data-oe-t-group="1" data-oe-t-selectable="true" data-oe-t-group-active="true" data-oe-t-inline="true">
+                  atribuído a <strong t-out="object.rating_get_rated_partner_id().name or ''" contenteditable="false">Mitchell Admin</strong>.<br/>
+                </t>
+                <t t-else="" data-oe-t-selectable="true" data-oe-t-group="1" data-oe-t-inline="true">
+                    .<br/>
+                </t>
+            </td></tr>
+            <tr><td style="text-align: center;">
+                <table summary="o_mail_notification" style="width:100%; margin: 32px 0px 32px 0px;" width="590" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr><td style="font-size: 13px;">
+                        <strong>Conte-nos como você se sente sobre o nosso serviço</strong><br/>
+                        <span style="text-color: #888888">(clique em uma das estrelas)</span>
+                    </td></tr>
+                    <tr><td style="font-size: 13px;">
+                        <table style="width:100%;text-align:center;margin-top:2rem;">
+                            <tbody><tr>
+                                <td>
+                                  <a t-attf-href="/rate/{{ access_token }}/1">
+                                    <img
+                                      alt="Insatisfeito"
+                                      src="/kami_sm/static/src/img/star_score_icon.png"
+                                      title="Insatisfeito"
+                                    />
+                                  </a>
+                                </td>
+                                <td>
+                                  <a t-attf-href="/rate/{{ access_token }}/2">
+                                    <img
+                                      alt="Pouco Satisfeito"
+                                      src="/kami_sm/static/src/img/star_score_icon.png"
+                                      title="Pouco Satisfeito"
+                                    />
+                                  </a>
+                                </td>
+                                <td>
+                                  <a t-attf-href="/rate/{{ access_token }}/3">
+                                    <img
+                                      alt="Satisfeito"
+                                      src="/kami_sm/static/src/img/star_score_icon.png"
+                                      title="Satisfeito"
+                                    />
+                                  </a>
+                                </td>
+                                <td>
+                                  <a t-attf-href="/rate/{{ access_token }}/4">
+                                    <img
+                                      alt="Muito Satisfeito"
+                                      src="/kami_sm/static/src/img/star_score_icon.png"
+                                      title="Muito Satisfeito"
+                                    />
+                                  </a>
+                                </td>
+                                <td>
+                                  <a t-attf-href="/rate/{{ access_token }}/5">
+                                    <img
+                                      alt="Extremamente Satisfeito"
+                                      src="/kami_sm/static/src/img/star_score_icon.png"
+                                      title="Extremamente Satisfeito"
+                                    />
+                                  </a>
+                                </td>                                
+                            </tr>
+                        </tbody></table>
+                    </td></tr>
+                </tbody></table>
+            </td></tr>
             <tr>
-              <td>
-                <a href="/">
-                  <img 
-                    src="/web/binary/company_logo"
-                    style="vertical-align:baseline;max-width:100px;" 
-                  />
-                </a>
-              </td>
-              <td style="text-align:right;vertical-align:middle;">
-                Pesquisa de Satisfação
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table 
-          style="width:600px;margin:0px auto;background:white;border:1px solid #e1e1e1;"
-        >
-          <tbody>
-            <tr>
-              <td style="padding:15px 20px 10px 20px;">
-                <p>Olá,</p>
-                <p>
-                  Por favor, tome um momento para avaliar nossos serviços relacionados ao atendimento "<strong t-out="object.name"></strong>" atribuído a <strong>{{ object.rating_get_rated_partner_id().name }}</strong>.
-                </p>
-                <p>Agradecemos seu feedback. Isso nos ajuda a melhorar sempre.</p>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:10px 20px">
-                <table style="width:100%;border-top:1px solid #e1e1e1;">
-                  <tr>
-                    <td style="text-align:center;">
-                      <h2 style="font-weight:300;font-size:18px;">
-                        Conte-nos como você se sente sobre o nosso serviço:
-                      </h2>
-                      <div style="text-color: #888888">(clique em uma dessas estrelas)</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px 10px;">
-                      <table style="width:100%;text-align:center;">
-                        <tr>
-                          <td>
-                            <a href="/rating/{{access_token}}/10">
-                              <img 
-                                alt="Satisfied"
-                                src="/rating/static/src/img/rating_10.png"
-                                title="Satisfied"
-                              />
-                            </a>
-                          </td>
-                          <td>
-                            <a href="/rating/{{ access_token }}/5">
-                              <img
-                                alt="Not satisfied"
-                                src="/rating/static/src/img/rating_5.png"
-                                title="Not satisfied"
-                              />
-                            </a>
-                          </td>
-                          <td>
-                            <a href="/rating/{{ access_token }}/1">
-                              <img 
-                                alt="Highly Dissatisfied"
-                                src="/rating/static/src/img/rating_1.png"
-                                title="Highly Dissatisfied"
-                              />
-                            </a>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:15px 20px 10px 20px;">{{ object.user_id.signature | safe }}
-            </td>
-          </tr>
+              <td style="font-size: 13px;" valign="top">
+                Agradecemos seu feedback. Isso nos ajuda a melhorar continuamente               
+            </td></tr>
         </tbody>
         </table>
-        <table style="width:600px;margin:auto;text-align:center;font-size:12px;">
-          <tbody>
-            <tr>
-              <td style="padding-top:10px;color:#afafaf;">
-                <p>
-                  Email automatically sent by
-                  <a 
-                    href="https://www.example.com"
-                    style="color:#a24689;text-decoration:none;">Odoo Plant Nursery
-                  </a>
-                  for
-                  <a 
-                    href="{{ object.user_id.company_id.website }}"
-                    style="color:#a24689;text-decoration:none;">{{ object.user_id.company_id.name }}
-                  </a>
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    </div>      
     </field>
   </record>
 </odoo>
