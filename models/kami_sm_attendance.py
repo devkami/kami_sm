@@ -88,7 +88,8 @@ class KamiInEducationAttendance(models.Model):
     )
     feedback = fields.Text(string='Comentário')
     rating = fields.Selection(
-        [('1', 'Insatisfeito'),
+        [('0', 'Insatisfeito'),
+        ('1', 'Insatisfeito'),
         ('2', 'Pouco Satisfeito'),
         ('3', 'Satisfeito'),
         ('4', 'Muito Satisfeito'),
@@ -168,13 +169,12 @@ class KamiInEducationAttendance(models.Model):
         rating_vals = {}       
 
         if(attendance.partner_id == self.env.user.partner_id):            
-            rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id,
-            rating_vals['res_id'] = self.id,
-            rating_vals['rated_partner_id'] = attendance.seller_id.partner_id.id,
-            rating_vals['partner_id'] = attendance.partner_id.id,            
-            rating_vals['rating'] = attendance.rating,
-            rating_vals['feedback'] = attendance.feedback
-            
+            rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id
+            rating_vals['res_id'] = self.id
+            rating_vals['rated_partner_id'] = attendance.seller_id.partner_id.id
+            rating_vals['partner_id'] = attendance.partner_id.id
+            rating_vals['rating'] = attendance.rating
+            rating_vals['feedback'] = attendance.feedback           
         
         elif(attendance.seller_id == self.env.user):
             rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id
@@ -183,14 +183,6 @@ class KamiInEducationAttendance(models.Model):
             rating_vals['partner_id'] = attendance.seller_id.partner_id.id
             rating_vals['rating'] = attendance.rating
             rating_vals['feedback'] = attendance.feedback
-            
-            
-            
-            
-            
-            
-            
-        
         
         self.env['rating.rating'].create(rating_vals)
     
@@ -203,7 +195,7 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             minimum_antecedence = fields.Datetime.today() + timedelta(days=4)
             if(attendance.start_date < minimum_antecedence):
-                raise ValidationError(' A antecedência mínima para o agendamento de um evento são 4 dias!')            
+                raise ValidationError(' A antecedência mínima para o agendamento de um evento são 4 dias!')        
 
     # ------------------------------------------------------------
     # COMPUTES
@@ -268,11 +260,13 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance.state = 'canceled'
 
-    def action_finish_attendance(self):
+    def action_rating_attendance(self):
         for attendance in self:   
-            if attendance.state != 'approved':
-                raise UserError('Somente Atendimentos Aprovados Podem ser Avaliados!')
-            else:                            
+            if attendance.state not in ['approved', 'done']:
+                raise UserError('Somente Atendimentos Aprovados Podem ser Avaliados/Encerrados!')
+            else:
+                attendance.rating = '0'
+                attendance.feedback = ''
                 return {
                     'res_model': 'kami_sm.attendance',
                     'res_id': self.id,
@@ -289,7 +283,7 @@ class KamiInEducationAttendance(models.Model):
             domain=[('res_id', 'in', self.ids), ('res_model', '=', 'kami_sm.attendance')],
         )    
 
-    def action_rating_and_finish(self):
+    def action_rating_or_finish(self):
         for attendance in self:
             if(attendance.partner_id == self.env.user.partner_id):
                 #envia email de avaliação para o cliente
@@ -299,6 +293,7 @@ class KamiInEducationAttendance(models.Model):
                 self._create_attendance_rating(attendance)
                 attendance.state = 'done'                
             elif(attendance.seller_id == self.env.user):
+                #registra avaliação do vendedor
                 self._create_attendance_rating(attendance)    
     
     # ------------------------------------------------------------

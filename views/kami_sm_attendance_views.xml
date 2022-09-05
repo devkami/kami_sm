@@ -66,7 +66,7 @@
             states="waiting"
           />
           <button
-            name="action_finish_attendance"
+            name="action_rating_attendance"
             string="Encerrar"
             type="object"
             class="oe_highlight"
@@ -74,7 +74,7 @@
             groups="kami_sm.attendance_group_educator"
           />
           <button
-            name="action_finish_attendance"
+            name="action_rating_attendance"
             string="Avaliar"
             type="object"
             class="oe_highlight"
@@ -265,7 +265,7 @@
         
         <group>
           <button
-            name="action_rating_and_finish"
+            name="action_rating_or_finish"
             string="Enviar"
             type="object"
             class="oe_highlight"
