@@ -14,9 +14,12 @@ class KamiSmAttendanceCost(models.Model):
       compute='_compute_default_name',
       readonly=True
     )
-    description = fields.Text(
-      string='Descrição',
-      default='Pagamento Diária'
+    description = fields.Selection(        
+      [('daily', 'Diária'),
+      ('hosting', 'Hospedagem'),
+      ('transport', 'Transporte')],
+      string='Tipo',
+      default='daily'
     )
     active = fields.Boolean(default=True)    
     attendance_id = fields.Many2one(
@@ -27,7 +30,7 @@ class KamiSmAttendanceCost(models.Model):
       [('cash', 'Dinheiro'),
       ('product', 'Produto')],
       string='Tipo',
-      default='new'
+      default='cash'
     )
     partial = fields.Boolean(
       string='Parcial',
