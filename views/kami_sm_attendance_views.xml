@@ -315,5 +315,53 @@
     </field>
   </record>
 
+  <record id="kami_sm_attendance_seller_form" model="ir.ui.view">
+    <field name="name">edit_button</field>
+    <field name="model">kami_sm.attendance</field>
+    <field name="inherit_id" ref="kami_sm.kami_sm_attendance_view_form"/>
+    <field name="groups_id" eval="[(4,ref('kami_sm.attendance_group_seller'))]"/>
+    <field name="arch" type="xml">
+      <xpath expr="/form" position="attributes">
+        <attribute name="create">true</attribute>        
+        <attribute name="edit">true</attribute>
+      </xpath>
+      <xpath expr="//field[@name='client_id']" position="attributes">
+        <attribute name="readonly">
+          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+        </attribute>
+      </xpath>
+      <xpath expr="//field[@name='type_id']" position="attributes">
+        <attribute name="readonly">
+          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+        </attribute>
+      </xpath>
+      <xpath expr="//field[@name='theme_id']" position="attributes">
+        <attribute name="readonly">
+          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+        </attribute>
+      </xpath>
+      <xpath expr="//field[@name='start_date']" position="attributes">
+        <attribute name="readonly">
+          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+        </attribute>
+      </xpath>
+      <xpath expr="//field[@name='partner_id']" position="attributes">
+        <attribute name="readonly">
+          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+        </attribute>
+      </xpath>
+      <xpath expr="//field[@name='expected_audience']" position="attributes">
+        <attribute name="readonly">
+          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+        </attribute>
+      </xpath>
+      <xpath expr="//field[@name='description']" position="attributes">
+        <attribute name="readonly">
+          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+        </attribute>
+      </xpath>
+    </field>
+  </record>
+
 </odoo>
   
