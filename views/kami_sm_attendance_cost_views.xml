@@ -19,9 +19,12 @@
         <field name="partner_id" string="Educador" readonly="1"/>
         <field name="description"/>        
         <field name="cost_type"/>
-        <field name="partial"/>
+        <field name="partial"/>        
+        <field name="attendance_date" string="Data do Atendimento" widget="date"/>
+        <field name="invoice_date" string="Data da Fatura"/>
+        <field name="invoice_date_due" string="Data de Vencimento da Fatura"/>
         <field name="cost"/>     
-        <field name="invoice_id"/>        
+        <field name="invoice_id" invisible="1"/>        
       </tree>
     </field>
   </record>
@@ -30,7 +33,23 @@
     <field name="name">kami_sm.attendance.cost.form</field>
     <field name="model">kami_sm.attendance.cost</field>
     <field name="arch" type="xml">
-      <form string="Custo de Atendimento">        
+      <form string="Custo de Atendimento">    
+        <header>
+          <button 
+            name="action_open_invoice"
+            type="object"
+            class="oe_highlight"
+            string="Ver Fatura"                      
+            attrs="{
+              'invisible': [
+              '|',
+                ('invoice_id', '=', None),
+                ('cost_type', '!=', 'cash'),
+            ]}"
+          >
+            Abrir Fatura
+          </button>     
+        </header>        
         <sheet>     
           <group>
             <group>                                         
@@ -42,7 +61,12 @@
                 name="order_id"
                 attrs="{'invisible': [('cost_type', '=', 'cash')]}"
               />
-            </group>            
+            </group> 
+            <group>
+              <field name="attendance_id"/>
+              <field name="partner_id" string="Educador" readonly="1"/>              
+            </group>          
+            <field name="invoice_id" invisible="1"/>
           </group>                   
         </sheet>
       </form>

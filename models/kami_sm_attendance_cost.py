@@ -52,7 +52,9 @@ class KamiSmAttendanceCost(models.Model):
       string='Parceiro',
       related='attendance_id.partner_id'
     ) 
-    
+    attendance_date = fields.Datetime(related='attendance_id.start_date')
+    invoice_date = fields.Date(related='invoice_id.invoice_date')
+    invoice_date_due = fields.Date(related='invoice_id.invoice_date_due')
     # ------------------------------------------------------------
     # COMPUTES 
     # ------------------------------------------------------------
