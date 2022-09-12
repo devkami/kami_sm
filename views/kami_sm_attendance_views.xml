@@ -135,7 +135,10 @@
                       class="oe_highlight"
                       string="Ver Fatura"                      
                       attrs="{
-                        'invisible': [('invoice_id', '=', None)
+                        'invisible': [
+                        '|',
+                          ('invoice_id', '=', None),
+                          ('cost_type', '!=', 'cash'),
                       ]}"
                     >
                       Abrir Fatura
