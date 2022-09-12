@@ -98,6 +98,7 @@ class KamiInEducationAttendance(models.Model):
         default='1'     
     )
     is_expired = fields.Boolean(compute='_compute_is_expired')
+    address = fields.Text(string='Endereço', compute="_compute_address")
 
 
     # ------------------------------------------------------------
@@ -220,6 +221,11 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             attendance.is_expired = attendance.state == 'approved'\
             and attendance.start_date < fields.Datetime.now()
+        
+    def _compute_address(self):
+        for attendance in self:
+            attendance.address = f'{attendance.client_id.street} - {attendance.client_id.street2}, {attendance.client_id.city}, {attendance.client_id.state_id.name}, CEP: {attendance.client_id.zip}'
+
     # ------------------------------------------------------------
     # ACTIONS
     # ------------------------------------------------------------

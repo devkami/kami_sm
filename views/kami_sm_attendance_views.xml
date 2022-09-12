@@ -109,6 +109,7 @@
           <group>
             <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>             
             <field name="expected_audience"/>
+            <field name="address" readonly="1"/>
             <field name="stop_date" invisible="1"/>            
           </group>
           <notebook>
