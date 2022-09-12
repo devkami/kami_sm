@@ -118,8 +118,7 @@ class KamiInEducationAttendance(models.Model):
            hour=10, minute=00, second=00) + timedelta(days=4)
         )
 
-    def _create_attendance_event(self, attendance):       
-        
+    def _create_attendance_event(self, attendance):
         event_vals = {
             'name': attendance.name,
             'start': attendance.start_date,
@@ -154,6 +153,7 @@ class KamiInEducationAttendance(models.Model):
                         + timedelta(days=3),
                     'move_type': 'in_invoice',
                     'journal_id': journal.id,
+                    'narration': f"Data de Execução: {attendance.start_date.strftime('%d/%m/%Y')}",
                     'invoice_line_ids': [
                         ((0, 0,{
                             'name':attendance_cost.name,
