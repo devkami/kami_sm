@@ -112,6 +112,9 @@
             <field name="address" readonly="1"/>
             <field name="stop_date" invisible="1"/>            
           </group>
+          <group>
+            <field name="has_others_clients"/>
+          </group>
           <notebook>
             <page string="Detalhes">
               <group>
@@ -160,7 +163,18 @@
                   ]}"
                 />                
               </group>
-            </page>                         
+            </page>
+            <page 
+              string="Outros Clientes"
+              attrs="{'invisible': [('has_others_clients', '=', False)]}"
+            >              
+              <field name="client_ids" readonly="1">
+                <tree editable="top">
+                  <field name="partner_id"/>
+                  <field name="served_audience"/>
+                </tree>            
+              </field> 
+            </page>                      
           </notebook>           
         </sheet>
         <div class="oe_chatter">
@@ -262,14 +276,28 @@
     <field name="name">kami_sm.attendance.rating.popup.form</field>
     <field name="model">kami_sm.attendance</field>
     <field name="arch" type="xml">
-      <form string="Avaliação" create="false" edit="false">
+      <form string="Avaliação" create="false">
         <h3>Preencha a Avaliação Antes de Encerrar o Atendimento:</h3>
         
         <group>          
           <field name="rating" required="1" widget="priority" value="1"></field>
           <field name="feedback" required="1" value=" "></field>
         </group>
-        
+        <group>          
+          <field name="served_audience" required="1"></field>
+          <field name="has_others_clients"></field>
+        </group>
+        <group>                    
+          <field 
+            name="client_ids"
+            attrs="{'invisible': [('has_others_clients', '=', False)]}"
+          >
+            <tree editable="top">
+              <field name="partner_id"/>
+              <field name="served_audience"/>
+            </tree>
+          </field>
+        </group>
         <group>
           <button
             name="action_rating_or_finish"
@@ -283,87 +311,9 @@
             type="object"
             class="oe_highlight"
           />
-        </group>
-        
+        </group>        
         <footer></footer>        
       </form>
-    </field>
-  </record>
-
-  <record id="kami_sm_attendance_educator_form" model="ir.ui.view">
-    <field name="name">edit_button</field>
-    <field name="model">kami_sm.attendance</field>
-    <field name="inherit_id" ref="kami_sm.kami_sm_attendance_view_form"/>
-    <field name="groups_id" eval="[(4,ref('kami_sm.attendance_group_educator'))]"/>
-    <field name="arch" type="xml">
-      <xpath expr="/form" position="attributes">
-        <attribute name="create">false</attribute>
-        <attribute name="edit">false</attribute>
-      </xpath>
-    </field>
-  </record>
-
-  <record id="kami_sm_attendance_seller_and_manager_form" model="ir.ui.view">
-    <field name="name">edit_button</field>
-    <field name="model">kami_sm.attendance</field>
-    <field name="inherit_id" ref="kami_sm.kami_sm_attendance_view_form"/>
-    <field name="groups_id" eval="[
-      (4,ref('kami_sm.attendance_group_seller'), 
-      4,ref('kami_sm.attendance_group_manager'))]"
-    />
-    <field name="arch" type="xml">
-      <xpath expr="/form" position="attributes">
-        <attribute name="create">true</attribute>
-        <attribute name="edit">true</attribute>
-      </xpath>
-    </field>
-  </record>
-
-  <record id="kami_sm_attendance_seller_form" model="ir.ui.view">
-    <field name="name">edit_button</field>
-    <field name="model">kami_sm.attendance</field>
-    <field name="inherit_id" ref="kami_sm.kami_sm_attendance_view_form"/>
-    <field name="groups_id" eval="[(4,ref('kami_sm.attendance_group_seller'))]"/>
-    <field name="arch" type="xml">
-      <xpath expr="/form" position="attributes">
-        <attribute name="create">true</attribute>        
-        <attribute name="edit">true</attribute>
-      </xpath>
-      <xpath expr="//field[@name='client_id']" position="attributes">
-        <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
-        </attribute>
-      </xpath>
-      <xpath expr="//field[@name='type_id']" position="attributes">
-        <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
-        </attribute>
-      </xpath>
-      <xpath expr="//field[@name='theme_id']" position="attributes">
-        <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
-        </attribute>
-      </xpath>
-      <xpath expr="//field[@name='start_date']" position="attributes">
-        <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
-        </attribute>
-      </xpath>
-      <xpath expr="//field[@name='partner_id']" position="attributes">
-        <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
-        </attribute>
-      </xpath>
-      <xpath expr="//field[@name='expected_audience']" position="attributes">
-        <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
-        </attribute>
-      </xpath>
-      <xpath expr="//field[@name='description']" position="attributes">
-        <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
-        </attribute>
-      </xpath>
     </field>
   </record>
 

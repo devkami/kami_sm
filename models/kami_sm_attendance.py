@@ -98,8 +98,14 @@ class KamiInEducationAttendance(models.Model):
         default='1'     
     )
     is_expired = fields.Boolean(compute='_compute_is_expired')
-    address = fields.Text(string='Endereço', compute="_compute_address")
-
+    address = fields.Text(string='Endereço', compute='_compute_address')
+    has_others_clients = fields.Boolean(string='Atendeu outros Clientes?')
+    served_audience = fields.Integer(string='Público Atendido')
+    client_ids = fields.One2many(
+        'kami_sm.attendance.client',
+        'attendance_id',
+        string='Outros Clientes',        
+    )
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -186,6 +192,14 @@ class KamiInEducationAttendance(models.Model):
             rating_vals['feedback'] = attendance.feedback
         
         self.env['rating.rating'].create(rating_vals)
+    
+    def _create_attendance_client(self, attendance):
+        client_vals = {}
+        client_vals['attendance_id'] = attendance.id
+        client_vals['partner_id'] = attendance.client_id
+        client_vals['served_audience'] = attendance.served_audience
+                
+        self.env['rating.rating'].create(client_vals)
     
     # ------------------------------------------------------------
     # CONSTRAINS
