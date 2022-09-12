@@ -18,7 +18,7 @@ class KamiSmAttendanceCost(models.Model):
       [('daily', 'Diária'),
       ('hosting', 'Hospedagem'),
       ('transport', 'Transporte')],
-      string='Tipo',
+      string='Descrição',
       default='daily'
     )
     active = fields.Boolean(default=True)    
@@ -45,7 +45,13 @@ class KamiSmAttendanceCost(models.Model):
       string='Currency'
     )
     order_id = fields.Char(string='Pedido de Venda')
-    invoice_id = fields.Many2one('account.move', string='Fatura de Pagamento')  
+    invoice_id = fields.Many2one('account.move', string='Fatura de Pagamento')
+    was_paid = fields.Boolean(default=False, compute='_compute_was_paid')
+    partner_id = fields.Many2one(
+      'res.partner',
+      string='Parceiro',
+      related='attendance_id.partner_id'
+    ) 
     
     # ------------------------------------------------------------
     # COMPUTES 
@@ -53,8 +59,15 @@ class KamiSmAttendanceCost(models.Model):
 
     @api.depends('attendance_id')
     def _compute_default_name(self):
-      for record in self:
-        record.name = record.attendance_id.name
+      for attendance_cost in self:
+        attendance_cost.name = attendance_cost.attendance_id.name
+    
+    @api.depends('invoice_id', 'cost_type', 'order_id')
+    def _compute_was_paid(self):
+      for attendance_cost in self:
+        attendance_cost.was_paid = ( attendance_cost.invoice_id and \
+          attendance_cost.invoice_id.state == 'posted')\
+        or (attendance_cost.cost_type == 'product' and attendance_cost.order_id)
 
     # ------------------------------------------------------------
     # COMPUTES 
