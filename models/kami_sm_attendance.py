@@ -55,7 +55,6 @@ class KamiInEducationAttendance(models.Model):
         default=None
     )
     expected_audience = fields.Integer(string='Público Esperado')    
-    
     start_date = fields.Datetime(
         string='Ínicio',
         copy=False,
@@ -132,13 +131,12 @@ class KamiInEducationAttendance(models.Model):
             'stop': attendance.stop_date,
             'user_id': attendance.seller_id.id,
             'partner_ids': [
-                (4, attendance.partner_id.id),                        
-            ],                    
-            'location': attendance.client_id.contact_address,
+                (4, attendance.partner_id.id),
+            ],
+            'location': attendance.address,
             'description': attendance.description
         }            
-        self.env['calendar.event'].create(event_vals)
-    
+        self.env['calendar.event'].create(event_vals)    
 
     def _create_attendance_invoice(self, attendance):
         for attendance_cost in attendance.cost_ids:
@@ -181,7 +179,8 @@ class KamiInEducationAttendance(models.Model):
             rating_vals['rated_partner_id'] = attendance.seller_id.partner_id.id
             rating_vals['partner_id'] = attendance.partner_id.id
             rating_vals['rating'] = attendance.rating
-            rating_vals['feedback'] = attendance.feedback           
+            rating_vals['feedback'] = attendance.feedback
+            rating_vals['display_name'] = 'Educador'
         
         elif(attendance.seller_id == self.env.user):
             rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id
@@ -190,6 +189,7 @@ class KamiInEducationAttendance(models.Model):
             rating_vals['partner_id'] = attendance.seller_id.partner_id.id
             rating_vals['rating'] = attendance.rating
             rating_vals['feedback'] = attendance.feedback
+            rating_vals['Vendedor'] = 'Vendedor'
         
         self.env['rating.rating'].create(rating_vals)
     
@@ -260,7 +260,7 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance.state = 'waiting'
     
-    def action_open_request_cancel(self):
+    def action_open_request_cancel(self):        
         return {
             'res_model': 'kami_sm.attendance',
             'res_id': self.id,
@@ -323,23 +323,37 @@ class KamiInEducationAttendance(models.Model):
     @api.onchange('type_id', 'theme_id', 'start_date')
     def _onchange_attendance_type_theme_start_id(self):
         for attendance in self:
+            partner_attendances = []
             partner_types = attendance.type_id.partner_ids.mapped('id')
             partner_themes = attendance.theme_id.partner_ids.mapped('id')
-            meetings = self.env['kami_sm.attendance'].search(
-                [('start_date', '=', attendance.start_date)])            
-            busy_partners = meetings.mapped('partner_id.id')
-            
+            seller_partners = self.env.user.partner_ids.mapped('id')
+            attendances = self.env['kami_sm.attendance'].search([                
+                ('start_date', '=', attendance.start_date)                
+            ])
+            for att in attendances:
+                if(att.partner_id.id):
+                    partner_attendances.append(att.partner_id.id)
+
+            partner_meetings = self.env['calendar.event'].search([
+                '|', '&',
+                ('start_date', '=', attendance.start_date),
+                ('allday', '=', True),
+                ('start_date', '=', attendance.start_date)
+            ]).partner_ids.mapped('id')
+          
             return {'domain':
                 {'partner_id':
-                ['&', '&',
-                    ('id', 'in', partner_types),
-                    ('id', 'in', partner_themes),                    
-                    ('id', 'not in', busy_partners),
+                [   ('id', 'in', partner_types),
+                    ('id', 'in', partner_themes),
+                    ('id', 'in', seller_partners),
+                    ('id', 'not in', partner_meetings),
+                    ('id', 'not in', partner_attendances)
                 ]}}
     
     # ------------------------------------------------------------
     # RATING MIXIN
     # ------------------------------------------------------------
+    
     def rating_get_partner_id(self):
         if self.client_id:
             return self.client_id
