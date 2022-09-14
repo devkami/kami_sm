@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+  <!-- External page : thanks message -->
+  <template 
+    id="kami_sm.rating_external_page_view"
+    inherit_id="rating.rating_external_page_view"
+    name="Rating Page Done"
+  >
+    <xpath expr="//div[@class='container pt-5']" position="replace">
+      <div class="container pt-5">
+        <div class="text-center mt-5 pt-5">
+          <h3 class="d-inline">Obrigado, agradecemos seu retorno!</h3>
+        </div>
+        <div class="text-center">
+          <a 
+            role="button"
+            t-att-href="web_base_url"
+            class="btn btn-primary my-5"
+          >
+            Voltar a página inicial
+          </a>
+        </div>
+      </div>            
+    </xpath>
+  </template>
+  
+  <!-- External page: rate and submit feedback -->
+  <template 
+    id="kami_sm.rating_external_page_submit"
+    inherit_id="rating.rating_external_page_submit"
+    name="Rating Page Submit"
+  >
+    <xpath 
+      expr="//div[@class='container mb-5 mt-4 o_rating_page_submit']"
+      position="replace"
+    >
+      <div class="container mb-5 mt-4 o_rating_page_submit">
+        <div class="row text-center justify-content-center">
+          <h1 class="col-12 mt-5">Obrigado por avaliar nossos serviços!</h1>
+          <form class="col-md-6" t-attf-action="/rate/#{token}/submit_feedback" method="post">
+            <div 
+              class="btn-group btn-group-toggle row flex-nowrap justify-content-center w-100 mt-5" 
+              data-toggle="buttons"
+            >
+              <t t-foreach="rate_names" t-as="rate_name">
+                <label
+                  t-attf-class="col p-4 btn o_rating_label shadow-none {{rate == rate_name and 'active' or ''}}"
+                >
+                  <input 
+                    type="radio"
+                    name="rate"
+                    t-attf-id="rate_{{rate_name}}"
+                    t-att-value="rate_name"
+                    t-att-checked="rate == rate_name"
+                  />
+                  <a class="o_rating d-block bg-white rounded" href="#">
+                    <img
+                      t-attf-src='/kami_sm/static/src/img/star_score_icon.png'
+                      t-att-alt="rate_name_value"
+                      t-att-title="rate_name_value"
+                    />
+                  </a>
+                </label>
+              </t>
+            </div>
+            <p class="mt-5">
+              Sinta-se à vontade para escrever um feedback sobre sua experiência:
+            </p>
+            <input 
+              type="hidden"
+              name="csrf_token"
+              t-att-value="request.csrf_token()"
+            />
+            <textarea 
+              class="form-control"
+              name="feedback" 
+              rows="8"
+              t-att-value="rating.feedback">
+            </textarea>
+            <button 
+              type="submit"
+              class="btn btn-primary mt-4"
+              style="margin-top:8px;"
+            >
+              Enviar Feedback
+            </button>
+          </form>
+        </div>
+      </div>
+    </xpath>            
+  </template>
+</odoo>
