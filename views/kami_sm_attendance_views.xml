@@ -350,37 +350,37 @@
       </xpath>
       <xpath expr="//field[@name='client_id']" position="attributes">
         <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+          [('state', '!=', 'new')]
         </attribute>
       </xpath>
       <xpath expr="//field[@name='type_id']" position="attributes">
         <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+          [('state', '!=', 'new')]
         </attribute>
       </xpath>
       <xpath expr="//field[@name='theme_id']" position="attributes">
         <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+          [('state', '!=', 'new')]
         </attribute>
       </xpath>
       <xpath expr="//field[@name='start_date']" position="attributes">
         <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+          [('state', '!=', 'new')]
         </attribute>
       </xpath>
       <xpath expr="//field[@name='partner_id']" position="attributes">
         <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+          [('state', '!=', 'new')]
         </attribute>
       </xpath>
       <xpath expr="//field[@name='expected_audience']" position="attributes">
         <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+          [('state', '!=', 'new')]
         </attribute>
       </xpath>
       <xpath expr="//field[@name='description']" position="attributes">
         <attribute name="readonly">
-          [('state', 'in', ('approved', 'done', 'waiting', 'canceled'))]
+          [('state', '!=', 'new')]
         </attribute>
       </xpath>
       <xpath expr="//field[@name='has_others_clients']" position="attributes">

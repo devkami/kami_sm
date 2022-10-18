@@ -126,7 +126,7 @@ class KamiInEducationAttendance(models.Model):
 
     def _create_attendance_event(self, attendance):
         event_vals = {
-            'name': attendance.name,
+            'name': f"{attendance.client_id.name} - {attendance.theme_id.name}",
             'start': attendance.start_date,
             'stop': attendance.stop_date,
             'user_id': attendance.seller_id.id,
