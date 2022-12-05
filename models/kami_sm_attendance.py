@@ -325,8 +325,7 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             partner_attendances = []
             partner_types = attendance.type_id.partner_ids.mapped('id')
-            partner_themes = attendance.theme_id.partner_ids.mapped('id')
-            seller_partners = self.env.user.partner_ids.mapped('id')
+            partner_themes = attendance.theme_id.partner_ids.mapped('id')            
             attendances = self.env['kami_sm.attendance'].search([                
                 ('start_date', '=', attendance.start_date)                
             ])
@@ -344,8 +343,7 @@ class KamiInEducationAttendance(models.Model):
             return {'domain':
                 {'partner_id':
                 [   ('id', 'in', partner_types),
-                    ('id', 'in', partner_themes),
-                    ('id', 'in', seller_partners),
+                    ('id', 'in', partner_themes),                    
                     ('id', 'not in', partner_meetings),
                     ('id', 'not in', partner_attendances)
                 ]}}
