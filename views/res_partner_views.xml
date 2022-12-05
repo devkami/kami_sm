@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo> 
+<odoo>
 
   <record id="kami_sm_attendance_partner_action" model="ir.actions.act_window">
     <field name="name">Parceiros</field>
@@ -35,22 +35,22 @@
     <field name="model">res.partner</field>
     <field name="arch" type="xml">
       <form string="Parceiro">
-        <sheet>          
+        <sheet>
           <group>
             <field name="name"/>
-            <field name="email"/> 
-            <field name="phone"/>             
-          </group>          
+            <field name="email"/>
+            <field name="phone"/>
+          </group>
           <group>
             <field
               name="attendance_type_ids"
               widget="many2many_tags"
-              options="{'color_field': 'color'}"            
-            /> 
+              options="{'color_field': 'color'}"
+            />
             <field
               name="attendance_theme_ids"
               widget="many2many_tags"
-              options="{'color_field': 'color'}"           
+              options="{'color_field': 'color'}"
             />
           </group>
           <notebook>
@@ -62,10 +62,10 @@
                     <field name="email"/>
                     <field name="phone"/>
                   </tree>
-                </field>                              
+                </field>
               </group>
-            </page>            
-          </notebook>           
+            </page>
+          </notebook>
         </sheet>
       </form>
     </field>
@@ -75,21 +75,21 @@
     <field name="name">res.partner.kanban</field>
     <field name="model">res.partner</field>
     <field name="arch" type="xml">
-      <kanban 
+      <kanban
         default_group_by="state"
         records_draggable="false"
-      > 
+      >
         <templates>
           <t t-name="kanban-box">
             <div class="oe_kanban_global_click">
               <group>
-                <field name="avatar_128"/>
+                <field name="image_128"/>
               </group>
               <group>
                 <field name="name"/>
                 <field name="phone"/>
                 <field name="email"/>
-              </group>              
+              </group>
             </div>
           </t>
         </templates>
@@ -102,22 +102,22 @@
     <field name="model">res.partner</field>
     <field name="arch" type="xml">
       <search string="Parceiro">
-        <field name="name"/>        
+        <field name="name"/>
         <field name="attendance_type_ids"/>
-        <field name="attendance_theme_ids"/>        
-        <separator/>        
-        <group expand="1" string="Group By">                 
-          <filter 
+        <field name="attendance_theme_ids"/>
+        <separator/>
+        <group expand="1" string="Group By">
+          <filter
             string="Tipo de Atendimento"
             name="attendance_type"
-            context="{'group_by':'attendance_type_ids'}"            
+            context="{'group_by':'attendance_type_ids'}"
           />
-          <filter 
+          <filter
             string="Tema do Atendimento"
             name="attendance_theme"
-            context="{'group_by':'attendance_theme_ids'}"            
+            context="{'group_by':'attendance_theme_ids'}"
           />
-        </group>      
+        </group>
       </search>
     </field>
   </record>

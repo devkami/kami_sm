@@ -2,38 +2,38 @@
 <odoo>
   <record id="module_category_kami_sm_attendance_education" model="ir.module.category">
     <field name="name">Kami Attendance Manager</field>
-    <field name="description">Helps you manage your attendance for any company area.</field>    
+    <field name="description">Helps you manage your attendance for any company area.</field>
   </record>
   <record id="attendance_group_seller" model="res.groups">
     <field name="name">Vendedor</field>
-    <field name="category_id" ref="kami_sm.module_category_kami_sm_attendance_education"/>    
+    <field name="category_id" ref="kami_sm.module_category_kami_sm_attendance_education"/>
   </record>
   <record id="attendance_group_educator" model="res.groups">
     <field name="name">Educador</field>
-    <field name="category_id" ref="kami_sm.module_category_kami_sm_attendance_education"/>    
+    <field name="category_id" ref="kami_sm.module_category_kami_sm_attendance_education"/>
   </record>
   <record id="attendance_group_manager" model="res.groups">
     <field name="name">Gestor</field>
     <field name="category_id" ref="kami_sm.module_category_kami_sm_attendance_education"/>
     <field name="implied_ids" eval="[(6, 0, [ref('kami_sm.attendance_group_seller'), ref('kami_sm.attendance_group_educator')])]"/>
-  </record> 
+  </record>
   <record id="attendance_read_seller_rule" model="ir.rule">
     <field name="name">Vendedores podem acessar apenas seus próprios atendimentos</field>
-    <field name="model_id" ref="model_kami_sm_attendance"/>    
-    <field name="perm_read" eval="False"/>    
-    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_seller'))]"/>
+    <field name="model_id" ref="model_kami_sm_attendance"/>
+    <field name="perm_read" eval="False"/>
+    <field name="groups" eval="[(4,ref('kami_sm.attendance_group_seller'))]"/>
     <field name="domain_force">[
       '|',
       ('seller_id', '=', user.id),
       ('seller_id', '=', False)
     ]</field>
   </record>
-  
+
   <record id="attendance_read_educator_rule" model="ir.rule">
     <field name="name">Educadores podem acessar apenas seus próprios atendimentos</field>
     <field name="model_id" ref="model_kami_sm_attendance"/>
-    <field name="perm_read" eval="False"/>    
-    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_educator'))]"/>
+    <field name="perm_read" eval="False"/>
+    <field name="groups" eval="[(4,ref('kami_sm.attendance_group_educator'))]"/>
     <field name="domain_force">[
       '|',
       ('partner_id', '=', user.partner_id.id),
@@ -43,8 +43,8 @@
 
   <record id="attendance_domain_seller_rule" model="ir.rule">
     <field name="name">A description of the rule's role</field>
-    <field name="model_id" ref="model_kami_sm_attendance"/>    
-    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_seller'))]"/>
+    <field name="model_id" ref="model_kami_sm_attendance"/>
+    <field name="groups" eval="[(4,ref('kami_sm.attendance_group_seller'))]"/>
     <field name="domain_force">[
       '|',
       ('seller_id', '=', user.id),
@@ -54,20 +54,20 @@
 
   <record id="attendance_domain_educator_rule" model="ir.rule">
     <field name="name">A description of the rule's role</field>
-    <field name="model_id" ref="model_kami_sm_attendance"/>    
-    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_educator'))]"/>
+    <field name="model_id" ref="model_kami_sm_attendance"/>
+    <field name="groups" eval="[(4,ref('kami_sm.attendance_group_educator'))]"/>
     <field name="domain_force">[
       '|',
       ('partner_id', '=', user.partner_id.id),
       ('partner_id', '=', False)
     ]</field>
   </record>
-  
+
   <record id="attendance_domain_manager_rule" model="ir.rule">
     <field name="name">A description of the rule's role</field>
-    <field name="model_id" ref="model_kami_sm_attendance"/>    
-    <field name="groups" eval="[Command.link(ref('kami_sm.attendance_group_manager'))]"/>
+    <field name="model_id" ref="model_kami_sm_attendance"/>
+    <field name="groups" eval="[(4,ref('kami_sm.attendance_group_manager'))]"/>
     <field name="domain_force">[]</field>
   </record>
 
-</odoo> 
+</odoo>

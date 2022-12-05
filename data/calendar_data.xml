@@ -6,7 +6,6 @@
             <field name="duration" eval="1" />
             <field name="interval">days</field>
             <field name="alarm_type">email</field>
-            <field name="mail_template_id" ref="calendar.calendar_template_meeting_reminder"/>
         </record>
     </data>
 </odoo>
