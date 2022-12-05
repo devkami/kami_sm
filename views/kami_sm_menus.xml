@@ -2,37 +2,36 @@
 <odoo>
   <menuitem id="kami_sm_menu_root" name="Kami Service Manager">
     <menuitem id="kami_sm_attendance_first_level_menu" name="Atendimentos">
-      <menuitem 
-        id="kami_sm_attendance_model_menu_action" 
-        action="kami_sm_attendance_action"
-      />
-    </menuitem>
-    <menuitem 
-      id="kami_sm_attendance_type_first_level_menu"
-      name="Configurações"
-      groups="kami_sm.attendance_group_manager"
-    >
-      <menuitem 
-        id="kami_sm_attendance_type_model_menu_action"
-        action="kami_sm_attendance_type_action"
-      />
+        <menuitem
+          id="kami_sm_attendance_model_menu_action"
+          action="kami_sm_attendance_action"
+        />
+      </menuitem>
       <menuitem
-        id="kami_sm_attendance_themes_model_menu_action"
-        action="kami_sm_attendance_theme_action"
-      />
-      <menuitem
-        id="kami_sm_attendance_partners_model_menu_action"
-        action="kami_sm_attendance_partner_action"
-      />
-      <menuitem
-        id="kami_sm_attendance_users_model_menu_action"
-        action="kami_sm_attendance_user_action"
-      />
-      <menuitem
-        id="kami_sm_attendance_costs_model_menu_action"
-        action="kami_sm_attendance_cost_action"
-      />
-    </menuitem>
-  </menuitem>    
+        id="kami_sm_attendance_type_first_level_menu"
+        name="Configurações"
+        groups="kami_sm.attendance_group_manager"
+      >
+        <menuitem
+          id="kami_sm_attendance_type_model_menu_action"
+          action="kami_sm_attendance_type_action"
+        />
+        <menuitem
+          id="kami_sm_attendance_themes_model_menu_action"
+          action="kami_sm_attendance_theme_action"
+        />
+        <menuitem
+          id="kami_sm_attendance_partners_model_menu_action"
+          action="kami_sm_attendance_partner_action"
+        />
+        <menuitem
+          id="kami_sm_attendance_users_model_menu_action"
+          action="kami_sm_attendance_user_action"
+        />
+        <menuitem
+          id="kami_sm_attendance_costs_model_menu_action"
+          action="kami_sm_attendance_cost_action"
+        />
+      </menuitem>
+  </menuitem>
 </odoo>
-  
