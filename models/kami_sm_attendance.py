@@ -79,6 +79,9 @@ class KamiInEducationAttendance(models.Model):
       'res.currency',
       string='Currency'
     )
+    has_tasting = fields.Boolean(
+        string='Desgustação'
+    )
     description = fields.Text(string='Observações Relevantes')
     cancellation_reason = fields.Text(string='Motivo do Cancelamento')
     has_product_cost = fields.Boolean(
@@ -105,7 +108,13 @@ class KamiInEducationAttendance(models.Model):
         'attendance_id',
         string='Outros Clientes',        
     )
-
+    responsavel_backoffice = fields.Many2one(
+        'res.users',
+        string='Responsavel BackOffice'
+    )
+    backoffice_user_id = fields.One2one(
+        string='Id responsavel'
+    )
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
