@@ -108,13 +108,26 @@ class KamiInEducationAttendance(models.Model):
         'attendance_id',
         string='Outros Clientes',        
     )
-    responsavel_backoffice = fields.Many2one(
-        'res.users',
+    backoffice_user_id = fields.Many2one(
+        'kami_sm.attendance.type',
         string='Responsavel BackOffice'
     )
-    backoffice_user_id = fields.One2one(
-        string='Id responsavel'
+
+    has_tasting = fields.Boolean(
+        string="Tem degustação" 
     )
+
+    _is_beauty_day = fields.Boolean(
+        compute = "_compute_is_beauty_day"
+    )
+    @api.depends('type_id')
+    def _compute_is_beauty_day(self):
+        for attendance in self:
+            if attendance.type_id.name == "Dia da beleza":
+                attendance._is_beauty_day = True
+            else:
+                attendance._is_beauty_day = False
+
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
