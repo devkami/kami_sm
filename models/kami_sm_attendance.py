@@ -79,6 +79,9 @@ class KamiInEducationAttendance(models.Model):
       'res.currency',
       string='Currency'
     )
+    has_tasting = fields.Boolean(
+        string='Desgustação'
+    )
     description = fields.Text(string='Observações Relevantes')
     cancellation_reason = fields.Text(string='Motivo do Cancelamento')
     has_product_cost = fields.Boolean(
@@ -105,6 +108,25 @@ class KamiInEducationAttendance(models.Model):
         'attendance_id',
         string='Outros Clientes',        
     )
+    backoffice_user_id = fields.Many2one(
+        'kami_sm.attendance.type',
+        string='Responsavel BackOffice'
+    )
+
+    has_tasting = fields.Boolean(
+        string="Tem degustação" 
+    )
+
+    _is_beauty_day = fields.Boolean(
+        compute = "_compute_is_beauty_day"
+    )
+    @api.depends('type_id')
+    def _compute_is_beauty_day(self):
+        for attendance in self:
+            if attendance.type_id.name == "Dia da beleza":
+                attendance._is_beauty_day = True
+            else:
+                attendance._is_beauty_day = False
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
