@@ -55,12 +55,12 @@ class KamiInEducationAttendance(models.Model):
         default=None
     )
     expected_audience = fields.Integer(string='Público Esperado')
-    start_date = fields.Datetime(
+    start_date = fields.Date(
         string='Ínicio',
         copy=False,
         default= lambda self: self._get_default_start_date()
     )
-    stop_date = fields.Datetime(
+    stop_date = fields.Date(
         string='Término',
         copy=False,
         compute='_compute_stop_date'
@@ -136,19 +136,8 @@ class KamiInEducationAttendance(models.Model):
     # PRIVATE UTILS
     # ------------------------------------------------------------
 
-    def _get_user_timezone(self):
-        return timezone(self.env.user.partner_id.tz)
-
-    def _convert_to_user_timezone(self, date_time):
-        return fields.Datetime.to_string(timezone(
-            self.env.user.partner_id.tz).localize(fields.Datetime.from_string(
-            date_time), is_dst=None).astimezone(utc)
-        )
-
     def _get_default_start_date(self):
-        return self._convert_to_user_timezone( fields.Datetime.today().replace(
-           hour=10, minute=00, second=00) + timedelta(days=4)
-        )
+        return fields.Date.today() + timedelta(days=4)
 
     def _create_attendance_event(self, attendance):
         event_vals = {
@@ -179,8 +168,8 @@ class KamiInEducationAttendance(models.Model):
                     'partner_id': attendance.partner_id,
                     'create_uid': self.env.user.id,
                     'partner_bank_id': default_partner_account,
-                    'invoice_date': fields.Datetime.today(),
-                    'invoice_date_due': fields.Datetime.today() \
+                    'invoice_date': fields.Date.today(),
+                    'invoice_date_due': fields.Date.today() \
                         + timedelta(days=3),
                     'move_type': 'in_invoice',
                     'journal_id': journal.id,
@@ -226,7 +215,7 @@ class KamiInEducationAttendance(models.Model):
         client_vals['served_audience'] = attendance.served_audience
 
         self.env['rating.rating'].create(client_vals)
-    
+
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
         for attendance in self:
@@ -243,7 +232,7 @@ class KamiInEducationAttendance(models.Model):
     @api.constrains('start_date')
     def _check_attendance_start(self):
         for attendance in self:
-            minimum_antecedence = fields.Datetime.today() + timedelta(days=4)
+            minimum_antecedence = fields.Date.today() + timedelta(days=4)
             if(attendance.start_date < minimum_antecedence):
                 raise ValidationError(' A antecedência mínima para o agendamento de um evento são 4 dias!')
 
@@ -277,7 +266,7 @@ class KamiInEducationAttendance(models.Model):
     def _compute_is_expired(self):
         for attendance in self:
             attendance.is_expired = attendance.state == 'approved'\
-            and attendance.start_date < fields.Datetime.now()
+            and attendance.start_date < fields.Date.now()
 
     def _compute_address(self):
         for attendance in self:
