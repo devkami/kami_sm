@@ -122,7 +122,9 @@
             <field name="goal_ids"  widget="many2many_tags" options="{'color_field': 'color'}"/>
             <field name="available_space"/>
           </group>
-
+          <group>
+            <field name="total_event_attendees"/>
+          </group>
           <notebook>
             <page string="Detalhes">
               <group>

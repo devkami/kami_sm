@@ -117,6 +117,9 @@ class KamiInEducationAttendance(models.Model):
     _is_beauty_day = fields.Boolean(
         compute = "_compute_is_beauty_day"
     )
+    total_event_attendees = fields.Integer(
+        string='Porte do evento'
+    )
     tasting_ids = fields.Many2many(
         "kami_sm.attendance.tasting",
         string="Degustações"
@@ -223,6 +226,15 @@ class KamiInEducationAttendance(models.Model):
         client_vals['served_audience'] = attendance.served_audience
 
         self.env['rating.rating'].create(client_vals)
+    
+    @api.depends('type_id')
+    def _compute_is_beauty_day(self):
+        for attendance in self:
+            if attendance.type_id.name == "Dia da beleza":
+                attendance._is_beauty_day = True
+            else:
+                attendance._is_beauty_day = False
+
 
     # ------------------------------------------------------------
     # CONSTRAINS
