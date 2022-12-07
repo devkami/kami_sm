@@ -122,6 +122,11 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance._is_beauty_day = False
 
+    goal_ids = fields.Many2many(
+        'kami_sm.attendance.goal',
+        string='Objetivos'
+     )
+
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
