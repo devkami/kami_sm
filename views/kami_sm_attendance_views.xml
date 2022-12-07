@@ -102,6 +102,7 @@
           </div>
           <group>
             <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
+            <field name="digital_invitation" string="Convite Digital?"/>
             <field name="type_id"/>
             <field name="theme_id"/>
             <field name="start_date" string="Data"/>
