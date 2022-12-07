@@ -120,13 +120,8 @@ class KamiInEducationAttendance(models.Model):
     _is_beauty_day = fields.Boolean(
         compute = "_compute_is_beauty_day"
     )
-    @api.depends('type_id')
-    def _compute_is_beauty_day(self):
-        for attendance in self:
-            if attendance.type_id.name == "Dia da beleza":
-                attendance._is_beauty_day = True
-            else:
-                attendance._is_beauty_day = False
+    
+    tasting_ids = fields.Many2many("kami_sm.attendance.tasting", string="Degustações")
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -237,6 +232,14 @@ class KamiInEducationAttendance(models.Model):
     # ------------------------------------------------------------
     # COMPUTES
     # ------------------------------------------------------------
+
+    @api.depends('type_id')
+    def _compute_is_beauty_day(self):
+        for attendance in self:
+            if attendance.type_id.name == "Dia da beleza":
+                attendance._is_beauty_day = True
+            else:
+                attendance._is_beauty_day = False
 
     @api.depends('cost_ids')
     def _compute_attendance_total_cost(self):
