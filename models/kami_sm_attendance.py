@@ -114,9 +114,10 @@ class KamiInEducationAttendance(models.Model):
     _is_beauty_day = fields.Boolean(
         compute = "_compute_is_beauty_day"
     )
-
     available_space = fields.Boolean(default= True)
-
+    digital_invitation = fields.Boolean(
+        string="Convite Digital?"
+    ) 
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
         for attendance in self:
@@ -124,6 +125,11 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_beauty_day = True
             else:
                 attendance._is_beauty_day = False
+
+    goal_ids = fields.Many2many(
+        'kami_sm.attendance.goal',
+        string='Objetivos'
+     )
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
