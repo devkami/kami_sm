@@ -114,11 +114,10 @@ class KamiInEducationAttendance(models.Model):
     _is_beauty_day = fields.Boolean(
         compute = "_compute_is_beauty_day"
     )
-
+    available_space = fields.Boolean(default= True)
     digital_invitation = fields.Boolean(
         string="Convite Digital?"
     ) 
-
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
         for attendance in self:
