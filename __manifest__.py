@@ -10,7 +10,6 @@
     'security/security.xml',
     'security/ir.model.access.csv',
     'views/res_partner_views.xml',
-    'views/res_users_views.xml',
     'views/rating_template.xml',
     'views/rating_views.xml',
     'views/kami_sm_attendance_cost_views.xml',
