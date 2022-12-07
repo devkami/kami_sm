@@ -121,7 +121,10 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_beauty_day = True
             else:
                 attendance._is_beauty_day = False
-
+    backoffice_user_id = fields.Many2one(
+        'res.users',
+        string='Responsavel BackOffice'
+    )
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
