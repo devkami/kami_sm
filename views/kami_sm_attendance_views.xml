@@ -117,7 +117,7 @@
             <field name="_is_beauty_day" invisible = "1"/>
           </group>
           <group>
-            <field name="goal_ids"/>
+            <field name="goal_ids" widget='many2many_tags'/>
           </group>
           <notebook>
             <page string="Detalhes">
