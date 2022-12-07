@@ -25,10 +25,6 @@
           action="kami_sm_attendance_partner_action"
         />
         <menuitem
-          id="kami_sm_attendance_users_model_menu_action"
-          action="kami_sm_attendance_user_action"
-        />
-        <menuitem
           id="kami_sm_attendance_costs_model_menu_action"
           action="kami_sm_attendance_cost_action"
         />
