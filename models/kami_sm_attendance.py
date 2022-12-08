@@ -79,9 +79,6 @@ class KamiInEducationAttendance(models.Model):
       'res.currency',
       string='Currency'
     )
-    has_tasting = fields.Boolean(
-        string='Desgustação'
-    )
     description = fields.Text(string='Observações Relevantes')
     cancellation_reason = fields.Text(string='Motivo do Cancelamento')
     has_product_cost = fields.Boolean(
@@ -108,19 +105,32 @@ class KamiInEducationAttendance(models.Model):
         'attendance_id',
         string='Outros Clientes',
     )
+    backoffice_user_id = fields.Many2one(
+        'kami_sm.attendance.type',
+        string='Responsavel BackOffice'
+    )
+
     has_tasting = fields.Boolean(
         string="Tem degustação"
     )
+
     _is_beauty_day = fields.Boolean(
         compute = "_compute_is_beauty_day"
     )
-    @api.depends('type_id')
-    def _compute_is_beauty_day(self):
-        for attendance in self:
-            if attendance.type_id.name == "Dia da beleza":
-                attendance._is_beauty_day = True
-            else:
-                attendance._is_beauty_day = False
+    total_event_attendees = fields.Integer(
+        string='Porte do evento'
+    )
+    tasting_ids = fields.Many2many(
+        "kami_sm.attendance.tasting",
+        string="Degustações"
+    )
+    goal_ids = fields.Many2many(
+        'kami_sm.attendance.goal',
+        string='Objetivos'
+    )
+    available_space = fields.Boolean(
+        string="O espaço do cliente comporta uma estrutura de no mínimo 1,20cm de largura?"
+    )
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -216,6 +226,15 @@ class KamiInEducationAttendance(models.Model):
         client_vals['served_audience'] = attendance.served_audience
 
         self.env['rating.rating'].create(client_vals)
+    
+    @api.depends('type_id')
+    def _compute_is_beauty_day(self):
+        for attendance in self:
+            if attendance.type_id.name == "Dia da beleza":
+                attendance._is_beauty_day = True
+            else:
+                attendance._is_beauty_day = False
+
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -231,6 +250,14 @@ class KamiInEducationAttendance(models.Model):
     # ------------------------------------------------------------
     # COMPUTES
     # ------------------------------------------------------------
+
+    @api.depends('type_id')
+    def _compute_is_beauty_day(self):
+        for attendance in self:
+            if attendance.type_id.name == "Dia da beleza":
+                attendance._is_beauty_day = True
+            else:
+                attendance._is_beauty_day = False
 
     @api.depends('cost_ids')
     def _compute_attendance_total_cost(self):
