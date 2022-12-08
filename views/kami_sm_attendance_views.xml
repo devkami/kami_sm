@@ -125,6 +125,9 @@
           <group>
             <field name="total_event_attendees"/>
           </group>
+          <group>
+            <field name="invite_details"/>
+          </group>
           <notebook>
             <page string="Detalhes">
               <group>

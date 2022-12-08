@@ -131,6 +131,9 @@ class KamiInEducationAttendance(models.Model):
     available_space = fields.Boolean(
         string="O espaço do cliente comporta uma estrutura de no mínimo 1,20cm de largura?"
     )
+    invite_details = fields.Text(
+        string='Detalhes do convite'
+    )
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
