@@ -115,7 +115,6 @@
           <group >
             <field name="has_tasting" attrs="{'invisible':[('_is_beauty_day','=', False)]}"/>
             <field name="_is_beauty_day" invisible = "1"/>
-            <field name="tasting_ids" attrs="{'invisible':[('has_tasting','=', False)]}" widget="many2many_tags" options="{'color_field': 'color'}"/>
           </group>
           <group>
             <field name="backoffice_user_id" domain="[('partner_ids', '=', 'backoffice')]"/>
