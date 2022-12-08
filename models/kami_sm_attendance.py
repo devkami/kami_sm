@@ -128,6 +128,15 @@ class KamiInEducationAttendance(models.Model):
         string="O espaço do cliente comporta uma estrutura de no mínimo 1,20cm de largura?"
     )
 
+    _is_facade = fields.Boolean(
+        compute="_compute_is_facade"
+    )
+
+    installation_images = fields.Image(
+        string='Fotos da instalação'
+    )
+
+
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
@@ -230,6 +239,14 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_beauty_day = True
             else:
                 attendance._is_beauty_day = False
+
+    @api.depends('type_id')
+    def _compute_is_facade(self):
+        for attendance in self:
+            if attendance.type_id.name == "Fachada":
+                attendance._is_facade = True
+            else:
+                attendance._is_facade = False
 
 
     # ------------------------------------------------------------
