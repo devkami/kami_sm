@@ -25,3 +25,7 @@ class ResPartner(models.Model):
       column2="table_to_partner_col",
       string="Vendedores",
     )
+
+    is_salon = fields.Boolean(
+      string="É Salão de Beleza?"
+    )
