@@ -48,6 +48,11 @@
                   </tree>
                 </field>
               </group>              
+            </page>
+            <page string="Temas">
+              <group>
+                <field name="theme_ids"/>
+              </group>              
             </page>          
           </notebook>           
         </sheet>
