@@ -124,6 +124,12 @@
           <group>
             <field name="total_event_attendees"/>
           </group>
+
+          <group>
+            <field name="installation_images" attrs="{'invisible':[('_is_facade','=', False)]}"/>
+            <field name="_is_facade" invisible="1"/>
+            
+          </group>
           <notebook>
             <page string="Detalhes">
               <group>
