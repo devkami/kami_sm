@@ -136,7 +136,16 @@ class KamiInEducationAttendance(models.Model):
         string='Fotos da instalação'
     )
 
+    partner_schedule_id = fields.Many2one("kami_sm.attendance.partner.schedule", string="Horário de atendimento")
 
+    _has_partner = fields.Boolean(compute="_compute_partner_schedule")
+    @api.depends('partner_id')
+    def _compute_partner_schedule(self):
+        for attendance in self:
+            if attendance.partner_id:
+                attendance._has_partner = True
+            else:
+                attendance._has_partner = False
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
@@ -248,6 +257,7 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance._is_facade = False
 
+    
 
     # ------------------------------------------------------------
     # CONSTRAINS
