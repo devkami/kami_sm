@@ -46,6 +46,9 @@
                   <field name="phone"/>                  
                 </tree>
               </field>              
+            </page>
+            <page string="Tipos">
+              <field name="type_ids"/>  
             </page>         
           </notebook>           
         </sheet>
