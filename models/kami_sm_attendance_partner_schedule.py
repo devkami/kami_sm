@@ -12,5 +12,6 @@ class KamiSmAttendancePartnerSchedule(models.Model):
 
     @api.depends('start_time','duration')
     def _compute_end_time(self):
-        self.endtime = self.start_time + self.duration
-        
+        for schedule in self:
+            schedule.end_time = schedule.start_time + schedule.duration
+
