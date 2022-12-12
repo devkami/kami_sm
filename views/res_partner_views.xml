@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <record id="kami_sm_attendance_partner_action" model="ir.actions.act_window">
+  <record id="kami_sm.attendance_partner_action" model="ir.actions.act_window">
     <field name="name">Parceiros</field>
     <field name="res_model">res.partner</field>
     <field name="view_mode">tree,form,kanban</field>
@@ -11,21 +11,14 @@
   <record id="kami_sm_partner_view_tree" model="ir.ui.view">
     <field name="name">res.partner.tree</field>
     <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_tree"/>
     <field name="arch" type="xml">
-        <tree string="Parceiros" editable="bottom">
-          <field name="name"/>
-          <field name="email"/>
-          <field name="phone"/>
-          <field
-            name="attendance_type_ids"
-            widget="many2many_tags"
-            options="{'color_field': 'color'}"
-          />
-          <field
-            name="attendance_theme_ids"
-            widget="many2many_tags"
-            options="{'color_field': 'color'}"
-          />
+        <tree position="replace">
+            <tree string="Parceiros">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+            </tree>
         </tree>
     </field>
   </record>
@@ -65,6 +58,11 @@
                   </tree>
                 </field>
               </group>
+            </page>
+            <page string="Horários">
+                <group>
+                  <field name="attendance_schedule_ids"/>
+                </group>
             </page>
           </notebook>
         </sheet>
