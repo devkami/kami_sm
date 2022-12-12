@@ -22,7 +22,7 @@
         />
         <menuitem
           id="kami_sm_attendance_partners_model_menu_action"
-          action="kami_sm_attendance_partner_action"
+          action="kami_sm.attendance_partner_action"
         />
         <menuitem
           id="kami_sm_attendance_costs_model_menu_action"

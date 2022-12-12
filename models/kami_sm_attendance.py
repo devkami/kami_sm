@@ -109,47 +109,26 @@ class KamiInEducationAttendance(models.Model):
         'kami_sm.attendance.type',
         string='Responsavel BackOffice'
     )
-
-    has_tasting = fields.Boolean(
-        string="Tem degustação"
-    )
-
-    _is_beauty_day = fields.Boolean(
-        compute = "_compute_is_beauty_day"
-    )
-    total_event_attendees = fields.Integer(
-        string='Porte do evento'
-    )
+    has_tasting = fields.Boolean(string="Tem degustação")
+    _is_beauty_day = fields.Boolean(compute = "_compute_is_beauty_day")
+    total_event_attendees = fields.Integer(string='Porte do evento')
     goal_ids = fields.Many2many(
         'kami_sm.attendance.goal',
         string='Objetivos'
     )
     available_space = fields.Boolean(
-        string="O espaço do cliente comporta uma estrutura de no mínimo 1,20cm de largura?"
-    )
-
-    _is_facade = fields.Boolean(
-        compute="_compute_is_facade"
-    )
-
-    installation_images = fields.Image(
-        string='Fotos da instalação'
-    )
+        string="O espaço do cliente comporta uma estrutura de no mínimo 1,20cm de largura?")
+    _is_facade = fields.Boolean(compute="_compute_is_facade")
+    installation_images = fields.Image(string='Fotos da instalação')
     images_position = fields.Selection(
         string='Posição das imagens',
         selection=
-        [('separeted', 'Separadas'), 
+        [('separeted', 'Separadas'),
         ('syde-by-syde', 'Lado a Lado')]
     )
-    facade_width = fields.Float(
-        string='Largura da Arte'
-    )
-    facade_height= fields.Float(
-        string='Altura da arte'
-    )
-    facade_has_ad=fields.Boolean(
-        string='Solicitação de anúncio?'
-    )
+    facade_width = fields.Float(string='Largura da Arte')
+    facade_height= fields.Float(string='Altura da Arte')
+    facade_has_ad=fields.Boolean(string='Solicitação de anúncio?')
     facade_ad_type = fields.Selection(
         string='Tipo de anúncio',
         selection=[
@@ -169,22 +148,18 @@ class KamiInEducationAttendance(models.Model):
             ('perfect_blond','Perfect Blond'),
             ('shampoo_cond_blond','Shampoo/Cond.Blond'),
             ('linha_de_shampoos_con','Linha de Shampoos/Con.'),
-            ('others', 'Outros'),      
-        ]    
+            ('others', 'Outros'),
+        ]
     )
     magazine_types = fields.Selection(
         selection=[
-            ('professional', 'Profissional'), 
+            ('professional', 'Profissional'),
             ('consumer', 'Consumidor'),
         ],
         string='Tipos de Revista',
     )
-    magazine_height = fields.Float(
-        string='Altura da Revista (cm)'
-    )
-    magazine_width = fields.Float(
-        string='Largura da revista(cm)'
-    )
+    magazine_height = fields.Float(string='Altura da Revista (cm)')
+    magazine_width = fields.Float(string='Largura da revista(cm)')
     magazine_format = fields.Selection(
         selection=[
             ('pdf', 'PDF'),
@@ -192,18 +167,12 @@ class KamiInEducationAttendance(models.Model):
         ],
         string='Formato da revista'
     )
-    has_cutting_edge = fields.Boolean(
-        string='Sangria'
-    )
-    cutting_edge_size = fields.Float(
-        string='Sangria (mm)'
-    )
-    has_safe_margin = fields.Boolean(
-        string='Margem de Segurança ?'
-    )
-    safe_margin_size = fields.Float(
-        string='Margem de Segurança(mm)'
-    )
+    has_cutting_edge = fields.Boolean(string='Sangria')
+    cutting_edge_size = fields.Float(string='Sangria (mm)')
+    has_safe_margin = fields.Boolean(string='Margem de Segurança ?')
+    safe_margin_size = fields.Float(string='Margem de Segurança(mm)')
+    has_digital_invite = fields.Boolean(string='Convite Digital?')
+    invite_details = fields.Text(string='Detalhes do Convite')
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------

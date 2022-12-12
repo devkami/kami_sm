@@ -149,6 +149,8 @@
           <notebook>
             <page string="Detalhes">
               <group>
+                <field name="has_digital_invite" />
+                <field name="invite_details" attrs="{'invisible':[('has_digital_invite', '=', False)]}"/>
                 <field name="description"/>
               </group>
             </page>
