@@ -158,6 +158,8 @@ class KamiInEducationAttendance(models.Model):
         ],
         string='Tipos de Revista',
     )
+    partner_schedule_id = fields.Many2one("kami_sm.attendance.partner.schedule", string="Horário de atendimento")
+    _has_partner = fields.Boolean(compute="_compute_partner_schedule")
     magazine_height = fields.Float(string='Altura da Revista (cm)')
     magazine_width = fields.Float(string='Largura da revista(cm)')
     magazine_format = fields.Selection(
@@ -283,6 +285,7 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_facade = True
             else:
                 attendance._is_facade = False
+
     # ------------------------------------------------------------
     # CONSTRAINS
     # ------------------------------------------------------------
@@ -297,6 +300,14 @@ class KamiInEducationAttendance(models.Model):
     # ------------------------------------------------------------
     # COMPUTES
     # ------------------------------------------------------------
+    
+    @api.depends('partner_id')
+    def _compute_partner_schedule(self):
+        for attendance in self:
+            if attendance.partner_id:
+                attendance._has_partner = True
+            else:
+                attendance._has_partner = False
 
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
