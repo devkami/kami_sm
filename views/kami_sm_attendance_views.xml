@@ -125,10 +125,26 @@
             <field name="total_event_attendees"/>
           </group>
 
-          <group>
-            <field name="installation_images" attrs="{'invisible':[('_is_facade','=', False)]}"/>
+          <group name='group_facade' attrs="{'invisible':[('_is_facade','=', False)]}">
+            <field name="installation_images"/>
             <field name="_is_facade" invisible="1"/>
-            
+            <field name="images_position"/>
+            <field name="facade_width"/>
+            <field name="facade_height"/>
+            <field name="facade_has_ad"/>
+            <field name="facade_ad_type" attrs="{'invisible':[('facade_has_ad','=', False)]}"/>
+          </group>
+          <group name='group_magazine' attrs="{'invisible':[('_is_facade','=', False)]}">
+            <field name="magazine_types"/>
+            <field name="magazine_height"/>
+            <field name="magazine_width"/>
+            <field name="magazine_format"/>
+          </group>
+          <group name="group_cutting" attrs="{'invisible':[('_is_facade','=', False)]}">
+            <field name="has_cutting_edge" />
+            <field name="cutting_edge_size" attrs="{'invisible':[('has_cutting_edge', '=', False)]}"/>
+            <field name="has_safe_margin"/>
+            <field name="safe_margin_size" attrs="{'invisible':[('has_safe_margin', '=', False)]}"/>
           </group>
           <notebook>
             <page string="Detalhes">

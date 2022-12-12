@@ -135,8 +135,75 @@ class KamiInEducationAttendance(models.Model):
     installation_images = fields.Image(
         string='Fotos da instalação'
     )
-
-
+    images_position = fields.Selection(
+        string='Posição das imagens',
+        selection=
+        [('separeted', 'Separadas'), 
+        ('syde-by-syde', 'Lado a Lado')]
+    )
+    facade_width = fields.Float(
+        string='Largura da Arte'
+    )
+    facade_height= fields.Float(
+        string='Altura da arte'
+    )
+    facade_has_ad=fields.Boolean(
+        string='Solicitação de anúncio?'
+    )
+    facade_ad_type = fields.Selection(
+        string='Tipo de anúncio',
+        selection=[
+            ('truss_color','TRUSS Color'),
+            ('high_liss','High Liss'),
+            ('k_recovery','K Recovery'),
+            ('work_station Miracle','Work Station Miracle'),
+            ('fast_repais','Fast Repais'),
+            ('shock_repais','Shock Repais'),
+            ('8_xpowder','8 XPowder'),
+            ('therapy','Therapy'),
+            ('loucasportruss','LoucasporTRUSS'),
+            ('trussman','TRUSSMan'),
+            ('infusion_night_spa','Infusion & Night Spa'),
+            ('blond','Blond'),
+            ('net_mask','Net Mask'),
+            ('perfect_blond','Perfect Blond'),
+            ('shampoo_cond_blond','Shampoo/Cond.Blond'),
+            ('linha_de_shampoos_con','Linha de Shampoos/Con.'),
+            ('others', 'Outros'),      
+        ]    
+    )
+    magazine_types = fields.Selection(
+        selection=[
+            ('professional', 'Profissional'), 
+            ('consumer', 'Consumidor'),
+        ],
+        string='Tipos de Revista',
+    )
+    magazine_height = fields.Float(
+        string='Altura da Revista (cm)'
+    )
+    magazine_width = fields.Float(
+        string='Largura da revista(cm)'
+    )
+    magazine_format = fields.Selection(
+        selection=[
+            ('pdf', 'PDF'),
+            ('jpg', 'JPG')
+        ],
+        string='Formato da revista'
+    )
+    has_cutting_edge = fields.Boolean(
+        string='Sangria'
+    )
+    cutting_edge_size = fields.Float(
+        string='Sangria (mm)'
+    )
+    has_safe_margin = fields.Boolean(
+        string='Margem de Segurança ?'
+    )
+    safe_margin_size = fields.Float(
+        string='Margem de Segurança(mm)'
+    )
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
@@ -247,8 +314,6 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_facade = True
             else:
                 attendance._is_facade = False
-
-
     # ------------------------------------------------------------
     # CONSTRAINS
     # ------------------------------------------------------------
