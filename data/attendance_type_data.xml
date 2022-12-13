@@ -36,4 +36,6 @@
         <record id="training_salon" model="kami_sm.attendance.type">
             <field name="name">Treinamento Salão</field>
             <field name="active" eval="True"/>
+        </record>
+    </data>
 </odoo>
