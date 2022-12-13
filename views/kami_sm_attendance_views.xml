@@ -108,6 +108,8 @@
           </group>
           <group>
             <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+            <field name="_has_partner" invisible="1"/>
+            <field name="partner_schedule_id" attrs="{'invisible':[('_has_partner','=', False)]}"/>
             <field name="expected_audience"/>
             <field name="address" readonly="1"/>
             <field name="stop_date" invisible="1"/>
@@ -149,6 +151,8 @@
           <notebook>
             <page string="Detalhes">
               <group>
+                <field name="has_digital_invite" />
+                <field name="invite_details" attrs="{'invisible':[('has_digital_invite', '=', False)]}"/>
                 <field name="description"/>
               </group>
             </page>
