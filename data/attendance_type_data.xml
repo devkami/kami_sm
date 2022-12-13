@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="attendance_type_data" model="attendance_type_data">
+            <field name="beauty_day_sp">Dia da Beleza SP</field>
+            <field name="beauty_day_rs">Dia da Beleza RS</field>
+            <field name="beauty_day_rj">Dia da Beleza RJ</field>
+            <field name="tasting_sp">Degustação SP</field>
+            <field name="tasting_rs">Degustação RS</field>
+            <field name="tasting_rj ">Degustação RJ</field>
+            <field name="facade">Fachada</field>
+            <field name="storetraining">Treinamento Lojas</field>
+            <field name="training_salon">Treinamento Salão</field>
+        </record>
+    </data>
+</odoo>
