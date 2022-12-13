@@ -117,7 +117,7 @@ class KamiInEducationAttendance(models.Model):
         string='Objetivos'
     )
     available_space = fields.Boolean(
-        string="O espaço do cliente comporta uma estrutura de no mínimo 1,20cm de largura?")
+        string="Cliente possui estrutura de no mínimo 1,20cm de largura?")
     _is_facade = fields.Boolean(compute="_compute_is_facade")
     installation_images = fields.Image(string='Fotos da instalação')
     images_position = fields.Selection(
@@ -175,6 +175,10 @@ class KamiInEducationAttendance(models.Model):
     safe_margin_size = fields.Float(string='Margem de Segurança(mm)')
     has_digital_invite = fields.Boolean(string='Convite Digital?')
     invite_details = fields.Text(string='Detalhes do Convite')
+
+    invite_image_logo = fields.Image(string="Logo")
+
+
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------

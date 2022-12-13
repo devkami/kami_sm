@@ -6,7 +6,7 @@ class KamiSmAttendancePartnerSchedule(models.Model):
     _description = "Kami Model From Attendance Parter Schedule"
 
     partner_id = fields.Many2many("res.partner", string= "Parceiro")
-    start_time = fields.Float(string="Hora Inicial")
+    start_time = fields.z(string="Hora Inicial")
     duration = fields.Float(string="Duração")
     end_time = fields.Float(string="Término", compute="_compute_end_time")
 

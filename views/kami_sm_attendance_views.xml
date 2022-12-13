@@ -151,9 +151,16 @@
           <notebook>
             <page string="Detalhes">
               <group>
-                <field name="has_digital_invite" />
+                <field name="has_digital_invite"/>
+                <field name="invite_image_logo" widget="binary"/>
                 <field name="invite_details" attrs="{'invisible':[('has_digital_invite', '=', False)]}"/>
                 <field name="description"/>
+              </group>
+            </page>
+            <page string="Page" attrs="{'invisible':[('has_digital_invite', '=', False)]}"  >
+              <group>
+                <field name="invite_details"/>
+                <field name="invite_logo_image"/>
               </group>
             </page>
             <page
