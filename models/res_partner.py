@@ -25,11 +25,9 @@ class ResPartner(models.Model):
       column2="table_to_partner_col",
       string="Vendedores",
     )
-    attendance_schedule_ids = fields.Many2many(
-      comodel_name="kami_sm.attendance.partner.schedule",
-      relation="partner_attendance_schedule_table",
-      column1="partner_to_table_col",
-      column2="table_to_partner_col",
-      string="Horário de atendimento"
+    attendance_schedule_ids = fields.One2many(
+      "kami_sm.attendance.partner.schedule",
+      "partner_id",
+      string="Horários de atendimento"
     )
     is_salon = fields.Boolean(string="É Salão de Beleza?")

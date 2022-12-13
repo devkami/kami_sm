@@ -109,7 +109,7 @@
           <group>
             <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
             <field name="_has_partner" invisible="1"/>
-            <field name="partner_schedule_id" domain="[('partner_id','=','partner_schedule_id.partner_id')]" attrs="{'invisible':[('_has_partner','=', False)]}"/>
+            <field name="partner_schedule_id" attrs="{'invisible':[('_has_partner','=', False)]}"/>
             <field name="expected_audience"/>
             <field name="address" readonly="1"/>
             <field name="stop_date" invisible="1"/>
