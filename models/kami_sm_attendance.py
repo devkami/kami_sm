@@ -55,15 +55,14 @@ class KamiInEducationAttendance(models.Model):
         default=None
     )
     expected_audience = fields.Integer(string='Público Esperado')
-    start_date = fields.Datetime(
+    start_date = fields.Date(
         string='Ínicio',
         copy=False,
         default= lambda self: self._get_default_start_date()
     )
-    stop_date = fields.Datetime(
+    stop_date = fields.Date(
         string='Término',
-        copy=False,
-        compute='_compute_stop_date'
+        copy=False
     )
     cost_ids = fields.One2many(
         'kami_sm.attendance.cost',
@@ -109,17 +108,9 @@ class KamiInEducationAttendance(models.Model):
         'kami_sm.attendance.type',
         string='Responsavel BackOffice'
     )
-
-    has_tasting = fields.Boolean(
-        string="Tem degustação"
-    )
-
-    _is_beauty_day = fields.Boolean(
-        compute = "_compute_is_beauty_day"
-    )
-    total_event_attendees = fields.Integer(
-        string='Porte do evento'
-    )
+    has_tasting = fields.Boolean(string="Tem degustação")
+    _is_beauty_day = fields.Boolean(compute = "_compute_is_beauty_day")
+    total_event_attendees = fields.Integer(string='Porte do evento')
     goal_ids = fields.Many2many(
         'kami_sm.attendance.goal',
         string='Objetivos'
@@ -127,29 +118,17 @@ class KamiInEducationAttendance(models.Model):
     available_space = fields.Boolean(
         string="O espaço do cliente comporta uma estrutura de no mínimo 1,20cm de largura?"
     )
-
-    _is_facade = fields.Boolean(
-        compute="_compute_is_facade"
-    )
-
-    installation_images = fields.Image(
-        string='Fotos da instalação'
-    )
+    _is_facade = fields.Boolean(compute="_compute_is_facade")
+    installation_images = fields.Image(string='Fotos da instalação')
     images_position = fields.Selection(
         string='Posição das imagens',
         selection=
-        [('separeted', 'Separadas'), 
+        [('separeted', 'Separadas'),
         ('syde-by-syde', 'Lado a Lado')]
     )
-    facade_width = fields.Float(
-        string='Largura da Arte'
-    )
-    facade_height= fields.Float(
-        string='Altura da arte'
-    )
-    facade_has_ad=fields.Boolean(
-        string='Solicitação de anúncio?'
-    )
+    facade_width = fields.Float(string='Largura da Arte')
+    facade_height= fields.Float(string='Altura da Arte')
+    facade_has_ad=fields.Boolean(string='Solicitação de anúncio?')
     facade_ad_type = fields.Selection(
         string='Tipo de anúncio',
         selection=[
@@ -169,22 +148,25 @@ class KamiInEducationAttendance(models.Model):
             ('perfect_blond','Perfect Blond'),
             ('shampoo_cond_blond','Shampoo/Cond.Blond'),
             ('linha_de_shampoos_con','Linha de Shampoos/Con.'),
-            ('others', 'Outros'),      
-        ]    
+            ('others', 'Outros'),
+        ]
     )
     magazine_types = fields.Selection(
         selection=[
-            ('professional', 'Profissional'), 
+            ('professional', 'Profissional'),
             ('consumer', 'Consumidor'),
         ],
         string='Tipos de Revista',
     )
-    magazine_height = fields.Float(
-        string='Altura da Revista (cm)'
+    partner_schedule_id = fields.Many2one(
+        "kami_sm.attendance.partner.schedule",
+        string="Horário de atendimento",
+        copy=False,
+        default=None
     )
-    magazine_width = fields.Float(
-        string='Largura da revista(cm)'
-    )
+    _has_partner = fields.Boolean(compute="_compute_partner_schedule")
+    magazine_height = fields.Float(string='Altura da Revista (cm)')
+    magazine_width = fields.Float(string='Largura da revista(cm)')
     magazine_format = fields.Selection(
         selection=[
             ('pdf', 'PDF'),
@@ -192,41 +174,25 @@ class KamiInEducationAttendance(models.Model):
         ],
         string='Formato da revista'
     )
-    has_cutting_edge = fields.Boolean(
-        string='Sangria'
-    )
-    cutting_edge_size = fields.Float(
-        string='Sangria (mm)'
-    )
-    has_safe_margin = fields.Boolean(
-        string='Margem de Segurança ?'
-    )
-    safe_margin_size = fields.Float(
-        string='Margem de Segurança(mm)'
-    )
+    has_cutting_edge = fields.Boolean(string='Sangria')
+    cutting_edge_size = fields.Float(string='Sangria (mm)')
+    has_safe_margin = fields.Boolean(string='Margem de Segurança ?')
+    safe_margin_size = fields.Float(string='Margem de Segurança(mm)')
+    has_digital_invite = fields.Boolean(string='Convite Digital?')
+    invite_details = fields.Text(string='Detalhes do Convite')
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
 
-    def _get_user_timezone(self):
-        return timezone(self.env.user.partner_id.tz)
-
-    def _convert_to_user_timezone(self, date_time):
-        return fields.Datetime.to_string(timezone(
-            self.env.user.partner_id.tz).localize(fields.Datetime.from_string(
-            date_time), is_dst=None).astimezone(utc)
-        )
-
     def _get_default_start_date(self):
-        return self._convert_to_user_timezone( fields.Datetime.today().replace(
-           hour=10, minute=00, second=00) + timedelta(days=4)
-        )
+        return fields.Date.today() + timedelta(days=4)
 
     def _create_attendance_event(self, attendance):
         event_vals = {
             'name': f"{attendance.client_id.name} - {attendance.theme_id.name}",
-            'start': attendance.start_date,
-            'stop': attendance.stop_date,
+            'start_date': attendance.start_date + \
+                timedelta(hours=attendance.partner_schedule_id.start_time),
+            'duration': attendance.partner_schedule_id.duration,
             'user_id': attendance.seller_id.id,
             'partner_ids': [
                 (4, attendance.partner_id.id),
@@ -314,6 +280,7 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_facade = True
             else:
                 attendance._is_facade = False
+
     # ------------------------------------------------------------
     # CONSTRAINS
     # ------------------------------------------------------------
@@ -321,13 +288,21 @@ class KamiInEducationAttendance(models.Model):
     @api.constrains('start_date')
     def _check_attendance_start(self):
         for attendance in self:
-            minimum_antecedence = fields.Datetime.today() + timedelta(days=4)
+            minimum_antecedence = fields.Date.today() + timedelta(days=4)
             if(attendance.start_date < minimum_antecedence):
                 raise ValidationError(' A antecedência mínima para o agendamento de um evento são 4 dias!')
 
     # ------------------------------------------------------------
     # COMPUTES
     # ------------------------------------------------------------
+
+    @api.depends('partner_id')
+    def _compute_partner_schedule(self):
+        for attendance in self:
+            if attendance.partner_id:
+                attendance._has_partner = True
+            else:
+                attendance._has_partner = False
 
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
@@ -347,15 +322,10 @@ class KamiInEducationAttendance(models.Model):
       for attendance in self:
         attendance.name = f'{attendance.type_id.name}-{attendance.theme_id.name}'
 
-    @api.depends('start_date')
-    def _compute_stop_date(self):
-        for attendance in self:
-            attendance.stop_date = attendance.start_date + timedelta(hours=8)
-
     def _compute_is_expired(self):
         for attendance in self:
             attendance.is_expired = attendance.state == 'approved'\
-            and attendance.start_date < fields.Datetime.now()
+            and attendance.start_date < fields.Date.now()
 
     def _compute_address(self):
         for attendance in self:

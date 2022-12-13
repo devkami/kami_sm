@@ -9,24 +9,24 @@ class KamiSmAttendanceCost(models.Model):
 
 
     name = fields.Text(
-      string='Título', 
+      string='Título',
       required=True,
       compute='_compute_default_name',
       readonly=True
     )
-    description = fields.Selection(        
+    description = fields.Selection(
       [('daily', 'Diária'),
       ('hosting', 'Hospedagem'),
       ('transport', 'Transporte')],
       string='Descrição',
       default='daily'
     )
-    active = fields.Boolean(default=True)    
+    active = fields.Boolean(default=True)
     attendance_id = fields.Many2one(
       'kami_sm.attendance',
       string='Atendimento'
     )
-    cost_type = fields.Selection(      
+    cost_type = fields.Selection(
       [('cash', 'Dinheiro'),
       ('product', 'Produto')],
       string='Tipo',
@@ -37,7 +37,7 @@ class KamiSmAttendanceCost(models.Model):
       default=False
     )
     cost = fields.Monetary(
-      string='Valor', 
+      string='Valor',
       currency_field='currency_id'
     )
     currency_id = fields.Many2one(
@@ -51,19 +51,19 @@ class KamiSmAttendanceCost(models.Model):
       'res.partner',
       string='Parceiro',
       related='attendance_id.partner_id'
-    ) 
-    attendance_date = fields.Datetime(related='attendance_id.start_date')
+    )
+    attendance_date = fields.Date(related='attendance_id.start_date')
     invoice_date = fields.Date(related='invoice_id.invoice_date')
     invoice_date_due = fields.Date(related='invoice_id.invoice_date_due')
     # ------------------------------------------------------------
-    # COMPUTES 
+    # COMPUTES
     # ------------------------------------------------------------
 
     @api.depends('attendance_id')
     def _compute_default_name(self):
       for attendance_cost in self:
         attendance_cost.name = attendance_cost.attendance_id.name
-    
+
     @api.depends('invoice_id', 'cost_type', 'order_id')
     def _compute_was_paid(self):
       for attendance_cost in self:
@@ -72,7 +72,7 @@ class KamiSmAttendanceCost(models.Model):
         or (attendance_cost.cost_type == 'product' and attendance_cost.order_id)
 
     # ------------------------------------------------------------
-    # COMPUTES 
+    # COMPUTES
     # ------------------------------------------------------------
 
     def action_open_invoice(self):
@@ -86,4 +86,3 @@ class KamiSmAttendanceCost(models.Model):
             'context': self._context
           }
 
-    
