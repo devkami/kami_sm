@@ -13,7 +13,7 @@ class KamiSmAttendanceTheme(models.Model):
     active = fields.Boolean(default=True)
     attendance_ids = fields.One2many(
         "kami_sm.attendance",
-        "theme_id",
+        "theme_ids",
         string="Atendimentos"
     ) 
     sequence = fields.Integer(
@@ -33,3 +33,5 @@ class KamiSmAttendanceTheme(models.Model):
       column2="type_to_theme_col",
       string='Tipos'
     )
+
+    color = fields.Integer("Color Index")

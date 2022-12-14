@@ -44,7 +44,7 @@ class KamiInEducationAttendance(models.Model):
         'kami_sm.attendance.type',
         string='Tipo'
     )
-    theme_id = fields.Many2one(
+    theme_ids = fields.Many2many(
         'kami_sm.attendance.theme',
         string='Tema'
     )
@@ -175,10 +175,9 @@ class KamiInEducationAttendance(models.Model):
     safe_margin_size = fields.Float(string='Margem de Segurança(mm)')
     has_digital_invite = fields.Boolean(string='Convite Digital?')
     invite_details = fields.Text(string='Detalhes do Convite')
-
     invite_image_logo = fields.Image(string="Logo")
-
-
+    _is_degustation = fields.Boolean(compute="_compute_is_degustation")
+    
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
@@ -192,6 +191,9 @@ class KamiInEducationAttendance(models.Model):
             'start_date': attendance.start_date + \
                 timedelta(hours=attendance.partner_schedule_id.start_time),
             'duration': attendance.partner_schedule_id.duration,
+            'name': f"{attendance.client_id.name} - {attendance.theme_ids.name}",
+            'start': attendance.start_date,
+            'stop': attendance.stop_date,
             'user_id': attendance.seller_id.id,
             'partner_ids': [
                 (4, attendance.partner_id.id),
@@ -271,6 +273,8 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_beauty_day = True
             else:
                 attendance._is_beauty_day = False
+    
+
 
     @api.depends('type_id')
     def _compute_is_facade(self):
@@ -279,6 +283,14 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_facade = True
             else:
                 attendance._is_facade = False
+
+    @api.depends('type_id')
+    def _compute_is_degustation(self):
+        for attendance in self:
+            if attendance.type_id.name == "Degustação":
+                attendance._is_degustation = True
+            else:
+                attendance._is_degustation = False
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -315,10 +327,10 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             attendance.total_cost = sum(attendance.cost_ids.mapped('cost'))
 
-    @api.depends('type_id', 'theme_id', 'partner_id')
+    @api.depends('type_id', 'theme_ids', 'partner_id')
     def _compute_default_name(self):
       for attendance in self:
-        attendance.name = f'{attendance.type_id.name}-{attendance.theme_id.name}'
+        attendance.name = f'{attendance.type_id.name}-{attendance.theme_ids.name}'
 
     def _compute_is_expired(self):
         for attendance in self:
@@ -409,12 +421,12 @@ class KamiInEducationAttendance(models.Model):
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
-    @api.onchange('type_id', 'theme_id', 'start_date')
+    @api.onchange('type_id', 'theme_ids', 'start_date')
     def _onchange_attendance_type_theme_start_id(self):
         for attendance in self:
             partner_attendances = []
             partner_types = attendance.type_id.partner_ids.mapped('id')
-            partner_themes = attendance.theme_id.partner_ids.mapped('id')
+            partner_themes = attendance.theme_ids.partner_ids.mapped('id')
             attendances = self.env['kami_sm.attendance'].search([
                 ('start_date', '=', attendance.start_date)
             ])

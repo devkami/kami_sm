@@ -23,7 +23,7 @@
             groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_educator"/>
           <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
           <field name="type_id"/>
-          <field name="theme_id"/>
+          <field name="theme_ids"/>
           <field
             name="partner_id"
             context="{'res_partner_search_mode': 'supplier'}"
@@ -103,7 +103,9 @@
           <group>
             <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
             <field name="type_id"/>
-            <field name="theme_id"/>
+            <field name="theme_ids"/>
+            <field name="_is_degustation" invisible="1"/>
+            <field name="theme_ids" attrs="{'invisible':[('_is_degustation','=', False),('has_tasting','=', False)]}" widget="many2many_tags" options="{'color_field': 'color'}" string="Degustações"/>
             <field name="start_date" string="Data"/>
           </group>
           <group>
@@ -268,7 +270,7 @@
         <field name="seller_id"/>
         <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
         <field name="type_id"/>
-        <field name="theme_id"/>
+        <field name="theme_ids"/>
         <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
         <separator/>
         <group expand="1" string="Group By">
@@ -280,7 +282,7 @@
           <filter
             string="Tema do Atendimento"
             name="attendance_theme"
-            context="{'group_by':'theme_id'}"
+            context="{'group_by':'theme_ids'}"
           />
         </group>
       </search>
@@ -403,7 +405,7 @@
           [('state', '!=', 'new')]
         </attribute>
       </xpath>
-      <xpath expr="//field[@name='theme_id']" position="attributes">
+      <xpath expr="//field[@name='theme_ids']" position="attributes">
         <attribute name="readonly">
           [('state', '!=', 'new')]
         </attribute>
@@ -466,7 +468,7 @@
           False
         </attribute>
       </xpath>
-      <xpath expr="//field[@name='theme_id']" position="attributes">
+      <xpath expr="//field[@name='theme_ids']" position="attributes">
         <attribute name="readonly">
           False
         </attribute>
