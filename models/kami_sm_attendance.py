@@ -60,10 +60,6 @@ class KamiInEducationAttendance(models.Model):
         copy=False,
         default= lambda self: self._get_default_start_date()
     )
-    stop_date = fields.Date(
-        string='Término',
-        copy=False
-    )
     cost_ids = fields.One2many(
         'kami_sm.attendance.cost',
         'attendance_id',
@@ -295,7 +291,6 @@ class KamiInEducationAttendance(models.Model):
     # ------------------------------------------------------------
     # COMPUTES
     # ------------------------------------------------------------
-
     @api.depends('partner_id')
     def _compute_partner_schedule(self):
         for attendance in self:
