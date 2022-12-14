@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="beauty_day_sp" model="kami_sm.attendance.type">
+            <field name="name">Dia da Beleza SP</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="beauty_day_rs" model="kami_sm.attendance.type">
+            <field name="name">Dia da Beleza RS</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="beauty_day_rj" model="kami_sm.attendance.type">
+            <field name="name">Dia da Beleza RJ</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="tasting_sp" model="kami_sm.attendance.type">
+            <field name="name">Degustação SP</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="tasting_rs" model="kami_sm.attendance.type">
+            <field name="name">Degustação RS</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="tasting_rj" model="kami_sm.attendance.type">
+            <field name="name">Degustação RJ</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="facade" model="kami_sm.attendance.type">
+            <field name="name">Fachada</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="store_training" model="kami_sm.attendance.type">
+            <field name="name">Treinamento Lojas</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="training_salon" model="kami_sm.attendance.type">
+            <field name="name">Treinamento Salão</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>
