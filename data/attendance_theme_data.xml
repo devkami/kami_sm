@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="barman" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Barman</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="brigadeiro_bike" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Bike de brigadeiro</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="tacho_brigadeiro" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Tacho de brigadeiro [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="popcorn" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Pipoca [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="cotton_candy" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Algodão doce [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="mini_quiche" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Mini quiche [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="honey_bread_candy" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Bala de pão de mel [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="ice_cream_dough" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Sorvete (massa) [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="stick_ice_cream" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Sorvete de palito [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="fruit_salad" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Salada de frutas [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="fruit_stick" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Palito de Frutas [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="acai_in_a_glass" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Açaí no copo [MAFOZ]</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="churros" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Churros</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="truss_sante" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Truss Santé (Somente espumante)</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="barman_rs" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Barman Degustação RS</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="barman_rj" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Barman Degustação RJ</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="spoon_brigadeiro" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Brigadeiro de colher</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="candied_brigadeiro" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Brigadeiro confeitado</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="italian_straw" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Palha italiana</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="tower_macarons" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Macarons em torre</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="popcorn_gourmet" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Pipoca Gourmet</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="gourmet_fit_cart" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Carrinho Gourmet fit - Doces Lowcarb</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="coloring" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Coloração</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="coloring_discoloring_finishers" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Coloração + Descoloração +finalizadores</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="mens_line" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Linha Masculina</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="reduction_with_high_liss" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Redução com High Liss</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="home_cara_training" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Treinamento de Home Care</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="workstation_infusion_recoveri_finishers" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Workstation + Infusion + K' Recoveri + Finalizadores</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="home_cara_training_finishers" model="kami_sm.attendance.theme">
+            <field name="type_ids"  eval="[ (4, ref('kami_sm.beauty_day_sp')),
+                                            (4, ref('kami_sm.beauty_day_rs')),
+                                            (4, ref('kami_sm.beauty_day_rj')),
+                                            (4, ref('kami_sm.tasting_sp')),
+                                            (4, ref('kami_sm.tasting_rs')),
+                                            (4, ref('kami_sm.tasting_rj')),
+                                            (4, ref('kami_sm.facade')),
+                                            (4, ref('kami_sm.store_training')),
+                                            (4, ref('kami_sm.training_salon')),]" />
+            <field name="name">Treinamento de Home Care + Finalização</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>
