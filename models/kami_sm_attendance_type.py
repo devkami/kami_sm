@@ -28,7 +28,7 @@ class KamiSmAttendanceType(models.Model):
     )
     theme_ids = fields.Many2many(
       comodel_name="kami_sm.attendance.theme",
-      relation="theme_attendance_type_table",
+      relation="type_to_theme_table",
       column1="type_to_theme_col",
       column2="theme_to_type_col",
       string='Temas'

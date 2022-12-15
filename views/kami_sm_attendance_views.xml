@@ -158,12 +158,6 @@
                 <field name="description"/>
               </group>
             </page>
-            <page string="Page" attrs="{'invisible':[('has_digital_invite', '=', False)]}"  >
-              <group>
-                <field name="invite_details"/>
-                <field name="invite_logo_image"/>
-              </group>
-            </page>
             <page
               string="Custos"
               groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_educator">

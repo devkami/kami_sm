@@ -46,7 +46,7 @@ class KamiInEducationAttendance(models.Model):
     )
     theme_ids = fields.Many2many(
         'kami_sm.attendance.theme',
-        string='Tema'
+        string='Tema',
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -177,7 +177,7 @@ class KamiInEducationAttendance(models.Model):
     invite_details = fields.Text(string='Detalhes do Convite')
     invite_image_logo = fields.Image(string="Logo")
     _is_degustation = fields.Boolean(compute="_compute_is_degustation")
-    
+
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
@@ -273,7 +273,7 @@ class KamiInEducationAttendance(models.Model):
                 attendance._is_beauty_day = True
             else:
                 attendance._is_beauty_day = False
-    
+
 
 
     @api.depends('type_id')
@@ -425,8 +425,12 @@ class KamiInEducationAttendance(models.Model):
     def _onchange_attendance_type_theme_start_id(self):
         for attendance in self:
             partner_attendances = []
+            partner_themes = []
             partner_types = attendance.type_id.partner_ids.mapped('id')
-            partner_themes = attendance.theme_ids.partner_ids.mapped('id')
+            for t in attendance.theme_ids:
+                for i in t.partner_ids:
+                    partner_themes.append(i.id)
+
             attendances = self.env['kami_sm.attendance'].search([
                 ('start_date', '=', attendance.start_date)
             ])
@@ -440,13 +444,19 @@ class KamiInEducationAttendance(models.Model):
                 ('allday', '=', True),
                 ('start_date', '=', attendance.start_date)
             ]).partner_ids.mapped('id')
-
             return {'domain':
-                {'partner_id':
-                [   ('id', 'in', partner_types),
+                {'partner_id':[
                     ('id', 'in', partner_themes),
                     ('id', 'not in', partner_meetings),
                     ('id', 'not in', partner_attendances)
+                ]}}
+
+    @api.onchange('type_id')
+    def _onchange_attendance_type_id(self):
+        for attendance in self:
+            return {'domain':
+                {'theme_ids': [
+                    ('id', 'in', attendance.type_id.theme_ids.mapped('id'))
                 ]}}
 
     # ------------------------------------------------------------
