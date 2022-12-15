@@ -269,28 +269,20 @@ class KamiInEducationAttendance(models.Model):
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
         for attendance in self:
-            if attendance.type_id.name == "Dia da beleza":
-                attendance._is_beauty_day = True
-            else:
-                attendance._is_beauty_day = False
-
-
+            attendance._is_beauty_day = attendance.type_id.name != None \
+            and 'Dia' in str(attendance.type_id.name)
 
     @api.depends('type_id')
     def _compute_is_facade(self):
         for attendance in self:
-            if attendance.type_id.name == "Fachada":
-                attendance._is_facade = True
-            else:
-                attendance._is_facade = False
+            attendance._is_facade = attendance.type_id.name != None \
+            and 'Fachada' in str(attendance.type_id.name)
 
     @api.depends('type_id')
     def _compute_is_degustation(self):
         for attendance in self:
-            if attendance.type_id.name == "Degustação":
-                attendance._is_degustation = True
-            else:
-                attendance._is_degustation = False
+            attendance._is_degustation = attendance.type_id.name != None \
+            and 'Degustação' in str(attendance.type_id.name)
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -421,23 +413,15 @@ class KamiInEducationAttendance(models.Model):
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
-    @api.onchange('type_id', 'theme_ids', 'start_date')
-    def _onchange_attendance_type_theme_start_id(self):
+    @api.onchange('theme_ids', 'start_date')
+    def _onchange_attendance_theme_start_id(self):
         for attendance in self:
-            partner_attendances = []
-            partner_themes = []
-            partner_types = attendance.type_id.partner_ids.mapped('id')
-            for t in attendance.theme_ids:
-                for i in t.partner_ids:
-                    partner_themes.append(i.id)
 
-            attendances = self.env['kami_sm.attendance'].search([
+            partner_attendances = self.env['kami_sm.attendance'].search([
                 ('start_date', '=', attendance.start_date)
-            ])
-            for att in attendances:
-                if(att.partner_id.id):
-                    partner_attendances.append(att.partner_id.id)
-
+            ]).mapped('partner_id.id')
+            partner_themes = self.env['kami_sm.attendance.theme'].search([
+                ('type_ids', '=', attendance.type_id.id)]).partner_ids.mapped('id')
             partner_meetings = self.env['calendar.event'].search([
                 '|', '&',
                 ('start_date', '=', attendance.start_date),
