@@ -161,7 +161,7 @@
             <page string="Page" attrs="{'invisible':[('has_digital_invite', '=', False)]}"  >
               <group>
                 <field name="invite_details"/>
-                <field name="invite_logo_image"/>
+                <field name="invite_image_logo"/>
               </group>
             </page>
             <page
