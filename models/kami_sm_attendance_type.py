@@ -14,9 +14,7 @@ class KamiSmAttendanceType(models.Model):
         'type_id',
         string='Atendimentos'
     )
-    sequence = fields.Integer(
-      default=1
-    )
+    sequence = fields.Integer(default=1)
     partner_ids = fields.Many2many(
       "res.partner",
       string='Parceiros'
