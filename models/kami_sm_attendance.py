@@ -316,11 +316,13 @@ class KamiInEducationAttendance(models.Model):
       for attendance in self:
         attendance.name = f'{attendance.type_id.name}-{attendance.theme_ids.name}'
 
+    @api.depends('state', 'start_date')
     def _compute_is_expired(self):
         for attendance in self:
             attendance.is_expired = attendance.state == 'approved'\
             and attendance.start_date < fields.Date.now()
 
+    @api.depends('client_id')
     def _compute_address(self):
         for attendance in self:
             attendance.address = f'{attendance.client_id.street} - {attendance.client_id.street2}, {attendance.client_id.city}, {attendance.client_id.state_id.name}, CEP: {attendance.client_id.zip}'
@@ -346,7 +348,6 @@ class KamiInEducationAttendance(models.Model):
                 attendance.state = 'waiting'
 
     def action_open_request_cancel(self):
-        import wdb; wdb.set_trace()
         return {
             'res_model': 'kami_sm.attendance',
             'res_id': self.id,
@@ -406,15 +407,15 @@ class KamiInEducationAttendance(models.Model):
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
-    @api.onchange('theme_ids', 'start_date')
+    @api.onchange('type_id', 'theme_ids', 'start_date')
     def _onchange_attendance_theme_start_id(self):
         for attendance in self:
-
+            partner_types = attendance.type_id.partner_ids.mapped('id')
+            partner_themes = self.env['kami_sm.attendance.theme'].search([
+                ('type_ids', '=', attendance.type_id.id)]).partner_ids.mapped('id')
             partner_attendances = self.env['kami_sm.attendance'].search([
                 ('start_date', '=', attendance.start_date)
             ]).mapped('partner_id.id')
-            partner_themes = self.env['kami_sm.attendance.theme'].search([
-                ('type_ids', '=', attendance.type_id.id)]).partner_ids.mapped('id')
             partner_meetings = self.env['calendar.event'].search([
                 '|', '&',
                 ('start_date', '=', attendance.start_date),
@@ -423,6 +424,7 @@ class KamiInEducationAttendance(models.Model):
             ]).partner_ids.mapped('id')
             return {'domain':
                 {'partner_id':[
+                    ('id', 'in', partner_types),
                     ('id', 'in', partner_themes),
                     ('id', 'not in', partner_meetings),
                     ('id', 'not in', partner_attendances)
