@@ -102,9 +102,9 @@
           </div>
           <group>
             <field name="_has_partner" invisible="1"/>
-            <field name="_is_degustation" />
-            <field name="_is_beauty_day"/>
-            <field name="_is_facade" />
+            <field name="_is_degustation" invisible="1"/>
+            <field name="_is_beauty_day" invisible="1"/>
+            <field name="_is_facade" invisible="1"/>
             <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
             <field name="type_id"/>
             <field name="has_tasting" attrs="{'invisible':[('_is_beauty_day','=', False)]}"/>
@@ -112,7 +112,9 @@
               name="theme_ids"
               options="{'create': false, 'create_edit': false}"
               attrs="{'invisible':[
+                '|',
                 ('_is_degustation','=', True),
+                '|',
                 ('_is_facade','=', True),
                 ('_is_beauty_day','=', True)]}"
             />

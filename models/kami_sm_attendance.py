@@ -270,7 +270,7 @@ class KamiInEducationAttendance(models.Model):
     def _compute_is_beauty_day(self):
         for attendance in self:
             attendance._is_beauty_day = attendance.type_id.name != None \
-            and 'Dia' in str(attendance.type_id.name)
+            and 'Beleza' in str(attendance.type_id.name)
 
     @api.depends('type_id')
     def _compute_is_facade(self):
@@ -305,14 +305,6 @@ class KamiInEducationAttendance(models.Model):
                 attendance._has_partner = True
             else:
                 attendance._has_partner = False
-
-    @api.depends('type_id')
-    def _compute_is_beauty_day(self):
-        for attendance in self:
-            if attendance.type_id.name == "Dia da beleza":
-                attendance._is_beauty_day = True
-            else:
-                attendance._is_beauty_day = False
 
     @api.depends('cost_ids')
     def _compute_attendance_total_cost(self):
@@ -354,6 +346,7 @@ class KamiInEducationAttendance(models.Model):
                 attendance.state = 'waiting'
 
     def action_open_request_cancel(self):
+        import wdb; wdb.set_trace()
         return {
             'res_model': 'kami_sm.attendance',
             'res_id': self.id,
