@@ -186,14 +186,13 @@ class KamiInEducationAttendance(models.Model):
         return fields.Date.today() + timedelta(days=4)
 
     def _create_attendance_event(self, attendance):
+        start_time = fields.datetime.strptime(
+            attendance.partner_schedule_id.get_value_from('start_time'), '%H:%M'
+        ).time()
         event_vals = {
-            'name': f"{attendance.client_id.name} - {attendance.theme_id.name}",
-            'start_date': attendance.start_date + \
-                timedelta(hours=attendance.partner_schedule_id.start_time),
+            'name': f"{attendance.client_id.name} - {attendance.type_id.name}",
+            'start_date': fields.datetime.combine(attendance.start_date, start_time),
             'duration': attendance.partner_schedule_id.duration,
-            'name': f"{attendance.client_id.name} - {attendance.theme_ids.name}",
-            'start': attendance.start_date,
-            'stop': attendance.stop_date,
             'user_id': attendance.seller_id.id,
             'partner_ids': [
                 (4, attendance.partner_id.id),
@@ -320,7 +319,7 @@ class KamiInEducationAttendance(models.Model):
     def _compute_is_expired(self):
         for attendance in self:
             attendance.is_expired = attendance.state == 'approved'\
-            and attendance.start_date < fields.Date.now()
+            and attendance.start_date < fields.Date.today()
 
     @api.depends('client_id')
     def _compute_address(self):
