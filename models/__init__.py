@@ -8,4 +8,5 @@ from . import (
   kami_sm_attendance_goal,
   kami_sm_attendance_partner_schedule,
   res_partner,
+  res_users,
 )
