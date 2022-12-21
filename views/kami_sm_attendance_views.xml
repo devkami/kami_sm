@@ -172,6 +172,11 @@
                 <field name="has_digital_invite"/>
                 <field
                   name="invite_image_logo"
+                  widget='binary'
+                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
+                />
+                <field
+                  name="invite_image_logo_preview"
                   widget='image'
                   attrs="{'invisible':[('has_digital_invite', '=', False)]}"
                 />

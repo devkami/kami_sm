@@ -178,6 +178,11 @@ class KamiInEducationAttendance(models.Model):
     has_digital_invite = fields.Boolean(string='Convite Digital?')
     invite_details = fields.Text(string='Detalhes do Convite')
     invite_image_logo = fields.Image(string="Logo")
+    invite_image_logo_preview = fields.Image(
+      string='Pré-Vizualizção',
+      related='invite_image_logo',
+      readonly=True
+    )
     _is_degustation = fields.Boolean(compute="_compute_is_degustation")
 
     # ------------------------------------------------------------
