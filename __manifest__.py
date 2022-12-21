@@ -12,6 +12,7 @@
     'views/rating_template.xml',
     'views/rating_views.xml',
     'views/res_partner_views.xml',
+    'views/res_users_views.xml',
     'views/kami_sm_attendance_cost_views.xml',
     'views/kami_sm_attendance_type_views.xml',
     'views/kami_sm_attendance_theme_views.xml',

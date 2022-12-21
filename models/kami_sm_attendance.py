@@ -101,8 +101,10 @@ class KamiInEducationAttendance(models.Model):
         string='Outros Clientes',
     )
     backoffice_user_id = fields.Many2one(
-        'kami_sm.attendance.type',
-        string='Responsavel BackOffice'
+        'res.users',
+        string='Responsavel BackOffice',
+        copy=False,
+        default=None
     )
     has_tasting = fields.Boolean(string="Tem degustação")
     _is_beauty_day = fields.Boolean(compute = "_compute_is_beauty_day")

@@ -134,7 +134,7 @@
             <field name="address" readonly="1"/>
           </group>
           <group>
-            <field name="backoffice_user_id" domain="[('partner_ids', '=', 'backoffice')]"/>
+            <field name="backoffice_user_id" domain="[('is_backoffice', '=', True)]"/>
             <field name="goal_ids"  widget="many2many_tags" options="{'color_field': 'color'}"/>
             <field name="available_space"/>
           </group>
