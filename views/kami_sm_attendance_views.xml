@@ -170,7 +170,11 @@
             <page string="Detalhes">
               <group>
                 <field name="has_digital_invite"/>
-                <field name="invite_image_logo" widget="binary"/>
+                <field
+                  name="invite_image_logo"
+                  widget='image'
+                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
+                />
                 <field
                   name="invite_details"
                   attrs="{'invisible':[('has_digital_invite', '=', False)]}"
