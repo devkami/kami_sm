@@ -4,26 +4,79 @@
         <record id="beauty_day_sp" model="kami_sm.attendance.type">
             <field name="name">Dia da Beleza SP</field>
             <field name="active" eval="True"/>
-        </record>
-        <record id="beauty_day_rs" model="kami_sm.attendance.type">
-            <field name="name">Dia da Beleza RS</field>
-            <field name="active" eval="True"/>
-        </record>
-        <record id="beauty_day_rj" model="kami_sm.attendance.type">
-            <field name="name">Dia da Beleza RJ</field>
-            <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[
+                (4, ref('kami_sm.barman')),
+                (4, ref('kami_sm.brigadeiro_bike')),
+                (4, ref('kami_sm.tacho_brigadeiro')),
+                (4, ref('kami_sm.popcorn')),
+                (4, ref('kami_sm.cotton_candy')),
+                (4, ref('kami_sm.mini_quiche')),
+                (4, ref('kami_sm.honey_bread_candy')),
+                (4, ref('kami_sm.ice_cream_dough')),
+                (4, ref('kami_sm.stick_ice_cream')),
+                (4, ref('kami_sm.fruit_salad')),
+                (4, ref('kami_sm.fruit_stick')),
+                (4, ref('kami_sm.acai_in_a_glass')),
+                (4, ref('kami_sm.churros')),
+                (4, ref('kami_sm.truss_sante')),
+                ]"
+            />
         </record>
         <record id="tasting_sp" model="kami_sm.attendance.type">
             <field name="name">Degustação SP</field>
             <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[
+                (4, ref('kami_sm.barman')),
+                (4, ref('kami_sm.brigadeiro_bike')),
+                (4, ref('kami_sm.tacho_brigadeiro')),
+                (4, ref('kami_sm.popcorn')),
+                (4, ref('kami_sm.cotton_candy')),
+                (4, ref('kami_sm.mini_quiche')),
+                (4, ref('kami_sm.honey_bread_candy')),
+                (4, ref('kami_sm.ice_cream_dough')),
+                (4, ref('kami_sm.stick_ice_cream')),
+                (4, ref('kami_sm.fruit_salad')),
+                (4, ref('kami_sm.fruit_stick')),
+                (4, ref('kami_sm.acai_in_a_glass')),
+                (4, ref('kami_sm.churros')),
+                (4, ref('kami_sm.truss_sante')),
+            ]"/>
+        </record>
+        <record id="beauty_day_rs" model="kami_sm.attendance.type">
+            <field name="name">Dia da Beleza RS</field>
+            <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[(4, ref('kami_sm.barman')),]"/>
         </record>
         <record id="tasting_rs" model="kami_sm.attendance.type">
             <field name="name">Degustação RS</field>
             <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[(4, ref('kami_sm.barman')),]"/>
+        </record>
+        <record id="beauty_day_rj" model="kami_sm.attendance.type">
+            <field name="name">Dia da Beleza RJ</field>
+            <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[
+                (4, ref('kami_sm.barman')),
+                (4, ref('kami_sm.spoon_brigadeiro')),
+                (4, ref('kami_sm.candied_brigadeiro')),
+                (4, ref('kami_sm.italian_straw')),
+                (4, ref('kami_sm.tower_macarons')),
+                (4, ref('kami_sm.popcorn_gourmet')),
+                (4, ref('kami_sm.gourmet_fit_cart')),
+            ]"/>
         </record>
         <record id="tasting_rj" model="kami_sm.attendance.type">
             <field name="name">Degustação RJ</field>
             <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[
+                (4, ref('kami_sm.barman')),
+                (4, ref('kami_sm.spoon_brigadeiro')),
+                (4, ref('kami_sm.candied_brigadeiro')),
+                (4, ref('kami_sm.italian_straw')),
+                (4, ref('kami_sm.tower_macarons')),
+                (4, ref('kami_sm.popcorn_gourmet')),
+                (4, ref('kami_sm.gourmet_fit_cart')),
+            ]"/>
         </record>
         <record id="facade" model="kami_sm.attendance.type">
             <field name="name">Fachada</field>
@@ -32,10 +85,22 @@
         <record id="store_training" model="kami_sm.attendance.type">
             <field name="name">Treinamento Lojas</field>
             <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[
+               (4, ref('kami_sm.coloring')),
+               (4, ref('kami_sm.coloring_discoloring_finishers')),
+               (4, ref('kami_sm.mens_line')),
+               (4, ref('kami_sm.reduction_with_high_liss')),
+               (4, ref('kami_sm.home_cara_training')),
+               (4, ref('kami_sm.workstation_infusion_recoveri_finishers')),
+            ]"/>
         </record>
         <record id="training_salon" model="kami_sm.attendance.type">
             <field name="name">Treinamento Salão</field>
             <field name="active" eval="True"/>
+            <field name="theme_ids" eval="[
+                (4, ref('kami_sm.home_cara_training_finishers')),
+            ]"/>
+
         </record>
     </data>
 </odoo>

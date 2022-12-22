@@ -5,6 +5,7 @@ from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError, UserError
 from datetime import timedelta
 from pytz import timezone, utc
+<<<<<<< HEAD
 import pandas
 
 #As bibliotecas que não fazem parte do odoo, devem ser informadas em /odoo/custom/dependencies/pip.txt
@@ -12,6 +13,11 @@ import pandas
     # ------------------------------------------------------------
     # ------------------------------------------------------------
     # ------------------------------------------------------------
+=======
+from . import connection
+import mysql.connector
+import pandas
+>>>>>>> 14.0
 
 class KamiInEducationAttendance(models.Model):
     _name = 'kami_sm.attendance'
@@ -53,7 +59,7 @@ class KamiInEducationAttendance(models.Model):
     )
     theme_ids = fields.Many2many(
         'kami_sm.attendance.theme',
-        string='Tema'
+        string='Tema',
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -108,8 +114,10 @@ class KamiInEducationAttendance(models.Model):
         string='Outros Clientes',
     )
     backoffice_user_id = fields.Many2one(
-        'kami_sm.attendance.type',
-        string='Responsavel BackOffice'
+        'res.users',
+        string='Responsavel BackOffice',
+        copy=False,
+        default=None
     )
     has_tasting = fields.Boolean(string="Tem degustação")
     _is_beauty_day = fields.Boolean(compute = "_compute_is_beauty_day")
@@ -183,8 +191,13 @@ class KamiInEducationAttendance(models.Model):
     has_digital_invite = fields.Boolean(string='Convite Digital?')
     invite_details = fields.Text(string='Detalhes do Convite')
     invite_image_logo = fields.Image(string="Logo")
+    invite_image_logo_preview = fields.Image(
+      string='Pré-Vizualizção',
+      related='invite_image_logo',
+      readonly=True
+    )
     _is_degustation = fields.Boolean(compute="_compute_is_degustation")
-    
+
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
@@ -193,14 +206,13 @@ class KamiInEducationAttendance(models.Model):
         return fields.Date.today() + timedelta(days=4)
 
     def _create_attendance_event(self, attendance):
+        start_time = fields.datetime.strptime(
+            attendance.partner_schedule_id.get_value_from('start_time'), '%H:%M'
+        ).time()
         event_vals = {
-            'name': f"{attendance.client_id.name} - {attendance.theme_id.name}",
-            'start_date': attendance.start_date + \
-                timedelta(hours=attendance.partner_schedule_id.start_time),
+            'name': f"{attendance.client_id.name} - {attendance.type_id.name}",
+            'start_date': fields.datetime.combine(attendance.start_date, start_time),
             'duration': attendance.partner_schedule_id.duration,
-            'name': f"{attendance.client_id.name} - {attendance.theme_ids.name}",
-            'start': attendance.start_date,
-            'stop': attendance.stop_date,
             'user_id': attendance.seller_id.id,
             'partner_ids': [
                 (4, attendance.partner_id.id),
@@ -276,28 +288,20 @@ class KamiInEducationAttendance(models.Model):
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
         for attendance in self:
-            if attendance.type_id.name == "Dia da beleza":
-                attendance._is_beauty_day = True
-            else:
-                attendance._is_beauty_day = False
-    
-
+            attendance._is_beauty_day = attendance.type_id.name != None \
+            and 'Beleza' in str(attendance.type_id.name)
 
     @api.depends('type_id')
     def _compute_is_facade(self):
         for attendance in self:
-            if attendance.type_id.name == "Fachada":
-                attendance._is_facade = True
-            else:
-                attendance._is_facade = False
+            attendance._is_facade = attendance.type_id.name != None \
+            and 'Fachada' in str(attendance.type_id.name)
 
     @api.depends('type_id')
     def _compute_is_degustation(self):
         for attendance in self:
-            if attendance.type_id.name == "Degustação":
-                attendance._is_degustation = True
-            else:
-                attendance._is_degustation = False
+            attendance._is_degustation = attendance.type_id.name != None \
+            and 'Degustação' in str(attendance.type_id.name)
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -321,14 +325,6 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance._has_partner = False
 
-    @api.depends('type_id')
-    def _compute_is_beauty_day(self):
-        for attendance in self:
-            if attendance.type_id.name == "Dia da beleza":
-                attendance._is_beauty_day = True
-            else:
-                attendance._is_beauty_day = False
-
     @api.depends('cost_ids')
     def _compute_attendance_total_cost(self):
         for attendance in self:
@@ -339,11 +335,13 @@ class KamiInEducationAttendance(models.Model):
       for attendance in self:
         attendance.name = f'{attendance.type_id.name}-{attendance.theme_ids.name}'
 
+    @api.depends('state', 'start_date')
     def _compute_is_expired(self):
         for attendance in self:
             attendance.is_expired = attendance.state == 'approved'\
-            and attendance.start_date < fields.Date.now()
+            and attendance.start_date < fields.Date.today()
 
+    @api.depends('client_id')
     def _compute_address(self):
         for attendance in self:
             attendance.address = f'{attendance.client_id.street} - {attendance.client_id.street2}, {attendance.client_id.city}, {attendance.client_id.state_id.name}, CEP: {attendance.client_id.zip}'
@@ -424,36 +422,44 @@ class KamiInEducationAttendance(models.Model):
                 #registra avaliação do vendedor
                 self._create_attendance_rating(attendance)
 
+    def action_value_users(self):
+        for users in self:
+            value = connection.query(connection.connection(),users.client_id)
+            return value
+
     # ------------------------------------------------------------
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
     @api.onchange('type_id', 'theme_ids', 'start_date')
-    def _onchange_attendance_type_theme_start_id(self):
+    def _onchange_attendance_theme_start_id(self):
         for attendance in self:
-            partner_attendances = []
             partner_types = attendance.type_id.partner_ids.mapped('id')
-            partner_themes = attendance.theme_ids.partner_ids.mapped('id')
-            attendances = self.env['kami_sm.attendance'].search([
+            partner_themes = self.env['kami_sm.attendance.theme'].search([
+                ('type_ids', '=', attendance.type_id.id)]).partner_ids.mapped('id')
+            partner_attendances = self.env['kami_sm.attendance'].search([
                 ('start_date', '=', attendance.start_date)
-            ])
-            for att in attendances:
-                if(att.partner_id.id):
-                    partner_attendances.append(att.partner_id.id)
-
+            ]).mapped('partner_id.id')
             partner_meetings = self.env['calendar.event'].search([
                 '|', '&',
                 ('start_date', '=', attendance.start_date),
                 ('allday', '=', True),
                 ('start_date', '=', attendance.start_date)
             ]).partner_ids.mapped('id')
-
             return {'domain':
-                {'partner_id':
-                [   ('id', 'in', partner_types),
+                {'partner_id':[
+                    ('id', 'in', partner_types),
                     ('id', 'in', partner_themes),
                     ('id', 'not in', partner_meetings),
                     ('id', 'not in', partner_attendances)
+                ]}}
+
+    @api.onchange('type_id')
+    def _onchange_attendance_type_id(self):
+        for attendance in self:
+            return {'domain':
+                {'theme_ids': [
+                    ('id', 'in', attendance.type_id.theme_ids.mapped('id'))
                 ]}}
 
     # ------------------------------------------------------------

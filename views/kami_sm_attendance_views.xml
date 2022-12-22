@@ -59,6 +59,14 @@
             groups="kami_sm.attendance_group_seller"
           />
           <button
+            name="action_value_users"
+            string="Valor do cliente"
+            type="object"
+            class="oe_highlight"  
+            states="new,approved"
+            groups="kami_sm.attendance_group_seller"
+          />
+          <button
             name="action_cancel_attendance"
             string="Cancelar"
             type="object"
@@ -101,26 +109,40 @@
             </button>
           </div>
           <group>
+            <field name="_has_partner" invisible="1"/>
+            <field name="_is_degustation" invisible="1"/>
+            <field name="_is_beauty_day" invisible="1"/>
+            <field name="_is_facade" invisible="1"/>
             <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
             <field name="type_id"/>
-            <field name="theme_ids"/>
-            <field name="_is_degustation" invisible="1"/>
-            <field name="theme_ids" attrs="{'invisible':[('_is_degustation','=', False),('has_tasting','=', False)]}" widget="many2many_tags" options="{'color_field': 'color'}" string="Degustações"/>
+            <field name="has_tasting" attrs="{'invisible':[('_is_beauty_day','=', False)]}"/>
+            <field
+              name="theme_ids"
+              options="{'create': false, 'create_edit': false}"
+              attrs="{'invisible':[
+                '|',
+                ('_is_degustation','=', True),
+                '|',
+                ('_is_facade','=', True),
+                ('_is_beauty_day','=', True)]}"
+            />
+            <field
+              name="theme_ids"
+              options="{'color_field': 'color', 'create': false, 'create_edit': false}}"
+              attrs="{'invisible':[('_is_degustation','=', False),('has_tasting','=', False)]}"
+              widget="many2many_tags"
+              string="Degustações"
+            />
             <field name="start_date" string="Data"/>
+            <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+            <field name="partner_schedule_id" attrs="{'invisible':[('_has_partner','=', False)]}"/>
           </group>
           <group>
-            <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
-            <field name="_has_partner" invisible="1"/>
-            <field name="partner_schedule_id" attrs="{'invisible':[('_has_partner','=', False)]}"/>
             <field name="expected_audience"/>
             <field name="address" readonly="1"/>
           </group>
-          <group >
-            <field name="has_tasting" attrs="{'invisible':[('_is_beauty_day','=', False)]}"/>
-            <field name="_is_beauty_day" invisible = "1"/>
-          </group>
           <group>
-            <field name="backoffice_user_id" domain="[('partner_ids', '=', 'backoffice')]"/>
+            <field name="backoffice_user_id" domain="[('is_backoffice', '=', True)]"/>
             <field name="goal_ids"  widget="many2many_tags" options="{'color_field': 'color'}"/>
             <field name="available_space"/>
           </group>
@@ -130,7 +152,6 @@
 
           <group name='group_facade' attrs="{'invisible':[('_is_facade','=', False)]}">
             <field name="installation_images"/>
-            <field name="_is_facade" invisible="1"/>
             <field name="images_position"/>
             <field name="facade_width"/>
             <field name="facade_height"/>
@@ -145,23 +166,33 @@
           </group>
           <group name="group_cutting" attrs="{'invisible':[('_is_facade','=', False)]}">
             <field name="has_cutting_edge" />
-            <field name="cutting_edge_size" attrs="{'invisible':[('has_cutting_edge', '=', False)]}"/>
+            <field
+              name="cutting_edge_size"
+              attrs="{'invisible':[('has_cutting_edge', '=', False)]}"/>
             <field name="has_safe_margin"/>
-            <field name="safe_margin_size" attrs="{'invisible':[('has_safe_margin', '=', False)]}"/>
+            <field
+              name="safe_margin_size"
+              attrs="{'invisible':[('has_safe_margin', '=', False)]}"/>
           </group>
           <notebook>
             <page string="Detalhes">
               <group>
                 <field name="has_digital_invite"/>
-                <field name="invite_image_logo" widget="binary"/>
-                <field name="invite_details" attrs="{'invisible':[('has_digital_invite', '=', False)]}"/>
+                <field
+                  name="invite_image_logo"
+                  widget='binary'
+                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
+                />
+                <field
+                  name="invite_image_logo_preview"
+                  widget='image'
+                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
+                />
+                <field
+                  name="invite_details"
+                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
+                />
                 <field name="description"/>
-              </group>
-            </page>
-            <page string="Page" attrs="{'invisible':[('has_digital_invite', '=', False)]}"  >
-              <group>
-                <field name="invite_details"/>
-                <field name="invite_image_logo"/>
               </group>
             </page>
             <page

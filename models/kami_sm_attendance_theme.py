@@ -15,23 +15,16 @@ class KamiSmAttendanceTheme(models.Model):
         "kami_sm.attendance",
         "theme_ids",
         string="Atendimentos"
-    ) 
+    )
     sequence = fields.Integer(
       default=1
     )
     partner_ids = fields.Many2many(
-      comodel_name="res.partner",
-      relation="partner_attendance_theme_table",
-      column1="table_to_partner_col",
-      column2="partner_to_table_col",
+      "res.partner",
       string='Parceiros'
-    ) 
+    )
     type_ids = fields.Many2many(
-      comodel_name="kami_sm.attendance.type",
-      relation="type_attendance_theme_table",
-      column1="theme_to_type_col",
-      column2="type_to_theme_col",
+      "kami_sm.attendance.type",
       string='Tipos'
     )
-
     color = fields.Integer("Color Index")

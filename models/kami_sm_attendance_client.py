@@ -10,7 +10,7 @@ class KamiSmAttendanceClient(models.Model):
 
     attendance_id = fields.Many2one(
       'kami_sm.attendance',
-      string='Atendimento',      
+      string='Atendimento',
     )
     partner_id = fields.Many2one(
       'res.partner',
