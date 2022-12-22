@@ -59,14 +59,6 @@
             groups="kami_sm.attendance_group_seller"
           />
           <button
-            name="action_value_users"
-            string="Valor do cliente"
-            type="object"
-            class="oe_highlight"  
-            states="new,approved"
-            groups="kami_sm.attendance_group_seller"
-          />
-          <button
             name="action_cancel_attendance"
             string="Cancelar"
             type="object"
@@ -98,6 +90,15 @@
         </header>
         <sheet>
           <div class="oe_button_box" name="button_box">
+            <button
+              name="action_value_users"
+              type="object"
+              class="oe_stat_button"
+              icon="fa-money"
+              groups="kami_sm.attendance_group_seller"
+              >
+              Análise
+            </button>
             <button
               name="action_get_ratings"
               type="object"

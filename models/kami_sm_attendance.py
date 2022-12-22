@@ -5,19 +5,9 @@ from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError, UserError
 from datetime import timedelta
 from pytz import timezone, utc
-<<<<<<< HEAD
-import pandas
-
-#As bibliotecas que não fazem parte do odoo, devem ser informadas em /odoo/custom/dependencies/pip.txt
-
-    # ------------------------------------------------------------
-    # ------------------------------------------------------------
-    # ------------------------------------------------------------
-=======
 from . import connection
 import mysql.connector
 import pandas
->>>>>>> 14.0
 
 class KamiInEducationAttendance(models.Model):
     _name = 'kami_sm.attendance'
