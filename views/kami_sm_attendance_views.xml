@@ -59,6 +59,14 @@
             groups="kami_sm.attendance_group_seller"
           />
           <button
+            name="action_value_users"
+            string="Valor do cliente"
+            type="object"
+            class="oe_highlight"  
+            states="new,approved"
+            groups="kami_sm.attendance_group_seller"
+          />
+          <button
             name="action_cancel_attendance"
             string="Cancelar"
             type="object"

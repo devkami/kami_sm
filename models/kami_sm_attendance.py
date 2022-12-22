@@ -5,6 +5,9 @@ from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError, UserError
 from datetime import timedelta
 from pytz import timezone, utc
+from . import connection
+import mysql.connector
+import pandas
 
 class KamiInEducationAttendance(models.Model):
     _name = 'kami_sm.attendance'
@@ -408,6 +411,11 @@ class KamiInEducationAttendance(models.Model):
             elif(attendance.seller_id == self.env.user):
                 #registra avaliação do vendedor
                 self._create_attendance_rating(attendance)
+
+    def action_value_users(self):
+        for users in self:
+            value = connection.query(connection.connection(),users.client_id)
+            return value
 
     # ------------------------------------------------------------
     # PARTNERS DOMAIN FILTERS
