@@ -21,3 +21,5 @@ class ResPartner(models.Model):
       string="Horários de atendimento"
     )
     is_salon = fields.Boolean(string="É Salão de Beleza?")
+    cod_uno = fields.Char(string="Código do cliente")
+    

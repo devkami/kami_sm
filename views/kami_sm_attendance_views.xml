@@ -91,13 +91,13 @@
         <sheet>
           <div class="oe_button_box" name="button_box">
             <button
-              name="action_value_users"
+              name="action_value_attendance"
               type="object"
               class="oe_stat_button"
               icon="fa-money"
               groups="kami_sm.attendance_group_seller"
               >
-              Análise
+              Pedidos
             </button>
             <button
               name="action_get_ratings"
