@@ -137,6 +137,7 @@
             <field name="start_date" string="Data"/>
             <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
             <field name="partner_schedule_id" attrs="{'invisible':[('_has_partner','=', False)]}"/>
+            <field name="parent_id" readonly="1" groups="kami_sm.attendance_group_manager"/>
           </group>
           <group>
             <field name="expected_audience"/>
@@ -195,6 +196,20 @@
                 />
                 <field name="description"/>
               </group>
+            </page>
+            <page
+              string="Dependências"
+              attrs="{'invisible': [('child_ids', '!=', None)]}"
+              groups="kami_sm.attendance_group_manager"
+            >
+              <field name="has_others_clients" invisble="true"/>
+              <field name="child_ids" readonly="1">
+                <tree>
+                  <field name="name"/>
+                  <field name="state"/>
+                  <field name="total_cost"/>
+                </tree>
+              </field>
             </page>
             <page
               string="Custos"

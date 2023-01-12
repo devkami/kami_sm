@@ -186,6 +186,16 @@ class KamiInEducationAttendance(models.Model):
       readonly=True
     )
     _is_degustation = fields.Boolean(compute="_compute_is_degustation")
+    parent_id = fields.Many2one(
+        'kami_sm.attendance',
+        string='Atendimento Pai',
+        index=True
+    )
+    child_ids = fields.One2many(
+        'kami_sm.attendance',
+        'parent_id',
+        string="Dependências",
+    )
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -274,6 +284,21 @@ class KamiInEducationAttendance(models.Model):
 
         self.env['rating.rating'].create(client_vals)
 
+    def _create_sub_attendances(self, vals):
+        type_name = self.env['kami_sm.attendance.type'].\
+            search([('id', '=', vals['type_id'])], limit=1).name
+        if vals['has_tasting'] or 'Degustação' in type_name:
+            if len(vals['theme_ids'][0][2]) != 0:
+                for theme_id in vals['theme_ids'][0][2]:
+                    sub_attendance = vals
+                    sub_attendance['theme_ids'] = [(6, 0, [theme_id])]
+                    self.env['kami_sm.attendance'].create(sub_attendance)
+
+    def _check_childs_approved(self, attendance):
+        for child in attendance.child_ids:
+            if child.state != 'approved':
+                raise UserError('Atendimentos com Dependências Serão Aprovados Somente Se Todas Depêndencias Forem Aprovadas!')
+
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
         for attendance in self:
@@ -343,6 +368,8 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             if attendance.state != 'new':
                 raise UserError('Somente Novos Atendimentos Podem Ser Aprovados!')
+            if len(attendance.child_ids):
+                self._check_childs_approved(attendance)
             else:
                 attendance.state = 'approved'
                 self._create_attendance_invoice(attendance)
