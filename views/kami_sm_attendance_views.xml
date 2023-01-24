@@ -59,6 +59,19 @@
             groups="kami_sm.attendance_group_seller"
           />
           <button
+            name="action_create_subattendances"
+            string="Criar Sub Atendimentos"
+            type="object"
+            class="oe_highlight"
+            attrs="{'invisible':[
+            ('state', '!=', 'approved'),
+            '|',
+              ('_has_subattendances','=', False),
+              ('_has_childs', '=', True),
+            ]}"
+            groups="kami_sm.attendance_group_seller"
+          />
+          <button
             name="action_cancel_attendance"
             string="Cancelar"
             type="object"
@@ -114,8 +127,12 @@
             <field name="_is_degustation" invisible="1"/>
             <field name="_is_beauty_day" invisible="1"/>
             <field name="_is_facade" invisible="1"/>
+            <field name="_has_subattendances" invisible="1"/>
+            <field name="_has_childs" invisible="1"/>
+          </group>
+          <group string="Informaçõess Básicas">
             <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
-            <field name="type_id"/>
+            <field name="type_id" string="Tipo de Atendimento"/>
             <field name="has_tasting" attrs="{'invisible':[('_is_beauty_day','=', False)]}"/>
             <field
               name="theme_ids"
@@ -135,24 +152,39 @@
               string="Degustações"
             />
             <field name="start_date" string="Data"/>
-            <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
-            <field name="partner_schedule_id" attrs="{'invisible':[('_has_partner','=', False)]}"/>
-            <field name="parent_id" readonly="1" groups="kami_sm.attendance_group_manager"/>
-          </group>
-          <group>
+            <field
+              name="partner_id"
+              context="{'res_partner_search_mode': 'supplier'}"
+              attrs="{'invisible':[('_has_partner','=', False)]}"
+              string="Fornecedor"
+            />
+            <field
+              name="partner_schedule_id"
+              attrs="{'invisible':[('_has_partner','=', False)]}"
+            />
+            <field
+              name="parent_id"
+              readonly="1"
+              groups="kami_sm.attendance_group_manager"
+              attrs="{'invisible':[('parent_id','=', None)]}"
+            />
             <field name="expected_audience"/>
             <field name="address" readonly="1"/>
-          </group>
-          <group>
-            <field name="backoffice_user_id" domain="[('is_backoffice', '=', True)]"/>
+            <field name="total_event_attendees"/>
+            <field
+              name="backoffice_user_id"
+              domain="[('is_backoffice', '=', True)]"
+              attrs="{'invisible':[('backoffice_user_id','=', None)]}"
+            />
             <field name="goal_ids"  widget="many2many_tags" options="{'color_field': 'color'}"/>
             <field name="available_space"/>
           </group>
-          <group>
-            <field name="total_event_attendees"/>
-          </group>
 
-          <group name='group_facade' attrs="{'invisible':[('_is_facade','=', False)]}">
+          <group
+            string='Fachada'
+            name='group_facade'
+            attrs="{'invisible':[('_is_facade','=', False)]}"
+          >
             <field name="installation_images"/>
             <field name="images_position"/>
             <field name="facade_width"/>
@@ -160,21 +192,26 @@
             <field name="facade_has_ad"/>
             <field name="facade_ad_type" attrs="{'invisible':[('facade_has_ad','=', False)]}"/>
           </group>
-          <group name='group_magazine' attrs="{'invisible':[('_is_facade','=', False)]}">
+          <group
+            string='Revista'
+            name='group_magazine'
+            attrs="{'invisible':[('_is_facade','=', False)]}"
+          >
             <field name="magazine_types"/>
             <field name="magazine_height"/>
             <field name="magazine_width"/>
             <field name="magazine_format"/>
-          </group>
-          <group name="group_cutting" attrs="{'invisible':[('_is_facade','=', False)]}">
-            <field name="has_cutting_edge" />
-            <field
-              name="cutting_edge_size"
-              attrs="{'invisible':[('has_cutting_edge', '=', False)]}"/>
-            <field name="has_safe_margin"/>
-            <field
-              name="safe_margin_size"
-              attrs="{'invisible':[('has_safe_margin', '=', False)]}"/>
+
+            <group name="group_cutting" attrs="{'invisible':[('_is_facade','=', False)]}">
+              <field name="has_cutting_edge" />
+              <field
+                name="cutting_edge_size"
+                attrs="{'invisible':[('has_cutting_edge', '=', False)]}"/>
+              <field name="has_safe_margin"/>
+              <field
+                name="safe_margin_size"
+                attrs="{'invisible':[('has_safe_margin', '=', False)]}"/>
+            </group>
           </group>
           <notebook>
             <page string="Detalhes">
@@ -199,7 +236,7 @@
             </page>
             <page
               string="Dependências"
-              attrs="{'invisible': [('child_ids', '!=', None)]}"
+              attrs="{'invisible': [('child_ids', '=', None)]}"
               groups="kami_sm.attendance_group_manager"
             >
               <field name="has_others_clients" invisble="true"/>

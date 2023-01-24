@@ -196,6 +196,8 @@ class KamiInEducationAttendance(models.Model):
         'parent_id',
         string="Dependências",
     )
+    _has_subattendances = fields.Boolean(compute = "_compute_has_subattendances")
+    _has_childs = fields.Boolean(compute = "_compute_has_childs")
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -284,21 +286,46 @@ class KamiInEducationAttendance(models.Model):
 
         self.env['rating.rating'].create(client_vals)
 
-    def _create_sub_attendances(self, vals):
-        type_name = self.env['kami_sm.attendance.type'].\
-            search([('id', '=', vals['type_id'])], limit=1).name
-        if vals['has_tasting'] or 'Degustação' in type_name:
-            if len(vals['theme_ids'][0][2]) != 0:
-                for theme_id in vals['theme_ids'][0][2]:
-                    sub_attendance = vals
-                    sub_attendance['theme_ids'] = [(6, 0, [theme_id])]
-                    self.env['kami_sm.attendance'].create(sub_attendance)
+    def _convert_attendance_to_dict(self, attendance_id):
+        attendance_obj = self.env['kami_sm.attendance']
+        return attendance_obj.search_read(
+            [('id', '=', attendance_id)], limit=1)[0]
+
+    def _create_sub_attendances(self, attendance):
+        for theme_id in attendance.theme_ids:
+            sub_attendance = self._convert_attendance_to_dict(attendance.id)
+            sub_attendance['backoffice_user_id'] = attendance.backoffice_user_id.id
+            sub_attendance['client_id'] = attendance.client_id.id
+            sub_attendance['currency_id'] = attendance.currency_id.id
+            sub_attendance['parent_id'] = attendance.id
+            sub_attendance['partner_id'] = None
+            sub_attendance['partner_schedule_id'] = attendance.partner_schedule_id.id
+            sub_attendance['seller_id'] = attendance.seller_id.id
+            sub_attendance['theme_ids'] = [(6, 0, [theme_id.id])]
+            sub_attendance['type_id'] = attendance.type_id.id
+            sub_attendance['start_date'] = fields.Date.today() + timedelta(days=4)
+
+            self.env['kami_sm.attendance'].create(sub_attendance)
 
     def _check_childs_approved(self, attendance):
         for child in attendance.child_ids:
             if child.state != 'approved':
                 raise UserError('Atendimentos com Dependências Serão Aprovados Somente Se Todas Depêndencias Forem Aprovadas!')
 
+    # ------------------------------------------------------------
+    # CONSTRAINS
+    # ------------------------------------------------------------
+
+    @api.constrains('start_date')
+    def _check_attendance_start(self):
+        for attendance in self:
+            minimum_antecedence = fields.Date.today() + timedelta(days=4)
+            if(not attendance._has_subattendances and attendance.start_date < minimum_antecedence):
+                raise ValidationError(' A antecedência mínima para o agendamento de um evento são 4 dias!')
+
+    # ------------------------------------------------------------
+    # COMPUTES
+    # ------------------------------------------------------------
     @api.depends('type_id')
     def _compute_is_beauty_day(self):
         for attendance in self:
@@ -317,20 +344,6 @@ class KamiInEducationAttendance(models.Model):
             attendance._is_degustation = attendance.type_id.name != None \
             and 'Degustação' in str(attendance.type_id.name)
 
-    # ------------------------------------------------------------
-    # CONSTRAINS
-    # ------------------------------------------------------------
-
-    @api.constrains('start_date')
-    def _check_attendance_start(self):
-        for attendance in self:
-            minimum_antecedence = fields.Date.today() + timedelta(days=4)
-            if(attendance.start_date < minimum_antecedence):
-                raise ValidationError(' A antecedência mínima para o agendamento de um evento são 4 dias!')
-
-    # ------------------------------------------------------------
-    # COMPUTES
-    # ------------------------------------------------------------
     @api.depends('partner_id')
     def _compute_partner_schedule(self):
         for attendance in self:
@@ -347,7 +360,7 @@ class KamiInEducationAttendance(models.Model):
     @api.depends('type_id', 'theme_ids', 'partner_id')
     def _compute_default_name(self):
       for attendance in self:
-        attendance.name = f'{attendance.type_id.name}-{attendance.theme_ids.name}'
+        attendance.name = f'{attendance.type_id.name}-{attendance.client_id.name}'
 
     @api.depends('state', 'start_date')
     def _compute_is_expired(self):
@@ -359,6 +372,16 @@ class KamiInEducationAttendance(models.Model):
     def _compute_address(self):
         for attendance in self:
             attendance.address = f'{attendance.client_id.street} - {attendance.client_id.street2}, {attendance.client_id.city}, {attendance.client_id.state_id.name}, CEP: {attendance.client_id.zip}'
+
+    @api.depends('has_tasting', '_is_degustation')
+    def _compute_has_subattendances(self):
+        for attendance in self:
+            attendance._has_subattendances = (attendance._is_degustation or attendance.has_tasting)and len(attendance.theme_ids) > 1
+
+    @api.depends('child_ids')
+    def _compute_has_childs(self):
+        for attendance in self:
+            attendance._has_childs = len(attendance.child_ids) > 0
 
     # ------------------------------------------------------------
     # ACTIONS
@@ -443,12 +466,19 @@ class KamiInEducationAttendance(models.Model):
             value = connection.return_customer_spend_month(attendance.client_id.cod_uno)
             raise ValueError(value)
 
+    def action_create_subattendances(self):
+        import wdb
+        wdb.set_trace()
+        for attendance in self:
+            self._create_sub_attendances(attendance)
+
     # ------------------------------------------------------------
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
     @api.onchange('type_id', 'theme_ids', 'start_date')
     def _onchange_attendance_theme_start_id(self):
+        domain = {}
         for attendance in self:
             partner_types = attendance.type_id.partner_ids.mapped('id')
             partner_themes = self.env['kami_sm.attendance.theme'].search([
@@ -462,13 +492,24 @@ class KamiInEducationAttendance(models.Model):
                 ('allday', '=', True),
                 ('start_date', '=', attendance.start_date)
             ]).partner_ids.mapped('id')
-            return {'domain':
+
+            if attendance.type_id and 'Dia da Beleza' in attendance.type_id.name:
+                domain = {'domain':
+                {'partner_id':[
+                    ('id', 'in', partner_types),
+                    ('id', 'not in', partner_meetings),
+                    ('id', 'not in', partner_attendances)
+                ]}}
+            else:
+                domain = {'domain':
                 {'partner_id':[
                     ('id', 'in', partner_types),
                     ('id', 'in', partner_themes),
                     ('id', 'not in', partner_meetings),
                     ('id', 'not in', partner_attendances)
                 ]}}
+
+            return domain
 
     @api.onchange('type_id')
     def _onchange_attendance_type_id(self):

@@ -10,4 +10,5 @@ from . import (
   res_partner,
   res_users,
   connection,
+  mail_followers,
 )
