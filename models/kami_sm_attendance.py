@@ -307,10 +307,14 @@ class KamiInEducationAttendance(models.Model):
 
             self.env['kami_sm.attendance'].create(sub_attendance)
 
-    def _check_childs_approved(self, attendance):
+    def _get_state_value(self, state_key):
+        return dict(self._fields['state'].selection).get(state_key)
+
+    def _check_childs_state(self, attendance, state_key):
+        state_value = self._get_state_value(state_key)
         for child in attendance.child_ids:
-            if child.state != 'approved':
-                raise UserError('Atendimentos com Dependências Serão Aprovados Somente Se Todas Depêndencias Forem Aprovadas!')
+            if child.state != state_key:
+                raise UserError(f'Atendimentos com Dependências Serão {state_value}s Somente Se Todos Depêndentes Forem {state_value}s!')
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -391,8 +395,8 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             if attendance.state != 'new':
                 raise UserError('Somente Novos Atendimentos Podem Ser Aprovados!')
-            if len(attendance.child_ids):
-                self._check_childs_approved(attendance)
+            if attendance._has_childs:
+                self._check_childs_state(attendance, 'approved')
             else:
                 attendance.state = 'approved'
                 self._create_attendance_invoice(attendance)
@@ -422,6 +426,9 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             if attendance.state != 'waiting':
                 raise UserError('Somente Atendimentos Aguardando Cancelamento Podem ser Cancelados!')
+            if attendance._has_childs:
+                self._check_childs_state(attendance, 'approved')
+
             else:
                 attendance.state = 'canceled'
 
@@ -467,8 +474,6 @@ class KamiInEducationAttendance(models.Model):
             raise ValueError(value)
 
     def action_create_subattendances(self):
-        import wdb
-        wdb.set_trace()
         for attendance in self:
             self._create_sub_attendances(attendance)
 
