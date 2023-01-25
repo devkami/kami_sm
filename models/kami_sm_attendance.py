@@ -180,8 +180,7 @@ class KamiInEducationAttendance(models.Model):
     )
     _has_subattendances = fields.Boolean(compute = "_compute_has_subattendances")
     _has_childs = fields.Boolean(compute = "_compute_has_childs")
-    _is_child = fields.Boolean(default=False)
-    _has_magazine = fields.Boolean('Tem Revistas?', default=False)
+    _is_child = fields.Boolean(default=False)    
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
