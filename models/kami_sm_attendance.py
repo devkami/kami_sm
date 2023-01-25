@@ -2,6 +2,7 @@
 import ast
 from email.policy import default
 from odoo import fields, models, api, _
+from odoo.http import request
 from odoo.exceptions import ValidationError, UserError
 from datetime import timedelta
 from pytz import timezone, utc
@@ -302,6 +303,76 @@ class KamiInEducationAttendance(models.Model):
         for child in attendance.child_ids:
             if child.state != state_key:
                 raise UserError(f'Atendimentos com Dependências Serão {state_value}s Somente Se Todos Depêndentes Forem {state_value}s!')
+    
+    def _create_attendance_task(self, attendance):
+      task_name = attendance.name if not attendance.has_digital_invite else f'Convite Digital Para:{attendance.name}'
+      
+      project_id = attendance.type_id.project_id.id \
+        if not attendance.has_digital_invite \
+        else self.env.ref('kami_sm.digital_invite_project').id
+      
+      task_description = self._get_task_details(attendance)
+      task_vals = {}
+      task_vals['project_id'] = project_id
+      task_vals['name'] = task_name
+      task_vals['date_deadline'] = attendance.start_date
+      task_vals['description'] = task_description
+      
+      self.env['project.task'].create(task_vals)
+    
+    def _get_image_url(self, model, obj_id, image_field):
+      base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+      img_url = f"""{base_url}/web/image?model={model}&id={obj_id}&field={image_field}"""
+      return img_url
+    
+    def _get_image_html_tag(self, model, obj_id, image_field):
+      img_url = self._get_image_url(model, obj_id, image_field)
+      return f"""\
+        <div class="w-auto hover-text">
+          <a target="_blank" rel="noopener noreferrer" href="{img_url}">
+            <img
+              class="w-100"
+              title="Abrir a Imagem Original!"                            
+              src="{img_url}"
+            />            
+          </a>
+        <div>"""
+
+    def _get_task_details(self, attendance):
+      description = '<div class="w-auto"><ul>'      
+      
+      if attendance.has_digital_invite:
+          description += (
+            f"""<li>Detalhes do convite:\n{attendance.invite_details}</li>"""
+            f"""<li>Logo do convite:\n{self._get_image_html_tag(
+              'kami_sm.attendance', str(attendance.id), 'invite_image_logo')}
+            </li>""")
+      
+      if attendance._is_facade:
+          description += (
+          f"""<li>Largura da Arte :{attendance.facade_width} - {attendance.name_get()}</li>"""
+          f"""<li>Fotos da instalação :{self._get_image_html_tag(
+              'kami_sm.attendance', str(attendance.id), 'installation_images')}</li>"""
+          f"""<li>Largura da Arte :{attendance.facade_width}</li>"""
+          f"""<li>Altura da Arte :{attendance.facade_height}</li>""")
+          
+          if attendance.facade_has_ad:
+            description += f"""<li>Tipo de Anúncio :{attendance.facade_ad_type_id.name}</li>"""
+          
+          description += (
+          f"""<li>Tipo de Revista :{attendance.magazine_types}</li>"""
+          f"""<li>Altura da Revista (cm) :{attendance.magazine_height}</li>"""
+          f"""<li>Largura da revista(cm) :{attendance.magazine_width}</li>"""
+          f"""<li>Formato da revista :{attendance.magazine_format}</li>""")
+          
+          if attendance.has_cutting_edge:
+            description += f"""<li>Sangria (mm) :{attendance.cutting_edge_size}</li>"""
+
+          if attendance.has_safe_margin:
+            description += f"""<li>Margem de Segurança(mm) :{attendance.safe_margin_size}</li>"""
+
+      description += f"""<li>{str(attendance.description)}</li></ul></div>"""
+      return description
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -383,11 +454,13 @@ class KamiInEducationAttendance(models.Model):
             if attendance.state != 'new':
                 raise UserError('Somente Novos Atendimentos Podem Ser Aprovados!')
             if attendance._has_childs:
-                self._check_childs_state(attendance, 'approved')
+                self._check_childs_state(attendance, 'approved')            
             else:
-                attendance.state = 'approved'
+                if attendance.type_id.generate_tasks or attendance.has_digital_invite:
+                  self._create_attendance_task(attendance)                
                 self._create_attendance_invoice(attendance)
                 self._create_attendance_event(attendance)
+                attendance.state = 'approved'
 
     def action_request_cancel(self):
         for attendance in self:
@@ -470,8 +543,12 @@ class KamiInEducationAttendance(models.Model):
 
     @api.onchange('type_id', 'theme_ids', 'start_date')
     def _onchange_attendance_theme_start_id(self):
-        domain = {}
+        domain = {}        
         for attendance in self:
+            no_themes_type = attendance.type_id and (
+              'Dia da Beleza' in attendance.type_id.name
+              or 'Fachada' in attendance.type_id.name
+            )
             partner_types = attendance.type_id.partner_ids.mapped('id')
             partner_themes = self.env['kami_sm.attendance.theme'].search([
                 ('type_ids', '=', attendance.type_id.id)]).partner_ids.mapped('id')
@@ -485,7 +562,7 @@ class KamiInEducationAttendance(models.Model):
                 ('start_date', '=', attendance.start_date)
             ]).partner_ids.mapped('id')
 
-            if attendance.type_id and 'Dia da Beleza' in attendance.type_id.name:
+            if no_themes_type:
                 domain = {'domain':
                 {'partner_id':[
                     ('id', 'in', partner_types),
