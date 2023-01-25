@@ -23,13 +23,16 @@
     <field name="model">kami_sm.attendance.type</field>
     <field name="arch" type="xml">
       <form string="Tipo de Atendimento">
-        <header>
-
-        </header>
+        <header></header>
         <sheet>
           <group>
             <group>
               <field name="name"/>
+              <field name="generate_tasks"/>
+              <field 
+                name="project_id"
+                attrs="{'invisible':[('generate_tasks','=', False)]}"
+              />
             </group>
           </group>
           <notebook>
