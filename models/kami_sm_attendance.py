@@ -128,27 +128,9 @@ class KamiInEducationAttendance(models.Model):
     facade_width = fields.Float(string='Largura da Arte')
     facade_height= fields.Float(string='Altura da Arte')
     facade_has_ad=fields.Boolean(string='Solicitação de anúncio?')
-    facade_ad_type = fields.Selection(
-        string='Tipo de anúncio',
-        selection=[
-            ('truss_color','TRUSS Color'),
-            ('high_liss','High Liss'),
-            ('k_recovery','K Recovery'),
-            ('work_station Miracle','Work Station Miracle'),
-            ('fast_repais','Fast Repais'),
-            ('shock_repais','Shock Repais'),
-            ('8_xpowder','8 XPowder'),
-            ('therapy','Therapy'),
-            ('loucasportruss','LoucasporTRUSS'),
-            ('trussman','TRUSSMan'),
-            ('infusion_night_spa','Infusion & Night Spa'),
-            ('blond','Blond'),
-            ('net_mask','Net Mask'),
-            ('perfect_blond','Perfect Blond'),
-            ('shampoo_cond_blond','Shampoo/Cond.Blond'),
-            ('linha_de_shampoos_con','Linha de Shampoos/Con.'),
-            ('others', 'Outros'),
-        ]
+    facade_ad_type_id = fields.Many2one(
+        'kami_sm.attendance.ad_type',
+        string='Tipos de Anúncio'
     )
     magazine_types = fields.Selection(
         selection=[
@@ -198,6 +180,8 @@ class KamiInEducationAttendance(models.Model):
     )
     _has_subattendances = fields.Boolean(compute = "_compute_has_subattendances")
     _has_childs = fields.Boolean(compute = "_compute_has_childs")
+    _is_child = fields.Boolean(default=False)
+    _has_magazine = fields.Boolean('Tem Revistas?', default=False)
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -291,26 +275,34 @@ class KamiInEducationAttendance(models.Model):
         return attendance_obj.search_read(
             [('id', '=', attendance_id)], limit=1)[0]
 
+    def _create_sub_attendance(self, attendance, theme_id):
+        sub_attendance = self._convert_attendance_to_dict(attendance.id)
+        sub_attendance['backoffice_user_id'] = attendance.backoffice_user_id.id
+        sub_attendance['client_id'] = attendance.client_id.id
+        sub_attendance['currency_id'] = attendance.currency_id.id
+        sub_attendance['parent_id'] = attendance.id
+        sub_attendance['partner_id'] = None
+        sub_attendance['partner_schedule_id'] = attendance.partner_schedule_id.id
+        sub_attendance['seller_id'] = attendance.seller_id.id
+        sub_attendance['theme_ids'] = [(6, 0, [theme_id])]
+        sub_attendance['type_id'] = attendance.type_id.id
+        sub_attendance['start_date'] = fields.Date.today() + timedelta(days=4)
+        sub_attendance['_is_child'] = True
+        return sub_attendance
+
     def _create_sub_attendances(self, attendance):
         for theme_id in attendance.theme_ids:
-            sub_attendance = self._convert_attendance_to_dict(attendance.id)
-            sub_attendance['backoffice_user_id'] = attendance.backoffice_user_id.id
-            sub_attendance['client_id'] = attendance.client_id.id
-            sub_attendance['currency_id'] = attendance.currency_id.id
-            sub_attendance['parent_id'] = attendance.id
-            sub_attendance['partner_id'] = None
-            sub_attendance['partner_schedule_id'] = attendance.partner_schedule_id.id
-            sub_attendance['seller_id'] = attendance.seller_id.id
-            sub_attendance['theme_ids'] = [(6, 0, [theme_id.id])]
-            sub_attendance['type_id'] = attendance.type_id.id
-            sub_attendance['start_date'] = fields.Date.today() + timedelta(days=4)
-
+            sub_attendance = self._create_sub_attendance(attendance, theme_id.id)
             self.env['kami_sm.attendance'].create(sub_attendance)
 
-    def _check_childs_approved(self, attendance):
+    def _get_state_value(self, state_key):
+        return dict(self._fields['state'].selection).get(state_key)
+
+    def _check_childs_state(self, attendance, state_key):
+        state_value = self._get_state_value(state_key)
         for child in attendance.child_ids:
-            if child.state != 'approved':
-                raise UserError('Atendimentos com Dependências Serão Aprovados Somente Se Todas Depêndencias Forem Aprovadas!')
+            if child.state != state_key:
+                raise UserError(f'Atendimentos com Dependências Serão {state_value}s Somente Se Todos Depêndentes Forem {state_value}s!')
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -391,8 +383,8 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             if attendance.state != 'new':
                 raise UserError('Somente Novos Atendimentos Podem Ser Aprovados!')
-            if len(attendance.child_ids):
-                self._check_childs_approved(attendance)
+            if attendance._has_childs:
+                self._check_childs_state(attendance, 'approved')
             else:
                 attendance.state = 'approved'
                 self._create_attendance_invoice(attendance)
@@ -422,6 +414,9 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             if attendance.state != 'waiting':
                 raise UserError('Somente Atendimentos Aguardando Cancelamento Podem ser Cancelados!')
+            if attendance._has_childs:
+                self._check_childs_state(attendance, 'approved')
+
             else:
                 attendance.state = 'canceled'
 
@@ -467,8 +462,6 @@ class KamiInEducationAttendance(models.Model):
             raise ValueError(value)
 
     def action_create_subattendances(self):
-        import wdb
-        wdb.set_trace()
         for attendance in self:
             self._create_sub_attendances(attendance)
 

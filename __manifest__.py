@@ -17,12 +17,14 @@
     'views/kami_sm_attendance_type_views.xml',
     'views/kami_sm_attendance_theme_views.xml',
     'views/kami_sm_attendance_views.xml',
+    'views/kami_sm_attendance_ad_type_views.xml',
     'views/kami_sm_menus.xml',
     'data/calendar_data.xml',
     'data/user_data.xml',
     'data/mail_template_data.xml',
     'data/attendance_theme_data.xml',
-    'data/attendance_type_data.xml'
+    'data/attendance_type_data.xml',
+    'data/attendance_ad_type_data.xml'
   ],
   'installable': True,
   'auto_install': False,

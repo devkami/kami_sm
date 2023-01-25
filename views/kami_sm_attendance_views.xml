@@ -129,11 +129,22 @@
             <field name="_is_facade" invisible="1"/>
             <field name="_has_subattendances" invisible="1"/>
             <field name="_has_childs" invisible="1"/>
+            <field name="_is_child" invisible="1"/>
           </group>
           <group string="Informaçõess Básicas">
-            <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
-            <field name="type_id" string="Tipo de Atendimento"/>
-            <field name="has_tasting" attrs="{'invisible':[('_is_beauty_day','=', False)]}"/>
+            <field
+              name="client_id"
+              context="{'res_partner_search_mode': 'customer'}"
+            />
+            <field name="address" readonly="1"/>
+            <field
+              name="type_id"
+              string="Tipo de Atendimento"
+            />
+            <field
+              name="has_tasting"
+              attrs="{'invisible':[('_is_beauty_day','=', False)]}"
+            />
             <field
               name="theme_ids"
               options="{'create': false, 'create_edit': false}"
@@ -146,76 +157,67 @@
             />
             <field
               name="theme_ids"
-              options="{'color_field': 'color', 'create': false, 'create_edit': false}}"
-              attrs="{'invisible':[('_is_degustation','=', False),('has_tasting','=', False)]}"
+              options="{
+                'color_field': 'color',
+                'create': false,
+                'create_edit': false}"
+              attrs="{
+                'invisible':[
+                  ('_is_degustation','=', False),
+                  ('has_tasting','=', False)
+                ]}"
               widget="many2many_tags"
               string="Degustações"
             />
-            <field name="start_date" string="Data"/>
+            <field
+              name="start_date"
+              string="Data"
+            />
             <field
               name="partner_id"
+              groups="kami_sm.attendance_group_manager"
               context="{'res_partner_search_mode': 'supplier'}"
-              attrs="{'invisible':[('_has_partner','=', False)]}"
+              attrs="{'invisible':[('_has_subattendances','=', True)]}"
               string="Fornecedor"
             />
             <field
               name="partner_schedule_id"
+              groups="kami_sm.attendance_group_manager"
               attrs="{'invisible':[('_has_partner','=', False)]}"
             />
             <field
               name="parent_id"
               readonly="1"
               groups="kami_sm.attendance_group_manager"
-              attrs="{'invisible':[('parent_id','=', None)]}"
+              attrs="{'invisible':[('_is_child','=', False)]}"
             />
-            <field name="expected_audience"/>
-            <field name="address" readonly="1"/>
-            <field name="total_event_attendees"/>
             <field
               name="backoffice_user_id"
               domain="[('is_backoffice', '=', True)]"
-              attrs="{'invisible':[('backoffice_user_id','=', None)]}"
             />
-            <field name="goal_ids"  widget="many2many_tags" options="{'color_field': 'color'}"/>
-            <field name="available_space"/>
           </group>
-
           <group
             string='Fachada'
             name='group_facade'
             attrs="{'invisible':[('_is_facade','=', False)]}"
           >
-            <field name="installation_images"/>
-            <field name="images_position"/>
-            <field name="facade_width"/>
-            <field name="facade_height"/>
-            <field name="facade_has_ad"/>
-            <field name="facade_ad_type" attrs="{'invisible':[('facade_has_ad','=', False)]}"/>
-          </group>
-          <group
-            string='Revista'
-            name='group_magazine'
-            attrs="{'invisible':[('_is_facade','=', False)]}"
-          >
-            <field name="magazine_types"/>
-            <field name="magazine_height"/>
-            <field name="magazine_width"/>
-            <field name="magazine_format"/>
-
-            <group name="group_cutting" attrs="{'invisible':[('_is_facade','=', False)]}">
-              <field name="has_cutting_edge" />
-              <field
-                name="cutting_edge_size"
-                attrs="{'invisible':[('has_cutting_edge', '=', False)]}"/>
-              <field name="has_safe_margin"/>
-              <field
-                name="safe_margin_size"
-                attrs="{'invisible':[('has_safe_margin', '=', False)]}"/>
-            </group>
+            <field name="goal_ids"  widget="many2many_tags" options="{'color_field': 'color'}"/>
+            <field name="available_space"/>
+            <field
+              name="expected_audience"
+              attrs="{'invisible':[('_is_facade','=', True)]}"
+            />
+          <field
+            name="total_event_attendees"
+            attrs="{'invisible':[('_is_facade','=', True)]}"
+          />
           </group>
           <notebook>
             <page string="Detalhes">
-              <group>
+              <group
+                string="Convite Digital"
+                attrs="{'invisible':[('_is_facade','=', True)]}"
+              >
                 <field name="has_digital_invite"/>
                 <field
                   name="invite_image_logo"
@@ -231,6 +233,45 @@
                   name="invite_details"
                   attrs="{'invisible':[('has_digital_invite', '=', False)]}"
                 />
+              </group>
+              <group
+                string='Fachada'
+                name='group_facade'
+                attrs="{'invisible':[('_is_facade','=', False)]}"
+              >
+                <field name="installation_images"/>
+                <field name="images_position"/>
+                <field name="facade_width"/>
+                <field name="facade_height"/>
+                <field name="facade_has_ad"/>
+                <field
+                  name="facade_ad_type_id"
+                  attrs="{'invisible':[('facade_has_ad','=', False)]}"
+                />
+                <group
+                  string='Revista'
+                  name='group_magazine'
+                  attrs="{'invisible':[('_is_facade','=', False)]}"
+                >
+                  <field name="magazine_types"/>
+                  <field name="magazine_height"/>
+                  <field name="magazine_width"/>
+                  <field name="magazine_format"/>
+                  <group name="group_cutting" string="Sangria e Margem">
+                    <field name="has_cutting_edge" />
+                    <field
+                      name="cutting_edge_size"
+                      attrs="{'invisible':[('has_cutting_edge', '=', False)]}"
+                    />
+                    <field name="has_safe_margin"/>
+                    <field
+                      name="safe_margin_size"
+                      attrs="{'invisible':[('has_safe_margin', '=', False)]}"
+                    />
+                  </group>
+                </group>
+              </group>
+              <group>
                 <field name="description"/>
               </group>
             </page>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="truss_color" model="kami_sm.attendance.ad_type">
+            <field name="name">TRUSS Color</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="high_liss" model="kami_sm.attendance.ad_type">
+            <field name="name">High Liss</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="k_recovery" model="kami_sm.attendance.ad_type">
+            <field name="name">K Recovery</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="work_station_miracle" model="kami_sm.attendance.ad_type">
+            <field name="name">Work Station Miracle</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="fast_repais" model="kami_sm.attendance.ad_type">
+            <field name="name">Fast Repais</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="shock_repais" model="kami_sm.attendance.ad_type">
+            <field name="name">Shock Repais</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="8_xpowder" model="kami_sm.attendance.ad_type">
+            <field name="name">8 XPowder</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="therapy" model="kami_sm.attendance.ad_type">
+            <field name="name">Therapy</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="loucasportruss" model="kami_sm.attendance.ad_type">
+            <field name="name">#LoucasporTRUSS</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="trussman" model="kami_sm.attendance.ad_type">
+            <field name="name">TRUSSMan</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="infusion_night_spa" model="kami_sm.attendance.ad_type">
+            <field name="name">Infusion &#38; Night Spa</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="blond" model="kami_sm.attendance.ad_type">
+            <field name="name">Blond</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="net_mask" model="kami_sm.attendance.ad_type">
+            <field name="name">Net Mask</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="perfect_blond" model="kami_sm.attendance.ad_type">
+            <field name="name">Perfect Blond</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="shampoo_cond_blond" model="kami_sm.attendance.ad_type">
+            <field name="name">Shampoo/Cond. Blond</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record id="linha_de_shampoos_cond" model="kami_sm.attendance.ad_type">
+            <field name="name">Linha de Shampoos/Con.</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>
