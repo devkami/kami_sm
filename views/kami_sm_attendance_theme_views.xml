@@ -2,7 +2,7 @@
 <odoo>
   
   <record id="kami_sm_attendance_theme_action" model="ir.actions.act_window">
-    <field name="name">Temas de Atendimento</field>
+    <field name="name">Temas</field>
     <field name="res_model">kami_sm.attendance.theme</field>
     <field name="view_mode">tree,form</field>  
   </record>

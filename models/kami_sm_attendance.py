@@ -181,7 +181,9 @@ class KamiInEducationAttendance(models.Model):
     )
     _has_subattendances = fields.Boolean(compute = "_compute_has_subattendances")
     _has_childs = fields.Boolean(compute = "_compute_has_childs")
-    _is_child = fields.Boolean(default=False)    
+    _is_child = fields.Boolean(default=False)
+    _has_educator = fields.Boolean(compute = "_compute_has_educator")
+    _is_childs_approved = fields.Boolean(compute = "_compute_is_childs_approved")
 
     # ------------------------------------------------------------
     # PRIVATE UTILS
@@ -209,7 +211,7 @@ class KamiInEducationAttendance(models.Model):
 
     def _create_attendance_invoice(self, attendance):
         for attendance_cost in attendance.cost_ids:
-            if attendance_cost.cost_type == 'cash':
+            if attendance_cost.cost_type == 'cash' and not attendance_cost.invoice_id:
                 journal = self.env['account.move']\
                 .with_context(default_move_type='in_invoice')\
                 ._get_default_journal()
@@ -276,17 +278,16 @@ class KamiInEducationAttendance(models.Model):
             [('id', '=', attendance_id)], limit=1)[0]
 
     def _create_sub_attendance(self, attendance, theme_id):
-        sub_attendance = self._convert_attendance_to_dict(attendance.id)
+        sub_attendance = {}
         sub_attendance['backoffice_user_id'] = attendance.backoffice_user_id.id
         sub_attendance['client_id'] = attendance.client_id.id
         sub_attendance['currency_id'] = attendance.currency_id.id
-        sub_attendance['parent_id'] = attendance.id
-        sub_attendance['partner_id'] = None
-        sub_attendance['partner_schedule_id'] = attendance.partner_schedule_id.id
+        sub_attendance['parent_id'] = attendance.id         
+        sub_attendance['has_tasting'] = attendance.has_tasting
         sub_attendance['seller_id'] = attendance.seller_id.id
-        sub_attendance['theme_ids'] = [(6, 0, [theme_id])]
         sub_attendance['type_id'] = attendance.type_id.id
-        sub_attendance['start_date'] = fields.Date.today() + timedelta(days=4)
+        sub_attendance['theme_ids'] = [(6, 0, [theme_id])]        
+        sub_attendance['start_date'] = attendance.start_date
         sub_attendance['_is_child'] = True
         return sub_attendance
 
@@ -298,11 +299,11 @@ class KamiInEducationAttendance(models.Model):
     def _get_state_value(self, state_key):
         return dict(self._fields['state'].selection).get(state_key)
 
-    def _check_childs_state(self, attendance, state_key):
-        state_value = self._get_state_value(state_key)
+    def _check_childs_state(self, attendance, state_key):        
         for child in attendance.child_ids:
             if child.state != state_key:
-                raise UserError(f'Atendimentos com Dependências Serão {state_value}s Somente Se Todos Depêndentes Forem {state_value}s!')
+                return False
+        return True
     
     def _create_attendance_task(self, attendance):
       task_name = attendance.name if not attendance.has_digital_invite else f'Convite Digital Para:{attendance.name}'
@@ -435,15 +436,28 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             attendance.address = f'{attendance.client_id.street} - {attendance.client_id.street2}, {attendance.client_id.city}, {attendance.client_id.state_id.name}, CEP: {attendance.client_id.zip}'
 
-    @api.depends('has_tasting', '_is_degustation')
+    @api.depends('has_tasting', '_is_degustation', 'theme_ids')
     def _compute_has_subattendances(self):
         for attendance in self:
-            attendance._has_subattendances = (attendance._is_degustation or attendance.has_tasting)and len(attendance.theme_ids) > 1
+            attendance._has_subattendances = attendance.has_tasting or (attendance._is_degustation and len(attendance.theme_ids) > 1)
 
     @api.depends('child_ids')
     def _compute_has_childs(self):
         for attendance in self:
             attendance._has_childs = len(attendance.child_ids) > 0
+
+    @api.depends('type_id')
+    def _compute_has_educator(self):
+        for attendance in self:
+            attendance._has_educator = ('Treinamento' in attendance.type_id.name \
+            or 'Dia da Beleza' in attendance.type_id.name)\
+            if attendance.type_id else False
+    
+    @api.depends('child_ids')
+    def _compute_is_childs_approved(self):
+      for attendance in self:
+            attendance._is_childs_approved = \
+            self._check_childs_state(attendance, 'approved')
 
     # ------------------------------------------------------------
     # ACTIONS
@@ -453,22 +467,23 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             if attendance.state != 'new':
                 raise UserError('Somente Novos Atendimentos Podem Ser Aprovados!')
-            if attendance._has_childs:
-                self._check_childs_state(attendance, 'approved')            
-            else:
-                if attendance.type_id.generate_tasks or attendance.has_digital_invite:
-                  self._create_attendance_task(attendance)                
-                self._create_attendance_invoice(attendance)
-                self._create_attendance_event(attendance)
-                attendance.state = 'approved'
+            if not attendance._is_childs_approved:
+                raise UserError('Atendimentos Com Dependências Somente Serão Aprovados Se Todas As Dependências Forem Aprovadas!')
+            
+            attendance.state = 'approved'
+            if attendance.type_id.generate_tasks or attendance.has_digital_invite:
+              self._create_attendance_task(attendance)                
+            self._create_attendance_invoice(attendance)
+            self._create_attendance_event(attendance)
+                
 
     def action_request_cancel(self):
         for attendance in self:
             if attendance.state not in ['new', 'approved']:
-                raise UserError('Somente Atendimentos Novos ou Aprovados Podem ser Cancelados!')
+              raise UserError('Somente Atendimentos Novos ou Aprovados Podem ser Cancelados!')
             else:
-                attendance.state = 'waiting'
-
+              attendance.state = 'waiting'
+ 
     def action_open_request_cancel(self):
         return {
             'res_model': 'kami_sm.attendance',
@@ -542,9 +557,9 @@ class KamiInEducationAttendance(models.Model):
     # ------------------------------------------------------------
 
     @api.onchange('type_id', 'theme_ids', 'start_date')
-    def _onchange_attendance_theme_start_id(self):
-        domain = {}        
+    def _onchange_attendance_theme_start_id(self):                
         for attendance in self:
+            domain = {}
             no_themes_type = attendance.type_id and (
               'Dia da Beleza' in attendance.type_id.name
               or 'Fachada' in attendance.type_id.name
@@ -610,5 +625,5 @@ class KamiInEducationAttendance(models.Model):
     def _onchange_cost_ids(self):
         for attendance in self:
             for attendance_cost in attendance.cost_ids:
-                if not attendance_cost.invoice_id:
+              if not attendance_cost.invoice_id and attendance.state == 'approved':
                     self._create_attendance_invoice(attendance)

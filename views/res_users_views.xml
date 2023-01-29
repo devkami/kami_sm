@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <record id="kami_sm.attendance_users_action" model="ir.actions.act_window">
-    <field name="name">Usuários</field>
+  <record id="kami_sm_attendance_user_action" model="ir.actions.act_window">
+    <field name="name">Colaboradores</field>
     <field name="res_model">res.users</field>
     <field name="view_mode">tree,form,kanban</field>
     <field name="context">{'search_default_available': True}</field>
@@ -14,7 +14,7 @@
     <field name="inherit_id" ref="base.view_users_tree"/>
     <field name="arch" type="xml">
         <tree position="replace">
-            <tree string="Usuários">
+            <tree string="Colaboradores">
                 <field name="name"/>
                 <field name="email"/>
                 <field name="login"/>

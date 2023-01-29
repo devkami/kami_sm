@@ -81,6 +81,8 @@
         <record id="facade" model="kami_sm.attendance.type">
             <field name="name">Fachada</field>
             <field name="active" eval="True"/>
+            <field name="generate_tasks" eval="True"/>
+            <field name="project_id" eval="kami_sm_facade_project"/>
         </record>
         <record id="store_training" model="kami_sm.attendance.type">
             <field name="name">Treinamento Lojas</field>
