@@ -2,7 +2,7 @@
 <odoo>
   
   <record id="kami_sm_attendance_cost_action" model="ir.actions.act_window">
-    <field name="name">Custos de Atendimento</field>
+    <field name="name">Custos</field>
     <field name="res_model">kami_sm.attendance.cost</field>
     <field name="view_mode">tree,form</field>  
   </record>
@@ -13,9 +13,9 @@
     <field name="arch" type="xml">
       <tree 
         string="Custos de Atendimento"
-        decoration-success="was_paid == True"        
+        decoration-success="_was_paid == True"        
       >
-        <field name="was_paid" invisible="1"/>
+        <field name="_was_paid" invisible="1"/>
         <field name="partner_id" string="Educador" readonly="1"/>
         <field name="description"/>        
         <field name="cost_type"/>

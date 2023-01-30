@@ -5,6 +5,14 @@
         <menuitem
           id="kami_sm_attendance_model_menu_action"
           action="kami_sm_attendance_action"
+        />        
+        <menuitem
+          id="kami_sm_attendance_rating_model_menu_action"
+          action="kami_sm_attendance_rating_action"
+        />
+        <menuitem
+          id="kami_sm_attendance_cost_model_menu_action"
+          action="kami_sm_attendance_cost_action"
         />
       </menuitem>
       <menuitem
@@ -13,28 +21,24 @@
         groups="kami_sm.attendance_group_manager"
       >
         <menuitem
-          id="kami_sm_attendance_partners_model_menu_action"
-          action="kami_sm.attendance_partner_action"
+          id="kami_sm_attendance_user_model_menu_action"
+          action="kami_sm_attendance_user_action"
         />
         <menuitem
-          id="kami_sm_attendance_users_model_menu_action"
-          action="kami_sm.attendance_users_action"
+          id="kami_sm_attendance_partner_model_menu_action"
+          action="kami_sm_attendance_partner_action"
         />
         <menuitem
           id="kami_sm_attendance_type_model_menu_action"
           action="kami_sm_attendance_type_action"
         />
         <menuitem
-          id="kami_sm_attendance_themes_model_menu_action"
+          id="kami_sm_attendance_theme_model_menu_action"
           action="kami_sm_attendance_theme_action"
-        />
+        />        
         <menuitem
-          id="kami_sm_attendance_costs_model_menu_action"
-          action="kami_sm_attendance_cost_action"
-        />
-        <menuitem
-          id="kami_sm_attendance_partners_model_menu_action"
-          action="kami_sm.kami_sm_attendance_ad_type_action"
+          id="kami_sm_attendance_ad_type_model_menu_action"
+          action="kami_sm_attendance_ad_type_action"
         />
       </menuitem>
   </menuitem>

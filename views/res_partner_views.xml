@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <record id="kami_sm.attendance_partner_action" model="ir.actions.act_window">
-    <field name="name">Parceiros</field>
+  <record id="kami_sm_attendance_partner_action" model="ir.actions.act_window">
+    <field name="name">Parceiros (Educadores/Fornecedores)</field>
     <field name="res_model">res.partner</field>
     <field name="view_mode">tree,form,kanban</field>
     <field name="context">{'search_default_available': True}</field>

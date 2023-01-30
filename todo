@@ -1,0 +1,56 @@
+## exportar pdf do atendimento; #(maicon)
+## migrar todos módulos do odoo dev para o odoo Prod; #(adsandro)
+
+## Migração Pipefy Novo Projeto(Adriana e Marcos):
+### Dados dos fornecedores com os times:
+- informações básicas de contato;
+- dados bancários;
+- tipos e temas atendidos;
+
+## Configurar integração com Google Calendar
+
+verificar erro fatura não abre (ValueError: Invalid field 'edi_show_cancel_button' on model 'account.move');
+
+nova fatura de custos só pode ser criada se o antendimento já foi aprovado;
+
+criar o grupo aprovador(pode seleecionar e editar caracteristicas do antendimento; pode aprovar ou cancelar um atendimento);
+
+verificar erro de data na criação do evento;
+
+incluir opção de promotor no formulário de eventos (para dia da beleza ou degustações)
+
+adicionar carrossel de imagens;
+
+deixar o filtro de subatendimentos sempre ativo e 'invísivel';
+
+alterar o campo tema na lista de atendimentos;
+
+<s>Remover atendimento do formulário de custo</s>
+
+<s>Alterar opção de custos para o menu de atendimentos</s>
+
+<s>Acrescentar a opção de avaliações para o menu de atendimentos</s>
+
+<s>Reorganizar Todos Menus</s>
+
+<s>Exibir Botão 'ver fatura' somente se o tipo de custo for dinhiro E existir um fatura para o custo</s>
+
+<s>Exibir Botão 'Criar Sub Atendimentos' somente se o tipo for dia da beleza e a opção tem degustação estiver marcada OU se o tipo for degustação e houver mais de uma degustação</s>
+
+<s>Adicionar o status da fatura no custo</s>
+
+<s>Exibir Botão 'Aprovar' somente se o atendimento não for subatendimento E se todos subatendimentos foram aprovados se existirem</s>
+
+<s>Não exibir sub atendimentos na lista principal</s>
+
+<s>incluir preview da imagem de fachada nos detalhes de fachada</s>
+
+<s>incluir unidade de medida e organizar a ordem de campos de medida no formulário e nos detalhes da tarefa</s>
+
+<s>Transformar o campo observações relevantes em uma nova aba e mudar o tipo para texto com formatação</s>
+
+<s>Validar se o usuário atual já avaliou o atendimento</s>
+
+<s>Garantir que no caso de atendimento do tipo degustação c/ mais de 1 degustação o atendimento principal será aprovado e agendado sem necessidade de um parceiro ocultando os campos desenecessários</s>
+
+<s>Alterar o calculo de custo total para considerar os custos dos subatendimentos</s>

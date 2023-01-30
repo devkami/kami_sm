@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo> 
-  
+  <record id="kami_sm_attendance_rating_action" model="ir.actions.act_window">
+    <field name="name">Avaliações</field>
+    <field name="res_model">rating.rating</field>
+    <field name="view_mode">tree,form,kanban</field>
+    <field name="context">{'search_default_available': True}</field>
+  </record>
+
   <record id="rating_rating_view_tree_attendance" model="ir.ui.view">
     <field name="name">rating.rating.tree.attendance</field>
     <field name="model">rating.rating</field>

@@ -23,3 +23,11 @@ class KamiSmAttendanceType(models.Model):
       "kami_sm.attendance.theme",
       string='Temas'
     )
+    generate_tasks = fields.Boolean(
+      default=False,
+      string='Gera Tarefas?'
+    )
+    project_id = fields.Many2one(
+      'project.project',
+      string='Projeto'
+    )

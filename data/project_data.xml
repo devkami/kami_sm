@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="1">
+        <record id="kami_sm.digital_invite_project" model="project.project">
+            <field name="name">Arte Para Convites Digitais</field>
+        </record>
+    </data>
+    <data noupdate="1">
+      <record id="kami_sm_facade_project" model="project.project">
+          <field name="name">Arte Para Fachadas</field>
+      </record>
+  </data>
+</odoo>

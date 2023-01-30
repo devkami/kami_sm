@@ -2,6 +2,7 @@
 import ast
 from email.policy import default
 from odoo import fields, models, api, _
+from odoo.http import request
 from odoo.exceptions import ValidationError, UserError
 from datetime import timedelta
 from pytz import timezone, utc
@@ -76,7 +77,7 @@ class KamiInEducationAttendance(models.Model):
       'res.currency',
       string='Currency'
     )
-    description = fields.Text(string='Observações Relevantes')
+    description = fields.Html(string='Observações Relevantes')
     cancellation_reason = fields.Text(string='Motivo do Cancelamento')
     has_product_cost = fields.Boolean(
       'Pagamento Com Produtos',
@@ -118,16 +119,16 @@ class KamiInEducationAttendance(models.Model):
     available_space = fields.Boolean(string="Cliente possui estrutura de no mínimo 1,20cm de largura?")
 
     _is_facade = fields.Boolean(compute="_compute_is_facade")
-    installation_images = fields.Image(string='Fotos da instalação')
+    installation_images = fields.Image(string='Fotos da Instalação')    
     images_position = fields.Selection(
         string='Posição das imagens',
         selection=
         [('separeted', 'Separadas'),
         ('syde-by-syde', 'Lado a Lado')]
     )
-    facade_width = fields.Float(string='Largura da Arte')
-    facade_height= fields.Float(string='Altura da Arte')
-    facade_has_ad=fields.Boolean(string='Solicitação de anúncio?')
+    facade_height= fields.Float(string='Altura da Arte (mts)')
+    facade_width = fields.Float(string='Largura da Arte (mts)')    
+    facade_has_ad=fields.Boolean(string='Solicitação de Anúncio?')
     facade_ad_type_id = fields.Many2one(
         'kami_sm.attendance.ad_type',
         string='Tipos de Anúncio'
@@ -162,11 +163,6 @@ class KamiInEducationAttendance(models.Model):
     has_digital_invite = fields.Boolean(string='Convite Digital?')
     invite_details = fields.Text(string='Detalhes do Convite')
     invite_image_logo = fields.Image(string="Logo")
-    invite_image_logo_preview = fields.Image(
-      string='Pré-Vizualizção',
-      related='invite_image_logo',
-      readonly=True
-    )
     _is_degustation = fields.Boolean(compute="_compute_is_degustation")
     parent_id = fields.Many2one(
         'kami_sm.attendance',
@@ -181,8 +177,10 @@ class KamiInEducationAttendance(models.Model):
     _has_subattendances = fields.Boolean(compute = "_compute_has_subattendances")
     _has_childs = fields.Boolean(compute = "_compute_has_childs")
     _is_child = fields.Boolean(default=False)
-    _has_magazine = fields.Boolean('Tem Revistas?', default=False)
-
+    _has_educator = fields.Boolean(compute = "_compute_has_educator")
+    _is_childs_approved = fields.Boolean(compute = "_compute_is_childs_approved")
+    _has_cost = fields.Boolean(compute = "_compute_has_cost")
+        
     # ------------------------------------------------------------
     # PRIVATE UTILS
     # ------------------------------------------------------------
@@ -201,15 +199,16 @@ class KamiInEducationAttendance(models.Model):
             'user_id': attendance.seller_id.id,
             'partner_ids': [
                 (4, attendance.partner_id.id),
-            ],
+            ] if attendance._has_cost else [],
             'location': attendance.address,
             'description': attendance.description
         }
         self.env['calendar.event'].create(event_vals)
 
-    def _create_attendance_invoice(self, attendance):
+    def _create_attendance_invoice(self, attendance):      
         for attendance_cost in attendance.cost_ids:
-            if attendance_cost.cost_type == 'cash':
+            if attendance_cost.cost_type == 'cash' \
+            and not attendance_cost.invoice_id:
                 journal = self.env['account.move']\
                 .with_context(default_move_type='in_invoice')\
                 ._get_default_journal()
@@ -244,22 +243,24 @@ class KamiInEducationAttendance(models.Model):
 
         if(attendance.partner_id == self.env.user.partner_id):
             rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id
-            rating_vals['res_id'] = self.id
+            rating_vals['res_id'] = attendance.id
             rating_vals['rated_partner_id'] = attendance.seller_id.partner_id.id
             rating_vals['partner_id'] = attendance.partner_id.id
             rating_vals['rating'] = attendance.rating
-            rating_vals['feedback'] = attendance.feedback
+            rating_vals['feedback'] = attendance.feedback                        
             rating_vals['display_name'] = 'Educador'
+            attendance._has_educator_rating = True
 
         elif(attendance.seller_id == self.env.user):
             rating_vals['res_model_id'] = self.env.ref('kami_sm.model_kami_sm_attendance').id
-            rating_vals['res_id'] = self.id
+            rating_vals['res_id'] = attendance.id
             rating_vals['rated_partner_id'] = attendance.partner_id.id
             rating_vals['partner_id'] = attendance.seller_id.partner_id.id
             rating_vals['rating'] = attendance.rating
             rating_vals['feedback'] = attendance.feedback
-            rating_vals['Vendedor'] = 'Vendedor'
-
+            rating_vals['parent_res_model'] = 'kami_sm.attendance'            
+            attendance._has_seller_rating = True
+        
         self.env['rating.rating'].create(rating_vals)
 
     def _create_attendance_client(self, attendance):
@@ -276,17 +277,16 @@ class KamiInEducationAttendance(models.Model):
             [('id', '=', attendance_id)], limit=1)[0]
 
     def _create_sub_attendance(self, attendance, theme_id):
-        sub_attendance = self._convert_attendance_to_dict(attendance.id)
+        sub_attendance = {}
         sub_attendance['backoffice_user_id'] = attendance.backoffice_user_id.id
         sub_attendance['client_id'] = attendance.client_id.id
         sub_attendance['currency_id'] = attendance.currency_id.id
-        sub_attendance['parent_id'] = attendance.id
-        sub_attendance['partner_id'] = None
-        sub_attendance['partner_schedule_id'] = attendance.partner_schedule_id.id
+        sub_attendance['parent_id'] = attendance.id         
+        sub_attendance['has_tasting'] = attendance.has_tasting
         sub_attendance['seller_id'] = attendance.seller_id.id
-        sub_attendance['theme_ids'] = [(6, 0, [theme_id])]
         sub_attendance['type_id'] = attendance.type_id.id
-        sub_attendance['start_date'] = fields.Date.today() + timedelta(days=4)
+        sub_attendance['theme_ids'] = [(6, 0, [theme_id])]        
+        sub_attendance['start_date'] = attendance.start_date
         sub_attendance['_is_child'] = True
         return sub_attendance
 
@@ -298,11 +298,86 @@ class KamiInEducationAttendance(models.Model):
     def _get_state_value(self, state_key):
         return dict(self._fields['state'].selection).get(state_key)
 
-    def _check_childs_state(self, attendance, state_key):
-        state_value = self._get_state_value(state_key)
+    def _check_childs_state(self, attendance, state_key):        
         for child in attendance.child_ids:
             if child.state != state_key:
-                raise UserError(f'Atendimentos com Dependências Serão {state_value}s Somente Se Todos Depêndentes Forem {state_value}s!')
+                return False
+        return True
+    
+    def _create_attendance_task(self, attendance):
+      task_name = attendance.name if not attendance.has_digital_invite else f'Convite Digital Para:{attendance.name}'
+      
+      project_id = attendance.type_id.project_id.id \
+        if not attendance.has_digital_invite \
+        else self.env.ref('kami_sm.digital_invite_project').id
+      
+      task_description = self._get_task_details(attendance)
+      task_vals = {}
+      task_vals['project_id'] = project_id
+      task_vals['name'] = task_name
+      task_vals['date_deadline'] = attendance.start_date
+      task_vals['description'] = task_description
+      
+      self.env['project.task'].create(task_vals)
+    
+    def _get_image_url(self, model, obj_id, image_field):
+      base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+      img_url = f"""{base_url}/web/image?model={model}&id={obj_id}&field={image_field}"""
+      return img_url
+    
+    def _get_image_html_tag(self, model, obj_id, image_field):
+      img_url = self._get_image_url(model, obj_id, image_field)
+      return f"""\
+        <div class="w-auto hover-text">
+          <a target="_blank" rel="noopener noreferrer" href="{img_url}">
+            <img
+              class="w-100"
+              title="Abrir a Imagem Original!"                            
+              src="{img_url}"
+            />            
+          </a>
+        <div>"""
+
+    def _get_task_details(self, attendance):
+      description = '<div class="w-auto"><ul>'      
+      
+      if attendance.has_digital_invite:
+          description += (
+            f"""<li>Detalhes do convite:\n{attendance.invite_details}</li>"""
+            f"""<li>Logo do convite:\n{self._get_image_html_tag(
+              'kami_sm.attendance', str(attendance.id), 'invite_image_logo')}
+            </li>""")
+      
+      if attendance._is_facade:
+          description += (          
+          f"""<li>Fotos da instalação :{self._get_image_html_tag(
+              'kami_sm.attendance', str(attendance.id), 'installation_images')}</li>"""          
+          f"""<li>Altura da Arte(mts) :{attendance.facade_height}</li>"""
+          f"""<li>Largura da Arte(mts) :{attendance.facade_width}</li>""")
+          
+          if attendance.facade_has_ad:
+            description += f"""<li>Tipo de Anúncio :{attendance.facade_ad_type_id.name}</li>"""
+          
+          description += (
+          f"""<li>Tipo de Revista :{attendance.magazine_types}</li>"""
+          f"""<li>Altura da Revista (cm) :{attendance.magazine_height}</li>"""
+          f"""<li>Largura da revista(cm) :{attendance.magazine_width}</li>"""
+          f"""<li>Formato da revista :{attendance.magazine_format}</li>""")
+          
+          if attendance.has_cutting_edge:
+            description += f"""<li>Sangria (mm) :{attendance.cutting_edge_size}</li>"""
+
+          if attendance.has_safe_margin:
+            description += f"""<li>Margem de Segurança(mm) :{attendance.safe_margin_size}</li>"""
+
+      description += f"""<li>{str(attendance.description)}</li></ul></div>"""
+      return description
+
+    def _check_has_user_rating(self, attendance):
+      for rating in attendance.rating_ids:
+        if rating.partner_id == self.env.user.partner_id:
+          raise ValidationError('Você Já Avaliou Esse Atendimento!')
+        
 
     # ------------------------------------------------------------
     # CONSTRAINS
@@ -344,10 +419,14 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance._has_partner = False
 
-    @api.depends('cost_ids')
-    def _compute_attendance_total_cost(self):
+    @api.depends('cost_ids', '_has_cost', 'child_ids', '_has_childs')
+    def _compute_attendance_total_cost(self):        
         for attendance in self:
-            attendance.total_cost = sum(attendance.cost_ids.mapped('cost'))
+            if attendance._has_cost:
+                attendance.total_cost += sum(attendance.cost_ids.mapped('cost'))
+            if attendance._has_childs:
+                for child in attendance.child_ids:
+                    attendance.total_cost += sum(child.mapped('total_cost'))
 
     @api.depends('type_id', 'theme_ids', 'partner_id')
     def _compute_default_name(self):
@@ -365,15 +444,36 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             attendance.address = f'{attendance.client_id.street} - {attendance.client_id.street2}, {attendance.client_id.city}, {attendance.client_id.state_id.name}, CEP: {attendance.client_id.zip}'
 
-    @api.depends('has_tasting', '_is_degustation')
+    @api.depends('has_tasting', '_is_degustation', 'theme_ids')
     def _compute_has_subattendances(self):
         for attendance in self:
-            attendance._has_subattendances = (attendance._is_degustation or attendance.has_tasting)and len(attendance.theme_ids) > 1
+            attendance._has_subattendances = attendance.has_tasting or (attendance._is_degustation and len(attendance.theme_ids) > 1)
 
     @api.depends('child_ids')
     def _compute_has_childs(self):
         for attendance in self:
             attendance._has_childs = len(attendance.child_ids) > 0
+
+    @api.depends('type_id')
+    def _compute_has_educator(self):
+        for attendance in self:
+            attendance._has_educator = ('Treinamento' in attendance.type_id.name \
+            or 'Dia da Beleza' in attendance.type_id.name)\
+            if attendance.type_id else False
+    
+    @api.depends('child_ids')
+    def _compute_is_childs_approved(self):
+      for attendance in self:
+          attendance._is_childs_approved = \
+            self._check_childs_state(attendance, 'approved')
+
+    @api.depends('_is_degustation', 'theme_ids')
+    def _compute_has_cost(self):
+      for attendance in self:
+        if attendance._is_degustation and len(attendance.theme_ids) > 1:
+          attendance._has_cost = False
+        else:
+          attendance._has_cost = True
 
     # ------------------------------------------------------------
     # ACTIONS
@@ -383,20 +483,24 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             if attendance.state != 'new':
                 raise UserError('Somente Novos Atendimentos Podem Ser Aprovados!')
-            if attendance._has_childs:
-                self._check_childs_state(attendance, 'approved')
-            else:
-                attendance.state = 'approved'
-                self._create_attendance_invoice(attendance)
-                self._create_attendance_event(attendance)
+            if not attendance._is_childs_approved:
+                raise UserError('Atendimentos Com Dependências Somente Serão Aprovados Se Todas As Dependências Forem Aprovadas!')
+            
+            attendance.state = 'approved'
+            if attendance.type_id.generate_tasks or attendance.has_digital_invite:
+              self._create_attendance_task(attendance)
+            if attendance._has_cost:
+              self._create_attendance_invoice(attendance)
+            self._create_attendance_event(attendance)
+                
 
     def action_request_cancel(self):
         for attendance in self:
             if attendance.state not in ['new', 'approved']:
-                raise UserError('Somente Atendimentos Novos ou Aprovados Podem ser Cancelados!')
+              raise UserError('Somente Atendimentos Novos ou Aprovados Podem ser Cancelados!')
             else:
-                attendance.state = 'waiting'
-
+              attendance.state = 'waiting'
+ 
     def action_open_request_cancel(self):
         return {
             'res_model': 'kami_sm.attendance',
@@ -420,10 +524,13 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance.state = 'canceled'
 
-    def action_rating_attendance(self):
-        for attendance in self:
+    def action_rating_attendance(self):      
+        for attendance in self:            
+            self._check_has_user_rating(attendance)
+
             if attendance.state not in ['approved', 'done']:
                 raise UserError('Somente Atendimentos Aprovados Podem ser Avaliados/Encerrados!')
+            
             else:
                 attendance.rating = '0'
                 attendance.feedback = ''
@@ -465,14 +572,29 @@ class KamiInEducationAttendance(models.Model):
         for attendance in self:
             self._create_sub_attendances(attendance)
 
+    def action_edit_subattendance(self):
+      for attendance in self:                
+          return {
+            'view_mode': 'form',
+            'res_model': 'kami_sm.attendance',
+            'res_id': attendance.id,
+            'type': 'ir.actions.act_window',            
+            'context': {'form_view_initial_mode': 'edit'}
+          }
+
+
     # ------------------------------------------------------------
     # PARTNERS DOMAIN FILTERS
     # ------------------------------------------------------------
 
     @api.onchange('type_id', 'theme_ids', 'start_date')
-    def _onchange_attendance_theme_start_id(self):
-        domain = {}
+    def _onchange_attendance_theme_start_id(self):                
         for attendance in self:
+            domain = {}
+            no_themes_type = attendance.type_id and (
+              'Dia da Beleza' in attendance.type_id.name
+              or 'Fachada' in attendance.type_id.name
+            )
             partner_types = attendance.type_id.partner_ids.mapped('id')
             partner_themes = self.env['kami_sm.attendance.theme'].search([
                 ('type_ids', '=', attendance.type_id.id)]).partner_ids.mapped('id')
@@ -486,7 +608,7 @@ class KamiInEducationAttendance(models.Model):
                 ('start_date', '=', attendance.start_date)
             ]).partner_ids.mapped('id')
 
-            if attendance.type_id and 'Dia da Beleza' in attendance.type_id.name:
+            if no_themes_type:
                 domain = {'domain':
                 {'partner_id':[
                     ('id', 'in', partner_types),
@@ -534,5 +656,5 @@ class KamiInEducationAttendance(models.Model):
     def _onchange_cost_ids(self):
         for attendance in self:
             for attendance_cost in attendance.cost_ids:
-                if not attendance_cost.invoice_id:
+              if not attendance_cost.invoice_id and attendance.state == 'approved':
                     self._create_attendance_invoice(attendance)

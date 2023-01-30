@@ -2,7 +2,7 @@
 <odoo>
 
   <record id="kami_sm_attendance_type_action" model="ir.actions.act_window">
-    <field name="name">Tipos de Atendimento</field>
+    <field name="name">Tipos</field>
     <field name="res_model">kami_sm.attendance.type</field>
     <field name="view_mode">tree,form</field>
   </record>
@@ -23,13 +23,16 @@
     <field name="model">kami_sm.attendance.type</field>
     <field name="arch" type="xml">
       <form string="Tipo de Atendimento">
-        <header>
-
-        </header>
+        <header></header>
         <sheet>
           <group>
             <group>
               <field name="name"/>
+              <field name="generate_tasks"/>
+              <field 
+                name="project_id"
+                attrs="{'invisible':[('generate_tasks','=', False)]}"
+              />
             </group>
           </group>
           <notebook>

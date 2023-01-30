@@ -4,7 +4,10 @@
     <field name="name">Atendimentos</field>
     <field name="res_model">kami_sm.attendance</field>
     <field name="view_mode">tree,form,kanban</field>
-    <field name="context">{'search_default_available': True}</field>
+    <field name="context">{
+      'search_default_available': True,
+      'search_default_filter_parent_attendance': True
+    }</field>
   </record>
 
   <record id="kami_sm_attendance_view_tree" model="ir.ui.view">
@@ -47,7 +50,7 @@
             string="Aprovar"
             type="object"
             class="oe_highlight"
-            states="new"
+            states="new"            
             groups="kami_sm.attendance_group_manager"
           />
           <button
@@ -64,11 +67,9 @@
             type="object"
             class="oe_highlight"
             attrs="{'invisible':[
-            ('state', '!=', 'approved'),
             '|',
-              ('_has_subattendances','=', False),
-              ('_has_childs', '=', True),
-            ]}"
+            ('_has_subattendances', '=', False),
+            ('_has_childs', '=', True)]}"
             groups="kami_sm.attendance_group_seller"
           />
           <button
@@ -85,7 +86,7 @@
             type="object"
             class="oe_highlight"
             states="approved"
-            groups="kami_sm.attendance_group_educator"
+            groups="kami_sm.attendance_group_educator,kami_sm.attendance_group_seller"                       
           />
           <button
             name="action_rating_attendance"
@@ -130,8 +131,10 @@
             <field name="_has_subattendances" invisible="1"/>
             <field name="_has_childs" invisible="1"/>
             <field name="_is_child" invisible="1"/>
+            <field name="_has_educator" invisible="1"/>
+            <field name="_has_cost" invisible="1"/>            
           </group>
-          <group string="Informaçõess Básicas">
+          <group string="Informações Básicas">
             <field
               name="client_id"
               context="{'res_partner_search_mode': 'customer'}"
@@ -174,72 +177,60 @@
               string="Data"
             />
             <field
+              name="partner_schedule_id"
+              groups="kami_sm.attendance_group_manager"              
+            />
+            <field
               name="partner_id"
               groups="kami_sm.attendance_group_manager"
               context="{'res_partner_search_mode': 'supplier'}"
-              attrs="{'invisible':[('_has_subattendances','=', True)]}"
+              attrs="{'invisible':[
+              '|',
+              ('_has_educator','=', True),
+              ('_has_cost','=', False)]}"
               string="Fornecedor"
             />
             <field
-              name="partner_schedule_id"
+              name="partner_id"
               groups="kami_sm.attendance_group_manager"
-              attrs="{'invisible':[('_has_partner','=', False)]}"
-            />
+              context="{'res_partner_search_mode': 'supplier'}"
+              attrs="{'invisible':[('_has_educator','=', False)]}"
+              string="Educador"
+            /> 
             <field
               name="parent_id"
               readonly="1"
               groups="kami_sm.attendance_group_manager"
               attrs="{'invisible':[('_is_child','=', False)]}"
-            />
+            />            
             <field
               name="backoffice_user_id"
               domain="[('is_backoffice', '=', True)]"
             />
-          </group>
-          <group
-            string='Fachada'
-            name='group_facade'
-            attrs="{'invisible':[('_is_facade','=', False)]}"
-          >
-            <field name="goal_ids"  widget="many2many_tags" options="{'color_field': 'color'}"/>
-            <field name="available_space"/>
             <field
-              name="expected_audience"
-              attrs="{'invisible':[('_is_facade','=', True)]}"
+              name="total_cost"
+              attrs="{'invisible':[('_has_cost','=', True)]}"
             />
-          <field
-            name="total_event_attendees"
-            attrs="{'invisible':[('_is_facade','=', True)]}"
-          />
           </group>
           <notebook>
             <page string="Detalhes">
-              <group
-                string="Convite Digital"
-                attrs="{'invisible':[('_is_facade','=', True)]}"
-              >
+              <group attrs="{'invisible':[('_is_facade','=', True)]}">
+                <field
+                  name="goal_ids"
+                  widget="many2many_tags"
+                  options="{'color_field': 'color'}"
+                />
+                <field name="available_space"/>
+                <field name="expected_audience"/>
+                <field name="total_event_attendees"/>                      
                 <field name="has_digital_invite"/>
-                <field
-                  name="invite_image_logo"
-                  widget='binary'
-                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
-                />
-                <field
-                  name="invite_image_logo_preview"
-                  widget='image'
-                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
-                />
-                <field
-                  name="invite_details"
-                  attrs="{'invisible':[('has_digital_invite', '=', False)]}"
-                />
               </group>
-              <group
-                string='Fachada'
-                name='group_facade'
-                attrs="{'invisible':[('_is_facade','=', False)]}"
-              >
-                <field name="installation_images"/>
+              <group attrs="{'invisible':[('has_digital_invite', '=', False)]}">
+                <field name="invite_image_logo" widget='image'/>     
+                <field name="invite_details"/>
+              </group>
+              <group attrs="{'invisible':[('_is_facade','=', False)]}">
+                <field name="installation_images" widget='image'/>
                 <field name="images_position"/>
                 <field name="facade_width"/>
                 <field name="facade_height"/>
@@ -248,49 +239,56 @@
                   name="facade_ad_type_id"
                   attrs="{'invisible':[('facade_has_ad','=', False)]}"
                 />
-                <group
-                  string='Revista'
-                  name='group_magazine'
-                  attrs="{'invisible':[('_is_facade','=', False)]}"
-                >
-                  <field name="magazine_types"/>
-                  <field name="magazine_height"/>
-                  <field name="magazine_width"/>
-                  <field name="magazine_format"/>
-                  <group name="group_cutting" string="Sangria e Margem">
-                    <field name="has_cutting_edge" />
-                    <field
-                      name="cutting_edge_size"
-                      attrs="{'invisible':[('has_cutting_edge', '=', False)]}"
-                    />
-                    <field name="has_safe_margin"/>
-                    <field
-                      name="safe_margin_size"
-                      attrs="{'invisible':[('has_safe_margin', '=', False)]}"
-                    />
-                  </group>
-                </group>
-              </group>
-              <group>
-                <field name="description"/>
-              </group>
+              </group>             
+              <group attrs="{'invisible':[('_is_facade','=', False)]}">
+                <field name="magazine_types"/>
+                <field name="magazine_height"/>
+                <field name="magazine_width"/>
+                <field name="magazine_format"/>              
+                <field name="has_cutting_edge" />
+                <field
+                  name="cutting_edge_size"
+                  attrs="{'invisible':[('has_cutting_edge', '=', False)]}"
+                />
+                <field name="has_safe_margin"/>
+                <field
+                  name="safe_margin_size"
+                  attrs="{'invisible':[('has_safe_margin', '=', False)]}"
+                />
+              </group>                            
+            </page>
+            <page
+              name="description_page"
+              string="Observações"
+            >
+              <field name="description" type="html"/>
+              <div class="d-none oe_clear"/>
             </page>
             <page
               string="Dependências"
-              attrs="{'invisible': [('child_ids', '=', None)]}"
+              attrs="{'invisible': [('_has_childs', '=', False)]}"
               groups="kami_sm.attendance_group_manager"
-            >
-              <field name="has_others_clients" invisble="true"/>
+            >              
               <field name="child_ids" readonly="1">
                 <tree>
                   <field name="name"/>
                   <field name="state"/>
                   <field name="total_cost"/>
+                  <button
+                    name="action_edit_subattendance"
+                    type="object"
+                    class="oe_highlight"
+                    string="Editar"                      
+                    attrs="{'invisible': [('state', '!=', 'new')]}"
+                  >
+                    Editar
+                  </button>
                 </tree>
               </field>
             </page>
             <page
               string="Custos"
+              attrs="{'invisible': [('_has_cost', '=', False)]}"
               groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_educator">
               <group>
                 <field name="total_cost"/>
@@ -300,18 +298,27 @@
                     <field name="cost_type"/>
                     <field name="partial"/>
                     <field name="cost"/>
-                    <field name="invoice_id" invisible="1"/>
+                    <field name="_has_invoice" invisible="1"/>                    
+                    <field 
+                      name="invoice_date"
+                      string="Data da Fatura"
+                      attrs="{'invisible': [('_has_invoice', '=', False)]}"
+                    />
+                    <field 
+                      name="invoice_date_due"
+                      string="Data de Vencimento da Fatura"
+                      attrs="{'invisible': [('_has_invoice', '=', False)]}"
+                    />
+                    <field 
+                      name="invoice_state"                      
+                      attrs="{'invisible': [('_has_invoice', '=', False)]}"                      
+                    />
                     <button
                       name="action_open_invoice"
                       type="object"
                       class="oe_highlight"
-                      string="Ver Fatura"
-                      attrs="{
-                        'invisible': [
-                        '|',
-                          ('invoice_id', '=', None),
-                          ('cost_type', '!=', 'cash'),
-                      ]}"
+                      string="Ver Fatura"                      
+                      attrs="{'invisible': [('_has_invoice', '=', False)]}"
                     >
                       Abrir Fatura
                     </button>
@@ -326,9 +333,7 @@
               <group>
                 <field
                   name="cancellation_reason"
-                  attrs="{
-                    'readonly': [('state', 'in', ('waiting', 'canceled'))
-                  ]}"
+                  attrs="{'readonly': [('state', 'in', ('waiting', 'canceled'))]}"
                 />
               </group>
             </page>
@@ -337,7 +342,6 @@
               attrs="{'invisible': [('has_others_clients', '=', False)]}"
               groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_educator"
             >
-
               <field name="has_others_clients" invisble="true"/>
               <field name="client_ids" readonly="1">
                 <tree editable="top">
@@ -355,7 +359,6 @@
         </div>
       </form>
     </field>
-
   </record>
 
   <record id="kami_sm_attendance_view_kanban" model="ir.ui.view">
@@ -396,7 +399,7 @@
         <field name="client_id" context="{'res_partner_search_mode': 'customer'}"/>
         <field name="type_id"/>
         <field name="theme_ids"/>
-        <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>
+        <field name="partner_id" context="{'res_partner_search_mode': 'supplier'}"/>        
         <separator/>
         <group expand="1" string="Group By">
           <filter
@@ -410,6 +413,11 @@
             context="{'group_by':'theme_ids'}"
           />
         </group>
+        <filter 
+          string="Main"
+          name="filter_parent_attendance"
+          domain="[('_is_child', '=', False)]"
+        />
       </search>
     </field>
   </record>
@@ -635,5 +643,4 @@
       </xpath>
     </field>
   </record>
-
 </odoo>
