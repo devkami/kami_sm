@@ -21,6 +21,10 @@ incluir opção de promotor no formulário de eventos (para dia da beleza ou deg
 
 adicionar carrossel de imagens;
 
+deixar o filtro de subatendimentos sempre ativo e 'invísivel';
+
+alterar o campo tema na lista de atendimentos;
+
 <s>Remover atendimento do formulário de custo</s>
 
 <s>Alterar opção de custos para o menu de atendimentos</s>
@@ -38,3 +42,15 @@ adicionar carrossel de imagens;
 <s>Exibir Botão 'Aprovar' somente se o atendimento não for subatendimento E se todos subatendimentos foram aprovados se existirem</s>
 
 <s>Não exibir sub atendimentos na lista principal</s>
+
+<s>incluir preview da imagem de fachada nos detalhes de fachada</s>
+
+<s>incluir unidade de medida e organizar a ordem de campos de medida no formulário e nos detalhes da tarefa</s>
+
+<s>Transformar o campo observações relevantes em uma nova aba e mudar o tipo para texto com formatação</s>
+
+<s>Validar se o usuário atual já avaliou o atendimento</s>
+
+<s>Garantir que no caso de atendimento do tipo degustação c/ mais de 1 degustação o atendimento principal será aprovado e agendado sem necessidade de um parceiro ocultando os campos desenecessários</s>
+
+<s>Alterar o calculo de custo total para considerar os custos dos subatendimentos</s>

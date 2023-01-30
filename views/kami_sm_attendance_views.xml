@@ -66,7 +66,6 @@
             string="Criar Sub Atendimentos"
             type="object"
             class="oe_highlight"
-            states="new"
             attrs="{'invisible':[
             '|',
             ('_has_subattendances', '=', False),
@@ -87,7 +86,7 @@
             type="object"
             class="oe_highlight"
             states="approved"
-            groups="kami_sm.attendance_group_educator"
+            groups="kami_sm.attendance_group_educator,kami_sm.attendance_group_seller"                       
           />
           <button
             name="action_rating_attendance"
@@ -130,10 +129,10 @@
             <field name="_is_beauty_day" invisible="1"/>
             <field name="_is_facade" invisible="1"/>
             <field name="_has_subattendances" invisible="1"/>
-            <field name="_has_childs" invisible="0"/>
-            <field name="_is_child" invisible="0"/>
+            <field name="_has_childs" invisible="1"/>
+            <field name="_is_child" invisible="1"/>
             <field name="_has_educator" invisible="1"/>
-            <field name="_is_childs_approved" invisible="0"/>
+            <field name="_has_cost" invisible="1"/>            
           </group>
           <group string="Informações Básicas">
             <field
@@ -185,7 +184,10 @@
               name="partner_id"
               groups="kami_sm.attendance_group_manager"
               context="{'res_partner_search_mode': 'supplier'}"
-              attrs="{'invisible':[('_has_educator','=', True)]}"
+              attrs="{'invisible':[
+              '|',
+              ('_has_educator','=', True),
+              ('_has_cost','=', False)]}"
               string="Fornecedor"
             />
             <field
@@ -220,12 +222,11 @@
                 <field name="has_digital_invite"/>
               </group>
               <group attrs="{'invisible':[('has_digital_invite', '=', False)]}">
-                <field name="invite_image_logo" widget='binary'/>
-                <field name="invite_image_logo_preview" widget='image'/>
+                <field name="invite_image_logo" widget='image'/>     
                 <field name="invite_details"/>
               </group>
               <group attrs="{'invisible':[('_is_facade','=', False)]}">
-                <field name="installation_images"/>
+                <field name="installation_images" widget='image'/>
                 <field name="images_position"/>
                 <field name="facade_width"/>
                 <field name="facade_height"/>
@@ -250,27 +251,40 @@
                   name="safe_margin_size"
                   attrs="{'invisible':[('has_safe_margin', '=', False)]}"
                 />
-              </group>              
-              <group>
-                <field name="description"/>
-              </group>
+              </group>                            
+            </page>
+            <page
+              name="description_page"
+              string="Observações"
+            >
+              <field name="description" type="html"/>
+              <div class="d-none oe_clear"/>
             </page>
             <page
               string="Dependências"
               attrs="{'invisible': [('_has_childs', '=', False)]}"
               groups="kami_sm.attendance_group_manager"
-            >
-              <field name="has_others_clients" invisble="true"/>
+            >              
               <field name="child_ids" readonly="1">
                 <tree>
                   <field name="name"/>
                   <field name="state"/>
                   <field name="total_cost"/>
+                  <button
+                    name="action_edit_subattendance"
+                    type="object"
+                    class="oe_highlight"
+                    string="Editar"                      
+                    attrs="{'invisible': [('state', '!=', 'new')]}"
+                  >
+                    Editar
+                  </button>
                 </tree>
               </field>
             </page>
             <page
               string="Custos"
+              attrs="{'invisible': [('_has_cost', '=', False)]}"
               groups="kami_sm.attendance_group_manager,kami_sm.attendance_group_educator">
               <group>
                 <field name="total_cost"/>
