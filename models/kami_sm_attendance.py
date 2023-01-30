@@ -419,10 +419,14 @@ class KamiInEducationAttendance(models.Model):
             else:
                 attendance._has_partner = False
 
-    @api.depends('cost_ids')
-    def _compute_attendance_total_cost(self):
+    @api.depends('cost_ids', '_has_cost', 'child_ids', '_has_childs')
+    def _compute_attendance_total_cost(self):        
         for attendance in self:
-            attendance.total_cost = sum(attendance.cost_ids.mapped('cost'))
+            if attendance._has_cost:
+                attendance.total_cost += sum(attendance.cost_ids.mapped('cost'))
+            if attendance._has_childs:
+                for child in attendance.child_ids:
+                    attendance.total_cost += sum(child.mapped('total_cost'))
 
     @api.depends('type_id', 'theme_ids', 'partner_id')
     def _compute_default_name(self):

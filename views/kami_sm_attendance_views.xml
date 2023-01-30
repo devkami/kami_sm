@@ -206,7 +206,11 @@
             <field
               name="backoffice_user_id"
               domain="[('is_backoffice', '=', True)]"
-            />            
+            />
+            <field
+              name="total_cost"
+              attrs="{'invisible':[('_has_cost','=', True)]}"
+            />
           </group>
           <notebook>
             <page string="Detalhes">
