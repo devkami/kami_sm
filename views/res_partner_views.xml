@@ -30,6 +30,7 @@
     <field name="arch" type="xml">
         <div class="o_address_format" position="after">
             <field name="is_salon"/>
+            <field name="cod_uno"/>
         </div>
         <page name="contact_addresses" position="before">
             <page string="Kami Service Manager">
